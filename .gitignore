@@ -1,0 +1,17 @@
+# Secrets — never commit these
+client_secrets.json
+youtube_token.json
+
+# Output files (large, no need to store in git)
+output/*.mp4
+
+# Python
+__pycache__/
+*.py[cod]
+.env
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
