@@ -54,17 +54,17 @@ def authenticate():
 
 
 def get_credentials():
-    """Load credentials, refreshing if expired."""
-    if not TOKEN_FILE.exists():
+    """Load credentials — checks GitHub Actions env var first, then local file."""
+
+    # Check env var first (GitHub Actions)
+    if os.environ.get("YOUTUBE_TOKEN"):
+        creds_data = json.loads(os.environ["YOUTUBE_TOKEN"])
+    elif TOKEN_FILE.exists():
+        creds_data = json.loads(TOKEN_FILE.read_text())
+    else:
         raise FileNotFoundError(
             "youtube_token.json not found. Run: python scripts/upload_youtube.py --auth"
         )
-
-    creds_data = json.loads(TOKEN_FILE.read_text())
-
-    # Support GitHub Actions: token can also come from env var
-    if os.environ.get("YOUTUBE_TOKEN"):
-        creds_data = json.loads(os.environ["YOUTUBE_TOKEN"])
 
     creds = Credentials.from_authorized_user_info(creds_data, SCOPES)
 
@@ -89,7 +89,6 @@ def upload_video(video_path: Path, blueprint: dict) -> str:
     frisson_score = blueprint.get("frisson_score", "")
     scientific_note = blueprint.get("scientific_note", "")
 
-    # Append science credit and frisson score to description
     full_description = f"""{description}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -108,7 +107,7 @@ created using the neuroscience of musical frisson.
             "title": title,
             "description": full_description,
             "tags": tags + ["goosebumps", "frisson", "royalty free music", genre.lower(), "music science"],
-            "categoryId": "10",  # Music category
+            "categoryId": "10",
             "defaultLanguage": "en",
         },
         "status": {
@@ -122,7 +121,7 @@ created using the neuroscience of musical frisson.
         str(video_path),
         mimetype="video/mp4",
         resumable=True,
-        chunksize=1024 * 1024 * 5  # 5MB chunks
+        chunksize=1024 * 1024 * 5
     )
 
     print(f"Uploading: {video_path.name}")
@@ -155,7 +154,6 @@ def find_latest_output() -> tuple:
     states = sorted(output_dir.glob("*_state.json"), key=lambda p: p.stat().st_mtime, reverse=True)
 
     for state_path in states:
-        # Skip already uploaded ones
         done_marker = state_path.with_suffix(".uploaded")
         if done_marker.exists():
             continue
@@ -198,7 +196,6 @@ def main():
 
     url = upload_video(video_path, blueprint)
 
-    # Mark as uploaded
     state_path.with_suffix(".uploaded").write_text(url)
     print(f"\nDone. Video live at: {url}")
 
