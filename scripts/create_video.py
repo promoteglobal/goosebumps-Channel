@@ -31,7 +31,8 @@ ACCENT_COLOR = "534ab7"
 
 
 def find_blueprint(mp3_path: Path) -> dict:
-    """Find the matching blueprint JSON for an MP3 file."""
+    """Find the matching blueprint JSON for an MP3 file.
+    Falls back to auto-generated metadata if no blueprint exists."""
     stem = mp3_path.stem
     queue_dir = mp3_path.parent.parent / "queue"
 
@@ -42,15 +43,32 @@ def find_blueprint(mp3_path: Path) -> dict:
             return json.load(f)
 
     # Find most recent unprocessed blueprint
-    blueprints = sorted(queue_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-    for bp_path in blueprints:
-        if not (bp_path.parent / f"processed_{bp_path.name}").exists():
-            with open(bp_path) as f:
-                data = json.load(f)
-            print(f"Using blueprint: {bp_path.name}")
-            return data
+    if queue_dir.exists():
+        blueprints = sorted(queue_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        for bp_path in blueprints:
+            if not (bp_path.parent / f"processed_{bp_path.name}").exists():
+                with open(bp_path) as f:
+                    data = json.load(f)
+                print(f"Using blueprint: {bp_path.name}")
+                return data
 
-    raise FileNotFoundError("No matching blueprint found in queue/")
+    # No blueprint found — generate fallback metadata from filename
+    print("No blueprint found in queue/ — using fallback metadata from filename.")
+    track_name = stem.replace("-", " ").replace("_", " ").title()
+    return {
+        "genre": "Music",
+        "title": f"{track_name} — Goosebumps Music",
+        "frisson_score": 80,
+        "scientific_note": "Music engineered to trigger frisson — the neuroscience of goosebumps.",
+        "description": (
+            f"{track_name} is a carefully crafted piece of music designed to give you goosebumps.\n\n"
+            "Our tracks use the neuroscience of frisson — the physical sensation of chills caused by music — "
+            "to create deeply emotional listening experiences. Key techniques include unexpected harmonic shifts, "
+            "dynamic contrast, and melodic tension and release, all proven to trigger dopamine release.\n\n"
+            "Subscribe to the Goosebumps Channel for regular uploads of frisson-engineered music across every genre."
+        ),
+        "tags": ["goosebumps", "frisson", "royalty free music", "music science", "chills", "emotional music"],
+    }
 
 
 def get_audio_duration(mp3_path: Path) -> float:
