@@ -1,16 +1,13 @@
 name: Create Video and Upload to YouTube
 
 on:
-  # Triggers automatically when you push an MP3 to the /music folder
   push:
     paths:
       - 'music/**.mp3'
-
-  # Manual trigger with specific file
   workflow_dispatch:
     inputs:
       mp3_filename:
-        description: 'MP3 filename in /music folder'
+        description: 'MP3 path e.g. blues/my-track.mp3'
         required: true
 
 jobs:
@@ -18,51 +15,41 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
       - name: Install Python dependencies
         run: |
-          pip install \
-            google-api-python-client \
-            google-auth-oauthlib \
-            google-auth-httplib2
-
+          pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
       - name: Install FFmpeg
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg fonts-dejavu
-
       - name: Find MP3 file
         id: find_mp3
         run: |
           if [ -n "${{ github.event.inputs.mp3_filename }}" ]; then
             echo "mp3=music/${{ github.event.inputs.mp3_filename }}" >> $GITHUB_OUTPUT
           else
-            # Find the MP3 that was just pushed
             CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '\.mp3$' | head -1)
             echo "mp3=$CHANGED" >> $GITHUB_OUTPUT
           fi
-
       - name: Create video with FFmpeg
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python scripts/create_video.py "${{ steps.find_mp3.outputs.mp3 }}"
-
       - name: Upload to YouTube
         env:
           YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
         run: python scripts/upload_youtube.py --auto
-
       - name: Commit state files
         run: |
           git config user.name "goosebumps-bot"
           git config user.email "bot@goosebumps-channel"
           git add output/
-          git diff --staged --quiet || git commit -m "Uploaded: $(ls output/*.mp4 | tail -1 | xargs basename)"
+          git diff --staged --quiet || git commit -m "Uploaded video"
           git push
