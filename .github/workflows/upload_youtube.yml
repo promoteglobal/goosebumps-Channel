@@ -52,4 +52,4 @@ jobs:
           git config user.email "bot@goosebumps-channel"
           git add output/
           git diff --staged --quiet || git commit -m "Uploaded video"
-          git push`
+          git pull --rebase origin main`n        git push
