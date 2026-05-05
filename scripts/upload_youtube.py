@@ -12,6 +12,7 @@ PLAYLISTS = {
     "bollywood":     "PL7e9dvJK1b-Ahmufy9mm6YlXFwpSMMM4N",
     "blues":         "PL7e9dvJK1b-Cc_LtNRXGSi5x4s8ghGluJ",
     "ambient":       "PL7e9dvJK1b-Bvnb770Ne0CYfsMLtxrtq-",
+    "afrobeat":      "PL7e9dvJK1b-BUWXtjYbaPkYksWK8j1cVl"
 }
 
 def get_youtube_client():
