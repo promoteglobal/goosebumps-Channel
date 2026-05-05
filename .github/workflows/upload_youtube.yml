@@ -42,20 +42,28 @@ jobs:
             echo "mp3=music/${{ github.event.inputs.mp3_filename }}" >> $GITHUB_OUTPUT
           else
             CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep '\.mp3$' | head -1)
-            echo "mp3=$CHANGED" >> $GITHUB_OUTPUT
+            if [ -n "$CHANGED" ] && [ ! -f "$CHANGED" ]; then
+              echo "MP3 was deleted - skipping"
+              echo "mp3=" >> $GITHUB_OUTPUT
+            else
+              echo "mp3=$CHANGED" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Create video with FFmpeg
+        if: steps.find_mp3.outputs.mp3 != ''
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python scripts/create_video.py "${{ steps.find_mp3.outputs.mp3 }}"
 
       - name: Upload to YouTube
+        if: steps.find_mp3.outputs.mp3 != ''
         env:
           YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
         run: python scripts/upload_youtube.py --auto
 
       - name: Commit state files
+        if: steps.find_mp3.outputs.mp3 != ''
         run: |
           git config user.name "goosebumps-bot"
           git config user.email "bot@goosebumps-channel"
