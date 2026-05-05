@@ -41,6 +41,7 @@ jobs:
           if [ -n "${{ github.event.inputs.mp3_filename }}" ]; then
             echo "mp3=music/${{ github.event.inputs.mp3_filename }}" >> $GITHUB_OUTPUT
           else
+            git config core.quotepath false
             CHANGED=$(git show --name-only --format="" HEAD 2>/dev/null | grep '\.mp3$' | head -1)
             if [ -n "$CHANGED" ] && [ -f "$CHANGED" ]; then
               echo "mp3=$CHANGED" >> $GITHUB_OUTPUT
