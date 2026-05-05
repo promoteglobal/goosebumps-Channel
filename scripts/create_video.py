@@ -1,5 +1,6 @@
 """
 create_video.py - Fast static gradient visuals. Skips already-uploaded MP3s.
+Supports unicode filenames (Korean, Portuguese, Japanese, etc.)
 """
 import subprocess, json, sys
 from pathlib import Path
@@ -57,38 +58,52 @@ def find_blueprint(mp3_path):
             for bp in bps:
                 if not (bp.parent/f"processed_{bp.name}").exists():
                     with open(bp) as f: return json.load(f)
+
     genre = mp3_path.parent.name.title()
     if genre.lower() in ["music",""]: genre = "Music"
-    track = mp3_path.stem.encode("ascii","ignore").decode().replace("-"," ").replace("_"," ").strip() or "Goosebumps Track"
-    print(f"No blueprint - genre: {genre}")
+
+    # Keep full unicode track name for YouTube title
+    track_full = mp3_path.stem.replace("-"," ").replace("_"," ").strip() or "Goosebumps Track"
+
+    print(f"No blueprint - genre: {genre} | track: {track_full}")
     return {
         "genre": genre,
-        "title": f"{track} - Goosebumps Music",
+        "title": f"{track_full} - Goosebumps Music",
         "frisson_score": 82,
         "scientific_note": "Engineered using the neuroscience of frisson to trigger goosebumps.",
-        "description": f"{track} is crafted to give you chills using the science of musical frisson.\n\nSubscribe to the Goosebumps Channel for more.",
+        "description": f"{track_full} is crafted to give you chills using the science of musical frisson.\n\nSubscribe to the Goosebumps Channel for more.",
         "tags": ["goosebumps","frisson",genre.lower(),"royalty free music","chills"],
     }
 
 def get_duration(mp3):
-    r = subprocess.run(["ffprobe","-v","error","-show_entries","format=duration",
-                        "-of","default=noprint_wrappers=1:nokey=1",str(mp3)],
-                       capture_output=True, text=True)
+    r = subprocess.run(
+        ["ffprobe","-v","error","-show_entries","format=duration",
+         "-of","default=noprint_wrappers=1:nokey=1",str(mp3)],
+        capture_output=True, text=True)
     return float(r.stdout.strip())
 
-def safe(text, n=55):
+def safe_ffmpeg(text, n=55):
+    """Strip to ASCII for FFmpeg drawtext — FFmpeg can't render unicode."""
     t = str(text).encode("ascii","ignore").decode().strip()
     for c in ["'",'"',':',',','[',']','\\','%','`']: t = t.replace(c,' ')
+    t = ' '.join(t.split())
     return (t[:n]+"...") if len(t)>n else t or "Goosebumps Music"
 
 def create_video(mp3_path, output_dir):
     mp3_path = Path(mp3_path)
     bp = find_blueprint(mp3_path)
+
     genre = bp.get("genre","Music")
-    title = safe(bp.get("title","Goosebumps Music"))
-    note  = safe(bp.get("scientific_note","Engineered using the neuroscience of frisson to trigger goosebumps."), 90)
-    score = bp.get("frisson_score","")
-    score_txt = safe(f"Frisson Score  {score}%") if score else ""
+
+    # Full unicode title for YouTube upload
+    full_title = bp.get("title","Goosebumps Music")
+
+    # ASCII-safe title for FFmpeg drawtext overlay
+    ffmpeg_title = safe_ffmpeg(full_title)
+
+    note     = safe_ffmpeg(bp.get("scientific_note","Engineered using the neuroscience of frisson to trigger goosebumps."), 90)
+    score    = bp.get("frisson_score","")
+    score_txt = safe_ffmpeg(f"Frisson Score  {score}%") if score else ""
 
     dur = get_duration(mp3_path)
     T = get_theme(genre)
@@ -102,7 +117,7 @@ def create_video(mp3_path, output_dir):
     fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
     fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
     fi = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf"
-    gu = safe(genre.upper(), 20)
+    gu = safe_ffmpeg(genre.upper(), 20)
 
     fc = (
         f"color=c=0x{bg}:s={WIDTH}x{HEIGHT}:r={FPS}[bg];"
@@ -112,7 +127,7 @@ def create_video(mp3_path, output_dir):
         f"[bgline][wave]overlay=0:{int(HEIGHT*0.61)}:format=auto[v1];"
         f"[v1]drawbox=x=0:y=0:w={WIDTH}:h=8:color=0x{ac}@0.9:t=fill[v1b];"
         f"[v1b]drawbox=x=0:y={HEIGHT-8}:w={WIDTH}:h=8:color=0x{ac}@0.6:t=fill[v1c];"
-        f"[v1c]drawtext=fontfile={fb}:text='{title}'"
+        f"[v1c]drawtext=fontfile={fb}:text='{ffmpeg_title}'"
         f":fontcolor=#{tx}:fontsize=58:x=(w-text_w)/2:y=h*0.10"
         f":alpha='if(lt(t\\,1.5)\\,t/1.5\\,1)':shadowcolor=black@0.9:shadowx=3:shadowy=3[v2];"
         f"[v2]drawtext=fontfile={fr}:text='{gu}'"
@@ -148,21 +163,20 @@ def create_video(mp3_path, output_dir):
         print("FFmpeg error:"); print(r.stderr[-2000:])
         raise RuntimeError("FFmpeg failed")
 
+    # Save full unicode title in state for YouTube upload
+    bp["title"] = full_title
     print(f"Done: {out}")
     return out, bp
 
 def get_already_uploaded(output_dir):
-    """Get set of MP3 paths that already have state files."""
     done = set()
     for sf in output_dir.glob("*_state.json"):
         try:
             with open(sf) as f:
                 data = json.load(f)
                 mp3 = data.get("mp3_path","")
-                if mp3:
-                    done.add(mp3)
-        except:
-            pass
+                if mp3: done.add(mp3)
+        except: pass
     return done
 
 def main():
@@ -171,35 +185,26 @@ def main():
     if not mp3_path.name or not mp3_path.suffix:
         music_dir  = Path(__file__).parent.parent / "music"
         output_dir = Path(__file__).parent.parent / "output"
-
-        # Get all MP3s sorted by newest first
         all_mp3s = sorted(music_dir.rglob("*.mp3"), key=lambda p:p.stat().st_mtime, reverse=True)
-
-        # Skip MP3s that already have state files
         already_done = get_already_uploaded(output_dir)
         mp3s = [p for p in all_mp3s if str(p) not in already_done]
-
         if not mp3s:
             print("No new MP3s found - all already uploaded")
             raise SystemExit(0)
-
         mp3_path = mp3s[0]
         print(f"Auto-detected: {mp3_path}")
 
     if not mp3_path.exists():
         alt = Path(__file__).parent.parent / mp3_path
-        if alt.exists():
-            mp3_path = alt
-        else:
-            print(f"Not found: {mp3_path}")
-            raise SystemExit(1)
+        if alt.exists(): mp3_path = alt
+        else: print(f"Not found: {mp3_path}"); raise SystemExit(1)
 
     output_dir = Path(__file__).parent.parent / "output"
     video_path, bp = create_video(mp3_path, output_dir)
 
     state = output_dir / f"{video_path.stem}_state.json"
-    with open(state,"w") as f:
-        json.dump({"video_path":str(video_path),"mp3_path":str(mp3_path),"blueprint":bp},f,indent=2)
+    with open(state,"w", encoding="utf-8") as f:
+        json.dump({"video_path":str(video_path),"mp3_path":str(mp3_path),"blueprint":bp},f,indent=2,ensure_ascii=False)
     print(f"State: {state}\nReady for upload.")
 
 if __name__=="__main__":
