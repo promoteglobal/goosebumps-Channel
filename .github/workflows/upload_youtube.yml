@@ -41,7 +41,16 @@ jobs:
           if [ -n "${{ github.event.inputs.mp3_filename }}" ]; then
             echo "mp3=music/${{ github.event.inputs.mp3_filename }}" >> $GITHUB_OUTPUT
           else
+            # Use GitHub's built-in list of changed files from the push event
             CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep '\.mp3$' | head -1)
+            if [ -z "$CHANGED" ]; then
+              # Fallback: find the most recently modified MP3
+              CHANGED=$(find music -name "*.mp3" -newer music/.gitkeep 2>/dev/null | head -1)
+            fi
+            if [ -z "$CHANGED" ]; then
+              # Last resort: newest MP3 by modification time
+              CHANGED=$(find music -name "*.mp3" -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2-)
+            fi
             echo "mp3=$CHANGED" >> $GITHUB_OUTPUT
           fi
 
