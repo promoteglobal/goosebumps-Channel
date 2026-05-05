@@ -2,8 +2,8 @@ name: Create Video and Upload to YouTube
 
 on:
   push:
-    paths:
-      - 'music/**.mp3'
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       mp3_filename:
@@ -41,18 +41,26 @@ jobs:
           if [ -n "${{ github.event.inputs.mp3_filename }}" ]; then
             echo "mp3=music/${{ github.event.inputs.mp3_filename }}" >> $GITHUB_OUTPUT
           else
-            # Use GitHub's built-in list of changed files from the push event
+            # Try git diff first
             CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep '\.mp3$' | head -1)
+            # Fallback: newest MP3 by modification time
             if [ -z "$CHANGED" ]; then
-              # Fallback: find the most recently modified MP3
-              CHANGED=$(find music -name "*.mp3" -newer music/.gitkeep 2>/dev/null | head -1)
-            fi
-            if [ -z "$CHANGED" ]; then
-              # Last resort: newest MP3 by modification time
               CHANGED=$(find music -name "*.mp3" -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2-)
             fi
             echo "mp3=$CHANGED" >> $GITHUB_OUTPUT
           fi
+
+      - name: Check if MP3 exists
+        run: |
+          if [ -z "${{ steps.find_mp3.outputs.mp3 }}" ]; then
+            echo "No MP3 found - skipping"
+            exit 0
+          fi
+          if [ ! -f "${{ steps.find_mp3.outputs.mp3 }}" ]; then
+            echo "MP3 not found: ${{ steps.find_mp3.outputs.mp3 }} - skipping"
+            exit 0
+          fi
+          echo "Found MP3: ${{ steps.find_mp3.outputs.mp3 }}"
 
       - name: Create video with FFmpeg
         env:
