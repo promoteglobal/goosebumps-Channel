@@ -26,11 +26,28 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-google-api
+
       - name: Install Python dependencies
         run: |
           pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
 
+      - name: Cache FFmpeg
+        id: cache-ffmpeg
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/bin/ffmpeg
+            /usr/bin/ffprobe
+            /usr/share/fonts/truetype/dejavu
+          key: ${{ runner.os }}-ffmpeg-dejavu-v1
+
       - name: Install FFmpeg
+        if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg fonts-dejavu
