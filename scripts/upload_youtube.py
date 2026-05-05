@@ -40,21 +40,34 @@ def build_description(bp):
     analysis  = bp.get("scientific_analysis", "")
     structure = bp.get("structure", "")
 
-    desc  = f"{title} is crafted to give you chills using the science of musical frisson.\n\n"
-    desc += "Subscribe to the Goosebumps Channel for more.\n\n"
-    desc += "━" * 30 + "\n"
-    desc += "The Science: Engineered using the neuroscience of frisson to trigger goosebumps.\n"
+    desc  = f"{title} is scientifically engineered to give you chills and trigger a natural dopamine release.\n\n"
+
     if score:
-        desc += f"Frisson Score: {score}% (neuroscience-based goosebump prediction)\n"
+        desc += f"🥶 Frisson Score: {score}% — neuroscience-based goosebump prediction\n\n"
+
+    desc += "━" * 30 + "\n"
+    desc += "🧠 THE SCIENCE OF GOOSEBUMPS\n\n"
+    desc += "Musical frisson — the chills you feel from music — triggers real dopamine release "
+    desc += "in the brain's pleasure center (nucleus accumbens). Research shows this can:\n\n"
+    desc += "✅ Elevate mood and reduce symptoms of mild depression\n"
+    desc += "✅ Lower cortisol (stress hormone) levels\n"
+    desc += "✅ Support emotional processing and release\n"
+    desc += "✅ Provide mild natural pain relief\n"
+    desc += "✅ Strengthen feelings of connection and empathy\n\n"
+
     if analysis:
-        desc += f"\n{analysis}\n"
+        desc += f"🔬 Track Analysis: {analysis}\n\n"
+
     if structure:
-        desc += f"\n{structure}\n"
-    desc += f"\nGenre: {genre}\n"
-    desc += "━" * 30 + "\n\n"
+        desc += f"🎵 Music Structure: {structure}\n\n"
+
+    desc += "━" * 30 + "\n"
+    desc += f"Genre: {genre}\n\n"
     desc += "All music on this channel is 100% original and exclusively owned by "
     desc += "Feel the Music – Goosebumps Challenge. All rights reserved.\n\n"
-    desc += f"#Goosebumps #FrissonMusic #{genre.replace(' ','')} #OriginalMusic #AIGeneratedMusic #CopyrightProtected"
+    desc += f"#Goosebumps #FrissonMusic #{genre.replace(' ','')} #OriginalMusic "
+    desc += "#AIGeneratedMusic #CopyrightProtected #DopamineMusic #StressRelief "
+    desc += "#MoodBoost #MentalWellness #MusicScience"
     return desc
 
 def get_playlist_id(bp, mp3_path):
@@ -117,7 +130,8 @@ def upload_video(youtube, state_path):
     tags = bp.get("tags", []) or [
         "goosebumps", "frisson", "music", genre,
         "original music", "AI generated music", "chills",
-        "emotional music", "neuroscience", "dopamine"
+        "dopamine music", "stress relief", "mood boost",
+        "mental wellness", "music science", "emotional music"
     ]
 
     body = {
