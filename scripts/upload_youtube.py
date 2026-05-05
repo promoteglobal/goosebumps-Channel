@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 # Genre folder → YouTube Playlist ID
+# Add new playlist IDs here as you create them
 PLAYLISTS = {
     "kpop":          "PL7e9dvJK1b-DOnkI7q6K-T0AIrzsUiQn6",
     "flamenco":      "PL7e9dvJK1b-CM9HbVWkO1IGYX_YlLCN3d",
@@ -33,13 +34,13 @@ def find_latest_state():
     return None
 
 def build_description(bp):
-    genre    = bp.get("genre", "Music")
-    title    = bp.get("title", "").replace(" - Goosebumps Music", "").strip()
-    score    = bp.get("frisson_score", "")
-    analysis = bp.get("scientific_analysis", "")
-    structure= bp.get("structure", "")
+    genre     = bp.get("genre", "Music")
+    title     = bp.get("title", "").replace(" - Goosebumps Music", "").strip()
+    score     = bp.get("frisson_score", "")
+    analysis  = bp.get("scientific_analysis", "")
+    structure = bp.get("structure", "")
 
-    desc = f"{title} is crafted to give you chills using the science of musical frisson.\n\n"
+    desc  = f"{title} is crafted to give you chills using the science of musical frisson.\n\n"
     desc += "Subscribe to the Goosebumps Channel for more.\n\n"
     desc += "━" * 30 + "\n"
     desc += "The Science: Engineered using the neuroscience of frisson to trigger goosebumps.\n"
@@ -51,16 +52,13 @@ def build_description(bp):
         desc += f"\n{structure}\n"
     desc += f"\nGenre: {genre}\n"
     desc += "━" * 30 + "\n\n"
-    desc += "All music on this channel is 100% original and royalty-free, "
-    desc += "created using the neuroscience of musical frisson.\n\n"
-    desc += f"#Goosebumps #FrissonMusic #{genre.replace(' ','')} #RoyaltyFree #MusicScience"
+    desc += "All music on this channel is 100% original and exclusively owned by "
+    desc += "Feel the Music – Goosebumps Challenge. All rights reserved.\n\n"
+    desc += f"#Goosebumps #FrissonMusic #{genre.replace(' ','')} #OriginalMusic #AIGeneratedMusic #CopyrightProtected"
     return desc
 
 def get_playlist_id(bp, mp3_path):
-    """Get playlist ID from genre folder name."""
     genre_key = None
-
-    # Try to get genre from mp3 path first
     if mp3_path:
         try:
             folder = Path(mp3_path).parent.name.lower()
@@ -68,24 +66,19 @@ def get_playlist_id(bp, mp3_path):
                 genre_key = folder
         except:
             pass
-
-    # Fall back to blueprint genre
     if not genre_key:
         genre = bp.get("genre", "").lower().replace(" ","").replace("-","")
         for k in PLAYLISTS:
             if genre == k or (len(genre) >= 4 and genre[:4] == k[:4]):
                 genre_key = k
                 break
-
     if genre_key and genre_key in PLAYLISTS:
         print(f"Playlist: {genre_key} → {PLAYLISTS[genre_key]}")
         return PLAYLISTS[genre_key]
-
     print(f"No playlist found for genre: {bp.get('genre','')}")
     return None
 
 def add_to_playlist(youtube, video_id, playlist_id):
-    """Add video to playlist."""
     try:
         youtube.playlistItems().insert(
             part="snippet",
@@ -111,7 +104,6 @@ def upload_video(youtube, state_path):
     mp3_path   = state.get("mp3_path", "")
     bp         = state.get("blueprint", {})
 
-    # Build title
     raw_title = bp.get("title", "")
     if raw_title:
         raw_title = raw_title.replace(" - Goosebumps Music", "").strip()
@@ -124,8 +116,8 @@ def upload_video(youtube, state_path):
     genre = bp.get("genre", "music").lower().replace(" ", "")
     tags = bp.get("tags", []) or [
         "goosebumps", "frisson", "music", genre,
-        "royalty free music", "chills", "emotional music",
-        "neuroscience", "dopamine"
+        "original music", "AI generated music", "chills",
+        "emotional music", "neuroscience", "dopamine"
     ]
 
     body = {
@@ -150,12 +142,10 @@ def upload_video(youtube, state_path):
     video_id = response["id"]
     print(f"Uploaded: https://youtube.com/watch?v={video_id}")
 
-    # Add to playlist
     playlist_id = get_playlist_id(bp, mp3_path)
     if playlist_id:
         add_to_playlist(youtube, video_id, playlist_id)
 
-    # Mark as uploaded
     uploaded_path = Path(str(state_path).replace("_state.json", "_state.uploaded"))
     uploaded_path.touch()
     return video_id
@@ -170,7 +160,7 @@ def main():
         creds = flow.run_local_server(port=0)
         with open("youtube_token.json", "w") as f:
             f.write(creds.to_json())
-        print("Auth complete")
+        print("Auth complete - youtube_token.json saved")
         return
 
     youtube = get_youtube_client()
