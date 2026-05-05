@@ -41,7 +41,15 @@ jobs:
           if [ -n "${{ github.event.inputs.mp3_filename }}" ]; then
             echo "mp3=music/${{ github.event.inputs.mp3_filename }}" >> $GITHUB_OUTPUT
           else
-            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep '\.mp3$' | head -1)
+            CHANGED=$(echo '${{ toJSON(github.event.commits) }}' | python3 -c "
+import json,sys
+commits = json.load(sys.stdin)
+for c in commits:
+    for f in c.get('added',[])+c.get('modified',[]):
+        if f.endswith('.mp3'):
+            print(f)
+            exit()
+")
             if [ -n "$CHANGED" ] && [ ! -f "$CHANGED" ]; then
               echo "MP3 was deleted - skipping"
               echo "mp3=" >> $GITHUB_OUTPUT
