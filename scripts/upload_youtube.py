@@ -1,14 +1,22 @@
-import os, json, sys, pickle, subprocess
+import os, json, sys
 from pathlib import Path
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
+# Genre folder → YouTube Playlist ID
+PLAYLISTS = {
+    "kpop":          "PL7e9dvJK1b-DOnkI7q6K-T0AIrzsUiQn6",
+    "flamenco":      "PL7e9dvJK1b-CM9HbVWkO1IGYX_YlLCN3d",
+    "bollywood":     "PL7e9dvJK1b-Ahmufy9mm6YlXFwpSMMM4N",
+    "blues":         "PL7e9dvJK1b-Cc_LtNRXGSi5x4s8ghGluJ",
+    "ambient":       "PL7e9dvJK1b-Bvnb770Ne0CYfsMLtxrtq-",
+}
+
 def get_youtube_client():
     token_data = os.environ.get("YOUTUBE_TOKEN")
     if token_data:
-        creds_info = json.loads(token_data)
-        creds = Credentials.from_authorized_user_info(creds_info)
+        creds = Credentials.from_authorized_user_info(json.loads(token_data))
     else:
         token_file = Path(__file__).parent.parent / "youtube_token.json"
         with open(token_file) as f:
@@ -19,19 +27,107 @@ def find_latest_state():
     output_dir = Path(__file__).parent.parent / "output"
     states = sorted(output_dir.glob("*_state.json"), key=lambda p: p.stat().st_mtime, reverse=True)
     for state in states:
-        uploaded = state.with_suffix(".uploaded")
+        uploaded = Path(str(state).replace("_state.json", "_state.uploaded"))
         if not uploaded.exists():
             return state
     return None
 
+def build_description(bp):
+    genre    = bp.get("genre", "Music")
+    title    = bp.get("title", "").replace(" - Goosebumps Music", "").strip()
+    score    = bp.get("frisson_score", "")
+    analysis = bp.get("scientific_analysis", "")
+    structure= bp.get("structure", "")
+
+    desc = f"{title} is crafted to give you chills using the science of musical frisson.\n\n"
+    desc += "Subscribe to the Goosebumps Channel for more.\n\n"
+    desc += "━" * 30 + "\n"
+    desc += "The Science: Engineered using the neuroscience of frisson to trigger goosebumps.\n"
+    if score:
+        desc += f"Frisson Score: {score}% (neuroscience-based goosebump prediction)\n"
+    if analysis:
+        desc += f"\n{analysis}\n"
+    if structure:
+        desc += f"\n{structure}\n"
+    desc += f"\nGenre: {genre}\n"
+    desc += "━" * 30 + "\n\n"
+    desc += "All music on this channel is 100% original and royalty-free, "
+    desc += "created using the neuroscience of musical frisson.\n\n"
+    desc += f"#Goosebumps #FrissonMusic #{genre.replace(' ','')} #RoyaltyFree #MusicScience"
+    return desc
+
+def get_playlist_id(bp, mp3_path):
+    """Get playlist ID from genre folder name."""
+    genre_key = None
+
+    # Try to get genre from mp3 path first
+    if mp3_path:
+        try:
+            folder = Path(mp3_path).parent.name.lower()
+            if folder in PLAYLISTS:
+                genre_key = folder
+        except:
+            pass
+
+    # Fall back to blueprint genre
+    if not genre_key:
+        genre = bp.get("genre", "").lower().replace(" ","").replace("-","")
+        for k in PLAYLISTS:
+            if genre == k or (len(genre) >= 4 and genre[:4] == k[:4]):
+                genre_key = k
+                break
+
+    if genre_key and genre_key in PLAYLISTS:
+        print(f"Playlist: {genre_key} → {PLAYLISTS[genre_key]}")
+        return PLAYLISTS[genre_key]
+
+    print(f"No playlist found for genre: {bp.get('genre','')}")
+    return None
+
+def add_to_playlist(youtube, video_id, playlist_id):
+    """Add video to playlist."""
+    try:
+        youtube.playlistItems().insert(
+            part="snippet",
+            body={
+                "snippet": {
+                    "playlistId": playlist_id,
+                    "resourceId": {
+                        "kind": "youtube#video",
+                        "videoId": video_id
+                    }
+                }
+            }
+        ).execute()
+        print(f"Added to playlist: {playlist_id}")
+    except Exception as e:
+        print(f"Playlist add failed: {e}")
+
 def upload_video(youtube, state_path):
-    with open(state_path) as f:
+    with open(state_path, encoding="utf-8") as f:
         state = json.load(f)
+
     video_path = state["video_path"]
-    bp = state.get("blueprint", {})
-    title = bp.get("title", "Goosebumps Music")[:100]
-    description = bp.get("description", "Engineered using the neuroscience of frisson.")
-    tags = bp.get("tags", ["goosebumps", "frisson", "music"])
+    mp3_path   = state.get("mp3_path", "")
+    bp         = state.get("blueprint", {})
+
+    # Build title
+    raw_title = bp.get("title", "")
+    if raw_title:
+        raw_title = raw_title.replace(" - Goosebumps Music", "").strip()
+        title = f"{raw_title} - Goosebumps Music"
+    else:
+        title = f"{Path(video_path).stem} - Goosebumps Music"
+    title = title[:100]
+
+    description = build_description(bp)
+    genre = bp.get("genre", "music").lower().replace(" ", "")
+    tags = bp.get("tags", []) or [
+        "goosebumps", "frisson", "music", genre,
+        "royalty free music", "chills", "emotional music",
+        "neuroscience", "dopamine"
+    ]
+
     body = {
         "snippet": {
             "title": title,
@@ -41,16 +137,28 @@ def upload_video(youtube, state_path):
         },
         "status": {"privacyStatus": "public"},
     }
+
     media = MediaFileUpload(video_path, mimetype="video/mp4", resumable=True)
     request = youtube.videos().insert(part="snippet,status", body=body, media_body=media)
+
     response = None
     while response is None:
         status, response = request.next_chunk()
         if status:
             print(f"Uploading: {int(status.progress() * 100)}%")
-    print(f"Uploaded: https://youtube.com/watch?v={response['id']}")
-    state_path.with_suffix(".uploaded").touch()
-    return response["id"]
+
+    video_id = response["id"]
+    print(f"Uploaded: https://youtube.com/watch?v={video_id}")
+
+    # Add to playlist
+    playlist_id = get_playlist_id(bp, mp3_path)
+    if playlist_id:
+        add_to_playlist(youtube, video_id, playlist_id)
+
+    # Mark as uploaded
+    uploaded_path = Path(str(state_path).replace("_state.json", "_state.uploaded"))
+    uploaded_path.touch()
+    return video_id
 
 def main():
     if "--auth" in sys.argv:
@@ -62,8 +170,9 @@ def main():
         creds = flow.run_local_server(port=0)
         with open("youtube_token.json", "w") as f:
             f.write(creds.to_json())
-        print("Auth complete - youtube_token.json saved")
+        print("Auth complete")
         return
+
     youtube = get_youtube_client()
     state = find_latest_state()
     if not state:
