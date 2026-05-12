@@ -37,7 +37,8 @@ PLAYLISTS = {
     "deephouse":         "PL7e9dvJK1b-Amk5aqu5oV2zDvr38WVzTO",
     "classical":         "PL7e9dvJK1b-BvSDoHTeJbsFTNeMBAv-XS",
     "country":           "PL7e9dvJK1b-A1Tf__S_BOduCcQsgTrq5s",
-    "celtic":            "PL7e9dvJK1b-C_S0ViL6uS_S9p_JUKz7TK"
+    "celtic":            "PL7e9dvJK1b-C_S0ViL6uS_S9p_JUKz7TK",
+    "bossanova":          "PL7e9dvJK1b-C4oc6qBCFEiE_q9enMBoqT"
 }
 
 def get_youtube_client():
