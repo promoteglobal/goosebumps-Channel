@@ -7,14 +7,39 @@ from googleapiclient.http import MediaFileUpload
 # Genre folder → YouTube Playlist ID
 # Add new playlist IDs here as you create them
 PLAYLISTS = {
-    "kpop":          "PL7e9dvJK1b-DOnkI7q6K-T0AIrzsUiQn6",
-    "flamenco":      "PL7e9dvJK1b-CM9HbVWkO1IGYX_YlLCN3d",
-    "bollywood":     "PL7e9dvJK1b-Ahmufy9mm6YlXFwpSMMM4N",
-    "blues":         "PL7e9dvJK1b-Cc_LtNRXGSi5x4s8ghGluJ",
-    "ambient":       "PL7e9dvJK1b-Bvnb770Ne0CYfsMLtxrtq-",
-    "afrobeat":      "PL7e9dvJK1b-BUWXtjYbaPkYksWK8j1cVl"
+    "kpop":              "PL7e9dvJK1b-DOnkI7q6K-T0AIrzsUiQn6",
+    "flamenco":          "PL7e9dvJK1b-CM9HbVWkO1IGYX_YlLCN3d",
+    "bollywood":         "PL7e9dvJK1b-Ahmufy9mm6YlXFwpSMMM4N",
+    "blues":             "PL7e9dvJK1b-Cc_LtNRXGSi5x4s8ghGluJ",
+    "ambient":           "PL7e9dvJK1b-Bvnb770Ne0CYfsMLtxrtq-",
+    "afrobeat":          "PL7e9dvJK1b-BUWXtjYbaPkYksWK8j1cVl",
+    "cinematic":         "PL7e9dvJK1b-AZNF-cFvG1I4U0Ax79e7a4",
+    "synthwave":         "PL7e9dvJK1b-BUErfB-VjBJcipnshdrQPG",
+    "world":             "PL7e9dvJK1b-CXD6yC1RPDnV2zOy9kdIHo",
+    "tango":             "PL7e9dvJK1b-AxqPtnCb1XNOjwCRFSEHPx",
+    "rock":              "PL7e9dvJK1b-DwFGqvE81PMqRDb_05f0hi",
+    "R&B":               "PL7e9dvJK1b-DNO1bFVwdBNguwWtkP_Vnm",
+    "reggae":            "PL7e9dvJK1b-DAIenfF6X2KfW6kZbdSajG",
+    "Nordic Folk":       "PL7e9dvJK1b-D0gDQgK4ypZvsOl_9vYTZC",
+    "Neo Soul":          "PL7e9dvJK1b-D-tba90c0A7_50LYcvdIek",
+    "middle eastern":    "PL7e9dvJK1b-AMvg-YDVqx077cWed_-WzK",
+    "metal":             "PL7e9dvJK1b-AnE_KyTZMlDsAkxtnYmbJl",
+    "lo-fi":             "PL7e9dvJK1b-BQBovkw_y420f7Nzi028Dc",
+    "Latin":             "PL7e9dvJK1b-DjLzqTFrA_El_5GNlo3m3O",
+    "jpop":              "PL7e9dvJK1b-D-k4gmY48G34sIcFyb8HfU",
+    "jazz":              "PL7e9dvJK1b-C5-YX6srTbT8dvL3Q9vPRs",
+    "indian classical":  "PL7e9dvJK1b-BUD-rNdHb44vnqq7bgWNIl",
+    "hip hop":           "PL7e9dvJK1b-CdF8P0hpR-LI6iqH-Kx5Mp",
+    "gospel":            "PL7e9dvJK1b-D0n2sC-eEWCpNMAW2fE_Te",
+    "folk":              "PL7e9dvJK1b-CQ3OXui9eVKqZnWID0X8H1",
+    "electronic":        "PL7e9dvJK1b-CwTyBtyzWPJB4GJaHzbZno",
+    "edm":               "PL7e9dvJK1b-ApOkTck8Q8FWh_GcoCZcgB",
+    "deep house":        "PL7e9dvJK1b-Amk5aqu5oV2zDvr38WVzTO",
+    "classical":         "PL7e9dvJK1b-BvSDoHTeJbsFTNeMBAv-XS",
+    "country":           "PL7e9dvJK1b-A1Tf__S_BOduCcQsgTrq5s",
+    "celtic":            "PL7e9dvJK1b-C_S0ViL6uS_S9p_JUKz7TK"
 }
-
+ 
 def get_youtube_client():
     token_data = os.environ.get("YOUTUBE_TOKEN")
     if token_data:
