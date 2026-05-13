@@ -38,7 +38,7 @@ PLAYLISTS = {
     "country":       "PL7e9dvJK1b-A1Tf__S_BOduCcQsgTrq5s",
     "celtic":        "PL7e9dvJK1b-C_S0ViL6uS_S9p_JUKz7TK",
     "bossanova":     "PL7e9dvJK1b-C4oc6qBCFEiE_q9enMBoqT",
-    "dangdut":       "PLAYLIST_ID_HERE",
+    "dangdut":       "PL7e9dvJK1b-BRpXwXpAu4AcnDKRgh4N5F"
 }
 
 # Native language taglines per genre for YouTube geo-targeting
