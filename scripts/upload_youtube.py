@@ -38,7 +38,8 @@ PLAYLISTS = {
     "country":       "PL7e9dvJK1b-A1Tf__S_BOduCcQsgTrq5s",
     "celtic":        "PL7e9dvJK1b-C_S0ViL6uS_S9p_JUKz7TK",
     "bossanova":     "PL7e9dvJK1b-C4oc6qBCFEiE_q9enMBoqT",
-    "dangdut":       "PL7e9dvJK1b-BRpXwXpAu4AcnDKRgh4N5F"
+    "dangdut":       "PL7e9dvJK1b-BRpXwXpAu4AcnDKRgh4N5F",
+    "bluegrass":     "id will go here"
 }
 
 # Native language taglines per genre for YouTube geo-targeting
@@ -76,6 +77,7 @@ NATIVE_TAGLINES = {
     "electronic":    "💡 This music is scientifically engineered to give you chills. Subscribe and feel it.",
     "cinematic":     "🎬 This music is scientifically engineered to give you chills. Subscribe and feel it.",
     "world":         "🌍 This music is scientifically engineered to give you chills. Subscribe and feel it.",
+    "bluegrass":     "🪕 This track was scientifically designed to give you goosebumps. Subscribe and feel the chill!",
 }
 
 def get_youtube_client():
