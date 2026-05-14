@@ -39,7 +39,7 @@ PLAYLISTS = {
     "celtic":        "PL7e9dvJK1b-C_S0ViL6uS_S9p_JUKz7TK",
     "bossanova":     "PL7e9dvJK1b-C4oc6qBCFEiE_q9enMBoqT",
     "dangdut":       "PL7e9dvJK1b-BRpXwXpAu4AcnDKRgh4N5F",
-    "bluegrass":     "id will go here"
+    "bluegrass":     "PL7e9dvJK1b-Dof1pxAHfTPn_OQz_J_5T9"
 }
 
 # Native language taglines per genre for YouTube geo-targeting
