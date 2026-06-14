@@ -109,13 +109,14 @@ def get_native_tagline(genre_folder):
     return "🎵 This music is scientifically engineered to give you chills. Subscribe and feel it."
 
 def build_description(bp, mp3_path=""):
-    genre    = bp.get("genre", "Music")
+    # Always derive genre from the MP3 folder name — never trust the blueprint for this
+    genre_folder = Path(mp3_path).parent.name if mp3_path else bp.get("genre", "music").lower()
+    genre    = genre_folder.title() if genre_folder else bp.get("genre", "Music")
     title    = bp.get("title", "").replace(" - Goosebumps Music", "").strip()
     score    = bp.get("frisson_score", "")
     analysis = bp.get("scientific_analysis", "")
     structure= bp.get("structure", "")
 
-    genre_folder = Path(mp3_path).parent.name if mp3_path else genre.lower()
     native = get_native_tagline(genre_folder)
 
     desc  = f"{title} is scientifically engineered to give you chills and trigger a natural dopamine release.\n\n"

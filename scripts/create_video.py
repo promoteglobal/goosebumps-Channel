@@ -103,8 +103,8 @@ def create_video(mp3_path, output_dir):
     mp3_path = Path(mp3_path)
     bp = find_blueprint(mp3_path)
 
-    # Use folder name as genre fallback (always correct from MP3 path)
-    genre = bp.get("genre") or mp3_path.parent.name.title()
+    # Always use the folder name — it's always correct and never stale
+    genre = mp3_path.parent.name.title()
 
     # Use MP3 filename as title fallback (blueprint from website has no title field)
     stem = mp3_path.stem.replace("-", " ").replace("_", " ").strip() or "Goosebumps Track"
