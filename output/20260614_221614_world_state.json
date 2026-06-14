@@ -1,0 +1,13 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260614_221614_world.mp4",
+  "mp3_path": "music/ambient/Golden Ratio Shift.mp3",
+  "blueprint": {
+    "genre": "World",
+    "frisson_score": 81,
+    "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and anterior cingulate cortex, triggering dopaminergic reward cascades. The combination of a sudden silence-to-full-sound transition and melodic tension resolution creates predictive-reward mismatch, the primary neurological driver of chills at approximately 61.8% track duration.",
+    "structure": "The track opens with a sparse duduk and oud melody building harmonic tension over a drone for the first 38% of the track. A sudden silence precedes an explosive entry of taiko drums, kora, and string ensemble at the golden ratio point (61.8%), accompanied by an unexpected shift from D minor to Bb major. The melodic line resolves triumphantly back to D minor, with layered vocals and frame drums carrying the emotional release through the final third.",
+    "suno_prompt": "World fusion instrumental, duduk and oud opening sparse melody over drone, sudden silence then explosive full ensemble entry, taiko drums kora strings frame drums, unexpected harmonic shift D minor to Bb major, triumphant melodic resolution, emotional cinematic peak, throat singing overtones, royalty-free, 7/10 intensity, 110 BPM",
+    "generated_at": "2026-06-14T20:52:19.230Z",
+    "title": "Goosebumps Music"
+  }
+}
