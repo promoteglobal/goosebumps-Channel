@@ -51,13 +51,23 @@ def get_theme(genre):
             return THEMES[k]
     return THEMES["default"]
 
+def normalize_blueprint(bp):
+    if not bp.get("scientific_analysis") and bp.get("scientific_note"):
+        bp["scientific_analysis"] = bp["scientific_note"]
+    return bp
+
 def find_blueprint(mp3_path):
+    local = mp3_path.parent / "blueprint.json"
+    if local.exists():
+        with open(local) as f:
+            return normalize_blueprint(json.load(f))
+
     for qd in [mp3_path.parent.parent.parent/"queue", mp3_path.parent.parent/"queue"]:
         if qd.exists():
             bps = sorted(qd.glob("*.json"), key=lambda p:p.stat().st_mtime, reverse=True)
             for bp in bps:
                 if not (bp.parent/f"processed_{bp.name}").exists():
-                    with open(bp) as f: return json.load(f)
+                    with open(bp) as f: return normalize_blueprint(json.load(f))
 
     genre = mp3_path.parent.name.title()
     if genre.lower() in ["music",""]: genre = "Music"
