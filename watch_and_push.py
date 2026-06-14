@@ -56,13 +56,14 @@ def git_push(mp3_path):
 
     os.chdir(REPO_PATH)
 
-    # Copy blueprint.json from music/ root into the genre folder if present
-    root_bp  = MUSIC_PATH / "blueprint.json"
+    # Find the newest blueprint*.json in music/ root and copy to genre folder
+    import shutil
+    bp_candidates = sorted(MUSIC_PATH.glob("blueprint*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
     genre_bp = MUSIC_PATH / genre / "blueprint.json"
-    if root_bp.exists():
-        import shutil
-        shutil.copy2(root_bp, genre_bp)
-        print(f"   📋 Copied blueprint.json → music/{genre}/")
+    if bp_candidates:
+        newest_bp = bp_candidates[0]
+        shutil.copy2(newest_bp, genre_bp)
+        print(f"   📋 Copied {newest_bp.name} → music/{genre}/")
 
     subprocess.run(["git", "add", f"music/{genre}/"], capture_output=True)
     result = subprocess.run(
