@@ -1,97 +1,101 @@
 """
-watch_and_push.py - Watches music folders and auto-pushes new MP3s to GitHub.
-
-Run this in a separate terminal window and leave it running.
-The moment you save an MP3 to any music/genre/ folder it automatically:
-1. Detects which genre folder it's in
-2. Git adds, commits, and pushes
-3. GitHub Actions takes over (video + YouTube upload)
-
-Usage: python watch_and_push.py
+watch_and_push.py - Watches music folders, pushes new MP3s, and directly
+triggers the GitHub Actions workflow with the exact filename.
 """
 
-import os
-import time
-import subprocess
+import os, time, subprocess, urllib.request, json
 from pathlib import Path
 
-REPO_PATH = r"C:\Users\promo\OneDrive\Desktop\Goosbumps Channel\goosebumps-channel\goosebumps-channel"
-MUSIC_PATH = Path(REPO_PATH) / "music"
-CHECK_INTERVAL = 5  # Check every 5 seconds
+REPO_PATH    = r"C:\Users\promo\OneDrive\Desktop\Goosbumps Channel\goosebumps-channel\goosebumps-channel"
+MUSIC_PATH   = Path(REPO_PATH) / "music"
+CHECK_INTERVAL = 5
+
+GITHUB_OWNER = "promoteglobal"
+GITHUB_REPO  = "goosebumps-Channel"
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "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")
 
 def get_mp3s():
-    """Get all MP3 files with their modification times."""
-    mp3s = {}
-    for mp3 in MUSIC_PATH.rglob("*.mp3"):
-        mp3s[str(mp3)] = mp3.stat().st_mtime
-    return mp3s
+    return {str(p): p.stat().st_mtime for p in MUSIC_PATH.rglob("*.mp3")}
+
+def trigger_workflow(genre, filename):
+    if not GITHUB_TOKEN or GITHUB_TOKEN == "PUT_YOUR_TOKEN_HERE":
+        print("   ⚠️  No GitHub token — set GITHUB_TOKEN in code!")
+        return False
+    try:
+        data = json.dumps({
+            "ref": "main",
+            "inputs": {"mp3_filename": f"{genre}/{filename}"}
+        }).encode()
+        url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/actions/workflows/upload_youtube.yml/dispatches"
+        req = urllib.request.Request(url, data=data, method="POST", headers={
+            "Authorization": f"token {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github.v3+json",
+            "Content-Type": "application/json",
+        })
+        urllib.request.urlopen(req, timeout=15)
+        print(f"   ✅ Workflow triggered: {genre}/{filename}")
+        return True
+    except Exception as e:
+        print(f"   ⚠️  API trigger failed: {e}")
+        return False
 
 def git_push(mp3_path):
-    """Auto git add, commit, push."""
-    mp3 = Path(mp3_path)
-    genre_folder = mp3.parent.name
-    track_name = mp3.stem
+    mp3   = Path(mp3_path)
+    genre = mp3.parent.name
+    name  = mp3.name
+    stem  = mp3.stem
 
-    print(f"\n🎵 New MP3 detected: {track_name}")
-    print(f"   Genre: {genre_folder}")
-    print(f"   Auto-pushing to GitHub...")
+    print(f"\n🎵 New MP3: {stem}")
+    print(f"   Genre: {genre}")
+    print(f"   Pushing to GitHub...")
 
     os.chdir(REPO_PATH)
 
-    commands = [
-        (["git", "add", f"music/{genre_folder}/"], "Adding files"),
-        (["git", "commit", "-m", f"Add {genre_folder}: {track_name}"], "Committing"),
-    ]
+    # Copy blueprint.json from music/ root into the genre folder if present
+    root_bp  = MUSIC_PATH / "blueprint.json"
+    genre_bp = MUSIC_PATH / genre / "blueprint.json"
+    if root_bp.exists():
+        import shutil
+        shutil.copy2(root_bp, genre_bp)
+        print(f"   📋 Copied blueprint.json → music/{genre}/")
 
-    for cmd, label in commands:
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        if result.returncode == 0:
-            print(f"   ✅ {label}")
-        else:
-            print(f"   ⚠️  {label}: {result.stderr.strip()}")
+    subprocess.run(["git", "add", f"music/{genre}/"], capture_output=True)
+    result = subprocess.run(
+        ["git", "commit", "-m", f"Add {genre}: {stem}"],
+        capture_output=True, text=True
+    )
+    print(f"   ✅ Committed" if result.returncode == 0 else f"   ⚠️  Commit: {result.stderr.strip()}")
 
-    # Pull then push
     subprocess.run(["git", "pull", "--no-edit"], capture_output=True)
     result = subprocess.run(["git", "push"], capture_output=True, text=True)
+    print(f"   ✅ Pushed!" if result.returncode == 0 else f"   ❌ Push failed: {result.stderr.strip()}")
 
-    if result.returncode == 0:
-        print(f"   ✅ Pushed!")
-        print(f"   🚀 GitHub Actions will now create video and upload to YouTube!")
-        print(f"   📺 Check: https://github.com/promoteglobal/goosebumps-Channel/actions")
-    else:
-        print(f"   ❌ Push failed: {result.stderr.strip()}")
+    time.sleep(3)
+    trigger_workflow(genre, name)
 
 def main():
     print("=" * 55)
     print("👀 GOOSEBUMPS CHANNEL - FILE WATCHER")
     print("=" * 55)
     print(f"Watching: {MUSIC_PATH}")
-    print(f"Checking every {CHECK_INTERVAL} seconds...")
-    print("Drop any MP3 into a music/genre/ folder and")
-    print("it will auto-push to GitHub instantly!")
+    if GITHUB_TOKEN and GITHUB_TOKEN != "PUT_YOUR_TOKEN_HERE":
+        print("✅ GitHub token found - workflow will auto-trigger!")
+    else:
+        print("⚠️  No GitHub token - edit GITHUB_TOKEN in watch_and_push.py")
     print("\nPress Ctrl+C to stop.\n")
 
-    # Get initial state
-    known_mp3s = get_mp3s()
-    print(f"Found {len(known_mp3s)} existing MP3s — watching for new ones...\n")
+    known = get_mp3s()
+    print(f"Found {len(known)} existing MP3s — watching for new ones...\n")
 
     while True:
         try:
             time.sleep(CHECK_INTERVAL)
-            current_mp3s = get_mp3s()
-
-            # Find new MP3s
-            new_mp3s = {
-                path: mtime
-                for path, mtime in current_mp3s.items()
-                if path not in known_mp3s
-            }
-
-            if new_mp3s:
-                for mp3_path in new_mp3s:
+            current = get_mp3s()
+            new = {p: t for p, t in current.items() if p not in known}
+            if new:
+                for mp3_path in new:
                     git_push(mp3_path)
-                known_mp3s = current_mp3s
-
+                known = current
         except KeyboardInterrupt:
             print("\n\n👋 Watcher stopped.")
             break
