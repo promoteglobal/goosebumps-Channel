@@ -103,10 +103,12 @@ def create_video(mp3_path, output_dir):
     mp3_path = Path(mp3_path)
     bp = find_blueprint(mp3_path)
 
-    genre = bp.get("genre","Music")
+    # Use folder name as genre fallback (always correct from MP3 path)
+    genre = bp.get("genre") or mp3_path.parent.name.title()
 
-    # Full unicode title for YouTube upload
-    full_title = bp.get("title","Goosebumps Music")
+    # Use MP3 filename as title fallback (blueprint from website has no title field)
+    stem = mp3_path.stem.replace("-", " ").replace("_", " ").strip() or "Goosebumps Track"
+    full_title = bp.get("title") or f"{stem} - Goosebumps Music"
 
     # ASCII-safe title for FFmpeg drawtext overlay
     ffmpeg_title = safe_ffmpeg(full_title)
