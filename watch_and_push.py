@@ -12,7 +12,12 @@ CHECK_INTERVAL = 5
 
 GITHUB_OWNER = "promoteglobal"
 GITHUB_REPO  = "goosebumps-Channel"
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+# Read token from local .token file (gitignored) or environment variable
+_token_file = Path(REPO_PATH) / ".token"
+if _token_file.exists():
+    GITHUB_TOKEN = _token_file.read_text().strip()
+else:
+    GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
 def get_mp3s():
     return {str(p): p.stat().st_mtime for p in MUSIC_PATH.rglob("*.mp3")}
