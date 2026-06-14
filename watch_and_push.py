@@ -12,7 +12,7 @@ CHECK_INTERVAL = 5
 
 GITHUB_OWNER = "promoteglobal"
 GITHUB_REPO  = "goosebumps-Channel"
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "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")
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
 def get_mp3s():
     return {str(p): p.stat().st_mtime for p in MUSIC_PATH.rglob("*.mp3")}
