@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260615_065637_latin.mp4",
+  "mp3_path": "music/latin/Cuerda de Aurora.mp3",
+  "blueprint": {
+    "genre": "Celtic",
+    "folder": "celtic",
+    "frisson_score": "82",
+    "scientific_analysis": "Frisson in Celtic music is reliably induced by unexpected harmonic movement activating the nucleus accumbens and anterior cerebellum, particularly when a deceptive cadence or chromatic mediant shift violates learned tonal expectations. The golden ratio placement of the emotional climax at approximately 61.8% of track duration maximizes autonomic arousal response by aligning peak dopaminergic release with accumulated melodic tension discharge.",
+    "structure": "The track opens with sparse solo uilleann pipes establishing a haunting D Dorian melody, building layered bodhrán and fiddle textures through the first half while harmonic tension accumulates via suspended chords. At the golden ratio point roughly 62% through, a sudden silence fractures the momentum before an explosive full-ensemble entry featuring an unexpected shift from D minor to B-flat major, a chromatic mediant creating maximum harmonic surprise. The final section resolves the tension through a descending Celtic cadence, fiddle and harp converging on a luminous D major resolution, releasing accumulated emotional charge.",
+    "suno_prompt": "Celtic orchestral, uilleann pipes, fiddle, harp, bodhrán, D Dorian to B-flat major chromatic mediant shift, sudden silence before full ensemble explosion, building melodic tension resolving to D major, layered textures, emotional climax at golden ratio, haunting ancient atmosphere, no vocals, royalty-free, cinematic Celtic folk, 120 BPM moderate intensity",
+    "generated_at": "2026-06-14T22:46:11.204Z",
+    "title": "Cuerda de Aurora - Goosebumps Music"
+  }
+}
