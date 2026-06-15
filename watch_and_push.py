@@ -56,9 +56,13 @@ def git_push(mp3_path):
 
     os.chdir(REPO_PATH)
 
-    # Find the newest blueprint*.json in music/ root and copy to genre folder
+    # Find the newest blueprint/download json in music/ root — Chrome names data: URL
+    # downloads "download.json", "download (N).json" instead of "blueprint_ts.json"
     import shutil
-    bp_candidates = sorted(MUSIC_PATH.glob("blueprint*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    bp_candidates = sorted(
+        list(MUSIC_PATH.glob("blueprint*.json")) + list(MUSIC_PATH.glob("download*.json")),
+        key=lambda p: p.stat().st_mtime, reverse=True
+    )
     genre_bp = MUSIC_PATH / genre / "blueprint.json"
     if bp_candidates:
         newest_bp = bp_candidates[0]
