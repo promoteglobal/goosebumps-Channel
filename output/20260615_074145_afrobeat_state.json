@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260615_074145_afrobeat.mp4",
+  "mp3_path": "music/afrobeat/Kora at Dawn.mp3",
+  "blueprint": {
+    "folder": "afrobeat",
+    "frisson_score": "81",
+    "generated_at": "2026-06-15T07:39:20.822Z",
+    "genre": "Afrobeat",
+    "scientific_analysis": "Frisson in Afrobeat contexts is amplified by the interplay between polyrhythmic groove expectation violations and unexpected harmonic displacement, activating dopaminergic reward pathways in the nucleus accumbens. The golden ratio emotional peak (~61.8% through the track) exploits temporal expectation mechanisms, while the silence-to-full-sound transition triggers the acoustic startle reflex cascade that primes skin conductance responses.",
+    "structure": "The track opens with sparse kora and talking drum establishing a hypnotic 12/8 groove for 32 bars, then drops to near-silence before exploding into full Afrobeat ensemble with a sudden bVI chord shift creating harmonic surprise. A melodic horn line builds tension through repeated ascending phrases with delayed resolution across the mid-section, culminating in a full cathartic release at bar 97 of 157, precisely the golden ratio point. The track uses unexpected modal mixture borrowing a flat-VII chord to sustain emotional elevation through the final section.",
+    "suno_prompt": "Afrobeat ensemble, kora opening, talking drum polyrhythm, sudden silence then explosive full band entry, unexpected bVI harmonic shift, building horn melody with delayed resolution, emotional climax at golden ratio, highlife guitar, bass guitar groove, bright brass stabs, tension and release, uplifting spiritual energy, 105 BPM, royalty-free, live band feel",
+    "title": "Kora at Dawn - Goosebumps Music"
+  }
+}
