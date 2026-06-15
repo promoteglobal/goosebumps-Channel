@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260615_104233_indianclassi.mp4",
+  "mp3_path": "music/indianclassical/Bb Hallelujah.mp3",
+  "blueprint": {
+    "genre": "Indian Classical",
+    "folder": "indianclassical",
+    "frisson_score": "81",
+    "scientific_analysis": "Frisson in Indian classical music is neurologically mediated by dopaminergic reward pathways activated through violation of melodic expectation within raga grammar, particularly when unexpected swara transitions create predictive error signals in the auditory cortex. The golden ratio placement of emotional climax at approximately 61.8% track duration aligns with peak autonomic arousal windows identified in psychoacoustic research, maximizing piloerection response.",
+    "structure": "The track opens with a sparse alap in Raga Bhairav establishing modal expectancy, then abruptly shifts from complete silence to full tanpura-tabla-sarangi ensemble creating a startle-frisson cascade. Melodic tension builds through komal re and komal dha ornamentations pushing toward an unresolved Gandhar, then the unexpected modulation to Raga Yaman harmonics at the 61.8% golden ratio mark delivers the emotional peak resolution. The jhala section accelerates rhythmically with layered sitar phrases descending through a cathartic tihai cadence, releasing accumulated neural tension in a controlled emotional denouement.",
+    "suno_prompt": "Indian classical raga fusion, Bhairav opening, sparse sitar alap, sudden silence then explosive tanpura tabla sarangi entrance, komal swara tension building, unexpected harmonic pivot to Yaman scale, emotional climax at golden ratio, piloerection-inducing melodic resolution, jhala acceleration, tihai cadence ending, acoustic live instruments, deeply meditative yet emotionally overwhelming, 7 out of 10 intensity, royalty free",
+    "generated_at": "2026-06-15T10:41:00.186Z",
+    "title": "Bb Hallelujah - Goosebumps Music"
+  }
+}
