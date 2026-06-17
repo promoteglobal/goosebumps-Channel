@@ -142,11 +142,21 @@ def safe_ffmpeg(text, n=55):
     t = ' '.join(t.split())
     return (t[:n]+"...") if len(t)>n else t or "Goosebumps Music"
 
-def get_pexels_background(query, api_key, out_path):
-    """Search Pexels for a landscape video and download a ~1080p mp4. Returns
-    the path on success, or None on any failure (caller falls back to gradient)."""
+def _best_mp4_link(video):
+    """Pick the mp4 file whose width is closest to 1920 (>=1280)."""
+    files = sorted(video.get("video_files", []),
+                   key=lambda f: abs((f.get("width") or 0) - 1920))
+    for f in files:
+        if f.get("file_type") == "video/mp4" and (f.get("width") or 0) >= 1280:
+            return f.get("link")
+    return None
+
+def get_pexels_clips(query, api_key, out_dir, ts, target_dur, max_clips=12):
+    """Download several DIFFERENT genre-matched clips that together cover the
+    whole song, so the background is continuous and never repeats. Returns a
+    list of clip paths (possibly empty -> caller falls back to gradient)."""
     api = ("https://api.pexels.com/videos/search?query="
-           + urllib.parse.quote(query) + "&per_page=15&orientation=landscape")
+           + urllib.parse.quote(query) + "&per_page=30&orientation=landscape")
     req = urllib.request.Request(api, headers={
         "Authorization": api_key.strip(),
         "User-Agent": BROWSER_UA,
@@ -157,21 +167,35 @@ def get_pexels_background(query, api_key, out_path):
     videos = data.get("videos", [])
     print(f"Pexels returned {len(videos)} video(s) for '{query}'")
     if not videos:
-        return None
+        return []
+
     random.shuffle(videos)  # variety across runs of the same genre
+
+    # Pick enough distinct clips (using Pexels' own duration field) to cover
+    # the song with a small buffer, capped at max_clips.
+    picked, total = [], 0.0
     for v in videos:
-        # pick the mp4 file whose width is closest to 1920 (>=1280)
-        files = sorted(v.get("video_files", []),
-                       key=lambda f: abs((f.get("width") or 0) - 1920))
-        for f in files:
-            if f.get("file_type") == "video/mp4" and (f.get("width") or 0) >= 1280:
-                link = f.get("link")
-                if link:
-                    dreq = urllib.request.Request(link, headers={"User-Agent": BROWSER_UA})
-                    with urllib.request.urlopen(dreq, timeout=120) as r, open(out_path, "wb") as fh:
-                        fh.write(r.read())
-                    return out_path
-    return None
+        dur_v = v.get("duration") or 0
+        link  = _best_mp4_link(v)
+        if not link or dur_v <= 0:
+            continue
+        picked.append((link, dur_v))
+        total += dur_v
+        if total >= target_dur + 3 or len(picked) >= max_clips:
+            break
+
+    paths = []
+    for i, (link, _d) in enumerate(picked):
+        p = out_dir / f"bg_{ts}_{i}.mp4"
+        try:
+            dreq = urllib.request.Request(link, headers={"User-Agent": BROWSER_UA})
+            with urllib.request.urlopen(dreq, timeout=120) as r, open(p, "wb") as fh:
+                fh.write(r.read())
+            paths.append(p)
+        except Exception as e:
+            print(f"  clip {i} download failed ({e}) — skipping")
+    print(f"Downloaded {len(paths)} clip(s), ~{total:.0f}s total for a {target_dur:.0f}s song")
+    return paths
 
 def create_video(mp3_path, output_dir):
     mp3_path = Path(mp3_path)
@@ -204,23 +228,24 @@ def create_video(mp3_path, output_dir):
     fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
     fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
-    # Try a genre-matched moving background from Pexels (key is optional)
+    # Try genre-matched moving backgrounds from Pexels (key is optional).
+    # We grab several DIFFERENT clips and stitch them so the footage covers the
+    # whole song with no repeating loop.
     api_key  = os.environ.get("PEXELS_API_KEY", "")
-    bg_video = None
+    bg_clips = []
     if api_key:
         query = PEXELS_QUERIES.get(genre_folder, PEXELS_QUERIES["default"])
         try:
-            bg_video = get_pexels_background(query, api_key, output_dir / f"bg_{ts}.mp4")
-            print(f"Pexels '{query}' -> {'downloaded' if bg_video else 'no results'}")
+            bg_clips = get_pexels_clips(query, api_key, output_dir, ts, dur)
         except urllib.error.HTTPError as e:
             body = ""
             try: body = e.read().decode("utf-8", "ignore")[:300]
             except Exception: pass
             print(f"Pexels HTTP {e.code} {e.reason}: {body} — using gradient fallback")
-            bg_video = None
+            bg_clips = []
         except Exception as e:
             print(f"Pexels fetch failed ({e}) — using gradient fallback")
-            bg_video = None
+            bg_clips = []
     else:
         print("No PEXELS_API_KEY — using gradient fallback")
 
@@ -240,21 +265,31 @@ def create_video(mp3_path, output_dir):
             f":x=(w-text_w)/2:y=h-85:box=1:boxcolor=black@0.55:boxborderw=14[vout]"
         )
 
-    if bg_video:
-        fc = (
-            f"[0:v]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
-            f"crop={WIDTH}:{HEIGHT},setsar=1,fps={FPS},eq=brightness=-0.06[bgv];"
-            + overlay_chain("bgv")
-        )
-        cmd = [
-            "ffmpeg","-y","-stream_loop","-1","-i",str(bg_video),"-i",str(mp3_path),
+    if bg_clips:
+        # Scale/crop each clip to fill the frame, then concat them end-to-end,
+        # dim slightly for text contrast, and overlay the branding. -t trims to
+        # the song length; with enough clips this never repeats.
+        n = len(bg_clips)
+        pre = ""
+        labels = ""
+        for i in range(n):
+            pre += (f"[{i}:v]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
+                    f"crop={WIDTH}:{HEIGHT},setsar=1,fps={FPS}[v{i}];")
+            labels += f"[v{i}]"
+        pre += f"{labels}concat=n={n}:v=1:a=0[cat];"
+        pre += f"[cat]eq=brightness=-0.06[bgv];"
+        fc = pre + overlay_chain("bgv")
+
+        cmd = ["ffmpeg","-y"]
+        for p in bg_clips:
+            cmd += ["-i", str(p)]
+        cmd += ["-i", str(mp3_path),
             "-filter_complex", fc,
-            "-map","[vout]","-map","1:a",
+            "-map","[vout]","-map",f"{n}:a",
             "-c:v","libx264","-preset","veryfast","-crf","23",
             "-c:a","aac","-b:a","192k",
             "-t",str(dur),"-pix_fmt","yuv420p",
-            "-movflags","+faststart", str(out)
-        ]
+            "-movflags","+faststart", str(out)]
     else:
         fc = (
             f"color=c=0x{bg}:s={WIDTH}x{HEIGHT}:r={FPS}[bgv];"
@@ -270,14 +305,14 @@ def create_video(mp3_path, output_dir):
             "-movflags","+faststart", str(out)
         ]
 
-    print(f"Creating: {out.name} | {genre} | {dur:.1f}s | bg={'Pexels' if bg_video else 'gradient'}")
+    print(f"Creating: {out.name} | {genre} | {dur:.1f}s | bg={f'Pexels x{len(bg_clips)}' if bg_clips else 'gradient'}")
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
         print("FFmpeg error:"); print(r.stderr[-2000:])
         raise RuntimeError("FFmpeg failed")
 
-    if bg_video:
-        try: Path(bg_video).unlink()
+    for p in bg_clips:
+        try: Path(p).unlink()
         except: pass
 
     # Save full unicode title in state for YouTube upload
