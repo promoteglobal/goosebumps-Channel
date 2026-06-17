@@ -94,15 +94,18 @@ function startWatching() {
       .filter(el => !el.parentElement?.closest('[data-clip-status="complete"]'));
   }
 
-  // Snapshot what's already complete NOW — we only want NEW ones
-  const seen    = new Set(topLevelClips());
+  // Snapshot ALL clips in any state (complete, generating, queued) so that
+  // in-progress songs from previous sessions can't count as new when they finish
+  const knownAtStart = new Set(document.querySelectorAll('[data-clip-status]'));
+
+  const seen     = new Set(topLevelClips());
   const newSongs = [];
 
-  showBanner(`👀 Watching — ignoring ${seen.size} existing songs...`, '#1e1040');
+  showBanner(`👀 Watching — ignoring ${seen.size} complete + ${knownAtStart.size} known clips...`, '#1e1040');
 
   const iv = setInterval(async () => {
     topLevelClips().forEach(clip => {
-      if (!seen.has(clip)) {
+      if (!seen.has(clip) && !knownAtStart.has(clip)) {
         seen.add(clip);
         newSongs.push(clip);
         if (newSongs.length === 1) showBanner('⏳ 1st song done — waiting for 2nd...', '#1e1040');
