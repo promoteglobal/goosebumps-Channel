@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260617_201921_bluegrass.mp4",
+  "mp3_path": "music/bluegrass/Alba de Jerez.mp3",
+  "blueprint": {
+    "folder": "bluegrass",
+    "frisson_score": "82",
+    "generated_at": "2026-06-17T20:16:48.657Z",
+    "genre": "Bluegrass",
+    "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and auditory cortex simultaneously, with sudden dynamic contrasts triggering the autonomic nervous system's fight-or-flight arousal pathways. The golden ratio placement (approximately 61.8% through the track) maximizes emotional impact by aligning the melodic climax with the brain's predictive expectation window, where dopaminergic reward circuits peak.",
+    "structure": "The track opens with sparse fingerpicked banjo in G major before a jarring pivot to Eb major at measure 9 creates immediate harmonic surprise, followed by a full-band explosion from dead silence that triggers the startle-frisson cascade. Tension accumulates through a chromatic fiddle ascent over unresolved dominant harmony for 16 bars, with dynamic swells and syncopated drive building anticipatory chills. At the golden ratio point the melody resolves triumphantly to the home key with full ensemble including dobro, mandolin, and bass, delivering the cathartic release that defines peak frisson response.",
+    "suno_prompt": "Royalty-free Appalachian bluegrass, G major with shocking pivot to Eb major, sudden silence then explosive full-band entry, chromatic fiddle tension build, banjo fingerpicking, resonator dobro, acoustic bass, mandolin chop, triumphant golden-ratio climax, emotional resolution, driving rhythm, 140 BPM, live acoustic recording feel, no vocals, instrumental cinematic bluegrass",
+    "title": "Alba de Jerez - Goosebumps Music"
+  }
+}
