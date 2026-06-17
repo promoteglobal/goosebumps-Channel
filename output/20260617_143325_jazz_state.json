@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260617_143325_jazz.mp4",
+  "mp3_path": "music/jazz/Split Rail Shift.mp3",
+  "blueprint": {
+    "folder": "jazz",
+    "frisson_score": "82",
+    "generated_at": "2026-06-17T14:30:19.144Z",
+    "genre": "Jazz",
+    "scientific_analysis": "Frisson is neurologically mediated by dopaminergic reward pathways activated through violated musical expectation and tension-resolution cycles, with peak response correlating to the golden ratio (φ ≈ 0.618) of track duration where emotional salience reaches maximum amplitude. Sudden dynamic contrasts from silence to full ensemble sound trigger the startle-adjacent autonomic arousal response, while unexpected modal interchange to a distant chromatic chord creates predictive error signals that amplify chills probability.",
+    "structure": "The track opens with sparse solo piano establishing a modal jazz theme in Dm, building harmonic tension through suspended voicings and chromatic passing chords over 38% of the duration. At the golden ratio moment (61.8%), a sudden eruption from silence to full ensemble coincides with an abrupt shift from Dm to BbM7#11 (Lydian, a tritone-adjacent surprise), followed by a soaring trumpet melody that climbs through dissonance before resolving warmly to F major. The final third decelerates into a hushed recapitulation, leaving harmonic ambiguity that sustains emotional resonance after playback ends.",
+    "suno_prompt": "Modal jazz, minor key, sparse solo piano opening, sudden silence then full ensemble explosion, unexpected Lydian chord shift, emotional trumpet melody building tension then resolving, melancholic yet triumphant mood, double bass walking line, brushed snare, cinematic dynamics, Miles Davis influence, royalty-free, instrumental, 7 out of 10 intensity, golden ratio emotional climax",
+    "title": "Split Rail Shift - Goosebumps Music"
+  }
+}
