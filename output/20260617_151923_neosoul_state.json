@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260617_151923_neosoul.mp4",
+  "mp3_path": "music/neosoul/Blue Teacup.mp3",
+  "blueprint": {
+    "folder": "neosoul",
+    "frisson_score": "84",
+    "generated_at": "2026-06-17T15:14:45.653Z",
+    "genre": "Neo-Soul",
+    "scientific_analysis": "Frisson is mediated by dopaminergic reward pathways in the nucleus accumbens, with unexpected harmonic violations triggering prediction error signals that cascade into autonomic arousal including piloerection and chills. The golden ratio emotional peak at approximately 61.8% track duration aligns with research showing climax placement near this point maximizes anticipatory tension and subsequent release response.",
+    "structure": "The track opens with sparse Rhodes piano and breathy vocals for 32 bars, establishing a warm Am9-Dm9-Gmaj7 harmonic language before a sudden full-band silence-to-explosion at bar 33 introduces a shocking Ebmaj7 modal mixture chord that violates all established tonal expectations. Melodic tension spirals upward through a chromatic passing sequence over 16 bars, landing the emotional apex at exactly 61.8% of the total runtime with a lush orchestral swell, layered harmonics, and a resolving vocal run from the 9th down to the tonic. The final third gradually strips instrumentation back to solo Rhodes, leaving the listener in reflective cool-down as the harmonic memory of that distant chord lingers unresolved in the subconscious.",
+    "suno_prompt": "Neo-soul, Rhodes piano, warm bass, breathy female vocals, sudden silence then full orchestral explosion, unexpected Eb major chord surprise shift, chromatic melodic tension building, lush string swell emotional peak, golden ratio climax, jazz harmony, vinyl warmth, 78 BPM, intimate then expansive, resolution and longing, royalty-free original",
+    "title": "Blue Teacup - Goosebumps Music"
+  }
+}
