@@ -94,11 +94,30 @@ function startWatching() {
       .filter(el => !el.parentElement?.closest('[data-clip-status="complete"]'));
   }
 
+  // FIRST wait for the library to render AND stop growing, otherwise old songs
+  // load late and get mistaken for new ones (the bug that grabbed a previous
+  // song). Only after the list settles do we snapshot "what already exists".
+  showBanner('⏳ Loading your Suno library...', '#1e1040');
+  let lastCount = -1, stableTicks = 0, waitTicks = 0;
+  const waitIv = setInterval(() => {
+    const c = document.querySelectorAll('[data-clip-status]').length;
+    if (c > 0 && c === lastCount) stableTicks++; else stableTicks = 0;
+    lastCount = c;
+    // proceed once the count holds steady for ~1.6s (>0 clips), or after ~12s max
+    if ((c > 0 && stableTicks >= 2) || ++waitTicks >= 15) {
+      clearInterval(waitIv);
+      console.log(`[GB] Library settled at ${c} clip(s) — snapshotting existing songs now.`);
+      beginWatch();
+    }
+  }, 800);
+
+  function beginWatch() {
   // Snapshot what's already complete NOW — we only want NEW ones
   const seen    = new Set(topLevelClips());
   const newSongs = [];
 
   showBanner(`👀 Watching — ignoring ${seen.size} existing songs...`, '#1e1040');
+  console.log(`[GB] Ignoring ${seen.size} existing complete song(s); waiting for 2 NEW ones to finish.`);
 
   const iv = setInterval(async () => {
     topLevelClips().forEach(clip => {
@@ -198,6 +217,7 @@ function startWatching() {
     watching = false;
     showBanner('⚠️ Timed out — click 3-dots → Download → MP3 manually.', '#7f1d1d');
   }, 10 * 60 * 1000);
+  }  // end beginWatch
 }
 
 // ── Entry point ───────────────────────────────────────────────────────────────
