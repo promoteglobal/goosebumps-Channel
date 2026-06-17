@@ -203,7 +203,10 @@ def upload_video(youtube, state_path):
 
     body = {
         "snippet": {"title": title, "description": description, "tags": tags, "categoryId": "10"},
-        "status": {"privacyStatus": "public"},
+        # General-audience music: "not made for kids" (COPPA) keeps comments,
+        # notifications, and personalized ads on. This is NOT an age restriction
+        # and does not mark the content as inappropriate.
+        "status": {"privacyStatus": "public", "selfDeclaredMadeForKids": False},
     }
 
     media = MediaFileUpload(video_path, mimetype="video/mp4", resumable=True)
