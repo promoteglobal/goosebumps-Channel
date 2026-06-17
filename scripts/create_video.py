@@ -3,9 +3,13 @@ create_video.py - Genre-matched moving (Pexels) backgrounds with branded overlay
 Falls back to a solid themed gradient if Pexels is unavailable, so a video is
 ALWAYS produced. Supports unicode filenames (Korean, Portuguese, Japanese, etc.)
 """
-import subprocess, json, sys, os, random, urllib.request, urllib.parse
+import subprocess, json, sys, os, random, urllib.request, urllib.parse, urllib.error
 from pathlib import Path
 from datetime import datetime
+
+# Pexels (Cloudflare) returns 403 to the default Python urllib User-Agent — send a browser one.
+BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
 WIDTH, HEIGHT, FPS = 1920, 1080, 24
 
@@ -143,10 +147,15 @@ def get_pexels_background(query, api_key, out_path):
     the path on success, or None on any failure (caller falls back to gradient)."""
     api = ("https://api.pexels.com/videos/search?query="
            + urllib.parse.quote(query) + "&per_page=15&orientation=landscape")
-    req = urllib.request.Request(api, headers={"Authorization": api_key})
+    req = urllib.request.Request(api, headers={
+        "Authorization": api_key.strip(),
+        "User-Agent": BROWSER_UA,
+        "Accept": "application/json",
+    })
     with urllib.request.urlopen(req, timeout=30) as resp:
         data = json.loads(resp.read().decode())
     videos = data.get("videos", [])
+    print(f"Pexels returned {len(videos)} video(s) for '{query}'")
     if not videos:
         return None
     random.shuffle(videos)  # variety across runs of the same genre
@@ -158,7 +167,9 @@ def get_pexels_background(query, api_key, out_path):
             if f.get("file_type") == "video/mp4" and (f.get("width") or 0) >= 1280:
                 link = f.get("link")
                 if link:
-                    urllib.request.urlretrieve(link, out_path)
+                    dreq = urllib.request.Request(link, headers={"User-Agent": BROWSER_UA})
+                    with urllib.request.urlopen(dreq, timeout=120) as r, open(out_path, "wb") as fh:
+                        fh.write(r.read())
                     return out_path
     return None
 
@@ -201,6 +212,12 @@ def create_video(mp3_path, output_dir):
         try:
             bg_video = get_pexels_background(query, api_key, output_dir / f"bg_{ts}.mp4")
             print(f"Pexels '{query}' -> {'downloaded' if bg_video else 'no results'}")
+        except urllib.error.HTTPError as e:
+            body = ""
+            try: body = e.read().decode("utf-8", "ignore")[:300]
+            except Exception: pass
+            print(f"Pexels HTTP {e.code} {e.reason}: {body} — using gradient fallback")
+            bg_video = None
         except Exception as e:
             print(f"Pexels fetch failed ({e}) — using gradient fallback")
             bg_video = None
