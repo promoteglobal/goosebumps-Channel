@@ -56,12 +56,18 @@ def git_push(mp3_path):
 
     os.chdir(REPO_PATH)
 
-    # blueprint.json is now saved directly to music/{genre}/ by the Chrome extension
+    import shutil
     genre_bp = MUSIC_PATH / genre / "blueprint.json"
     if genre_bp.exists():
         print(f"   📋 Blueprint: music/{genre}/blueprint.json")
     else:
-        print(f"   ⚠️  No blueprint.json found in music/{genre}/ — video will use fallback")
+        # Fall back to the single download.json in music/ root
+        root_dl = MUSIC_PATH / "download.json"
+        if root_dl.exists():
+            shutil.copy2(root_dl, genre_bp)
+            print(f"   📋 Copied download.json → music/{genre}/blueprint.json")
+        else:
+            print(f"   ⚠️  No blueprint found — video will use fallback description")
 
     subprocess.run(["git", "add", f"music/{genre}/"], capture_output=True)
     result = subprocess.run(

@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type !== 'SAVE_BLUEPRINT') return;
   chrome.downloads.download({
     url:            msg.url,
-    filename:       msg.filename || `blueprint_${Date.now()}.json`,
+    filename:       msg.filename || 'download.json',
     saveAs:         false,
     conflictAction: 'overwrite'
   });
