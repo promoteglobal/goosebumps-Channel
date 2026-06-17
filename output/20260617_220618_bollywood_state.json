@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260617_220618_bollywood.mp4",
+  "mp3_path": "music/bollywood/Bhairavi After Silence.mp3",
+  "blueprint": {
+    "folder": "bollywood",
+    "frisson_score": "82",
+    "generated_at": "2026-06-17T21:42:16.090Z",
+    "genre": "Bollywood",
+    "scientific_analysis": "Frisson is neurologically mediated by dopaminergic reward pathways activated through violated musical expectations, particularly unexpected harmonic shifts and dynamic contrasts that trigger autonomic arousal responses including piloerection. The golden ratio emotional peak placement at approximately 61.8% track duration aligns with listener anticipatory tension accumulation, maximizing the affective discharge when melodic resolution coincides with full orchestral swell.",
+    "structure": "The track opens with sparse sitar drone and tabla establishing a melancholic Bhairavi raga motif, suddenly interrupted by complete silence at bar 16 before exploding into full orchestral texture. A chromatic pivot chord shifts unexpectedly from D minor to B-flat major seventh at the golden ratio point, colliding with a soaring female vocal line that climbs a suspended fourth before resolving tearfully downward. The final section strips instrumentation back to solo violin echoing the opening motif, creating retrospective emotional closure through dynamic and timbral contrast.",
+    "suno_prompt": "Royalty-free Bollywood orchestral, Bhairavi raga sitar opening, sparse tabla, sudden silence then full ensemble explosion, unexpected chromatic harmonic pivot D minor to B-flat major seventh, soaring female playback vocalist melodic tension suspended fourth resolution, golden ratio emotional climax, lush strings sarangi dhol, bittersweet cinematic, 95 BPM, emotional intensity building, tearful resolution, no lyrics copyright",
+    "title": "Bhairavi After Silence - Goosebumps Music"
+  }
+}
