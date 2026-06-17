@@ -1,8 +1,9 @@
 {
-  "genre": "World",
-  "frisson_score": 81,
-  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and anterior cingulate cortex, triggering dopaminergic reward cascades. The combination of a sudden silence-to-full-sound transition and melodic tension resolution creates predictive-reward mismatch, the primary neurological driver of chills at approximately 61.8% track duration.",
-  "structure": "The track opens with a sparse duduk and oud melody building harmonic tension over a drone for the first 38% of the track. A sudden silence precedes an explosive entry of taiko drums, kora, and string ensemble at the golden ratio point (61.8%), accompanied by an unexpected shift from D minor to Bb major. The melodic line resolves triumphantly back to D minor, with layered vocals and frame drums carrying the emotional release through the final third.",
-  "suno_prompt": "World fusion instrumental, duduk and oud opening sparse melody over drone, sudden silence then explosive full ensemble entry, taiko drums kora strings frame drums, unexpected harmonic shift D minor to Bb major, triumphant melodic resolution, emotional cinematic peak, throat singing overtones, royalty-free, 7/10 intensity, 110 BPM",
-  "generated_at": "2026-06-14T20:52:19.230Z"
+  "folder": "jazz",
+  "frisson_score": "82",
+  "generated_at": "2026-06-17T14:30:19.144Z",
+  "genre": "Jazz",
+  "scientific_analysis": "Frisson is neurologically mediated by dopaminergic reward pathways activated through violated musical expectation and tension-resolution cycles, with peak response correlating to the golden ratio (φ ≈ 0.618) of track duration where emotional salience reaches maximum amplitude. Sudden dynamic contrasts from silence to full ensemble sound trigger the startle-adjacent autonomic arousal response, while unexpected modal interchange to a distant chromatic chord creates predictive error signals that amplify chills probability.",
+  "structure": "The track opens with sparse solo piano establishing a modal jazz theme in Dm, building harmonic tension through suspended voicings and chromatic passing chords over 38% of the duration. At the golden ratio moment (61.8%), a sudden eruption from silence to full ensemble coincides with an abrupt shift from Dm to BbM7#11 (Lydian, a tritone-adjacent surprise), followed by a soaring trumpet melody that climbs through dissonance before resolving warmly to F major. The final third decelerates into a hushed recapitulation, leaving harmonic ambiguity that sustains emotional resonance after playback ends.",
+  "suno_prompt": "Modal jazz, minor key, sparse solo piano opening, sudden silence then full ensemble explosion, unexpected Lydian chord shift, emotional trumpet melody building tension then resolving, melancholic yet triumphant mood, double bass walking line, brushed snare, cinematic dynamics, Miles Davis influence, royalty-free, instrumental, 7 out of 10 intensity, golden ratio emotional climax"
 }
