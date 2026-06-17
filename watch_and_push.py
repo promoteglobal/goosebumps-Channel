@@ -57,13 +57,17 @@ def git_push(mp3_path):
     os.chdir(REPO_PATH)
 
     import shutil
-    genre_bp = MUSIC_PATH / genre / "blueprint.json"
-    root_dl  = MUSIC_PATH / "download.json"
-    if root_dl.exists():
-        shutil.copy2(root_dl, genre_bp)
-        print(f"   📋 Copied download.json → music/{genre}/blueprint.json")
+    genre_bp    = MUSIC_PATH / genre / "blueprint.json"
+    dl_files    = sorted(MUSIC_PATH.glob("download*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    if dl_files:
+        newest = dl_files[0]
+        shutil.copy2(newest, genre_bp)
+        print(f"   📋 Copied {newest.name} → music/{genre}/blueprint.json")
+        for f in dl_files:
+            f.unlink()
+        print(f"   🧹 Cleaned {len(dl_files)} download file(s) from music/ root")
     else:
-        print(f"   ⚠️  No download.json found — video will use fallback description")
+        print(f"   ⚠️  No download*.json found — video will use fallback description")
 
     subprocess.run(["git", "add", f"music/{genre}/"], capture_output=True)
     result = subprocess.run(

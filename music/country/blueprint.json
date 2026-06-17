@@ -1,8 +1,9 @@
 {
-  "genre": "World",
-  "frisson_score": 81,
-  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and anterior cingulate cortex, triggering dopaminergic reward cascades. The combination of a sudden silence-to-full-sound transition and melodic tension resolution creates predictive-reward mismatch, the primary neurological driver of chills at approximately 61.8% track duration.",
-  "structure": "The track opens with a sparse duduk and oud melody building harmonic tension over a drone for the first 38% of the track. A sudden silence precedes an explosive entry of taiko drums, kora, and string ensemble at the golden ratio point (61.8%), accompanied by an unexpected shift from D minor to Bb major. The melodic line resolves triumphantly back to D minor, with layered vocals and frame drums carrying the emotional release through the final third.",
-  "suno_prompt": "World fusion instrumental, duduk and oud opening sparse melody over drone, sudden silence then explosive full ensemble entry, taiko drums kora strings frame drums, unexpected harmonic shift D minor to Bb major, triumphant melodic resolution, emotional cinematic peak, throat singing overtones, royalty-free, 7/10 intensity, 110 BPM",
-  "generated_at": "2026-06-14T20:52:19.230Z"
+  "folder": "country",
+  "frisson_score": "82",
+  "generated_at": "2026-06-17T14:05:43.135Z",
+  "genre": "Country",
+  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic deviations that violate learned musical schemas, activating dopaminergic reward pathways in the nucleus accumbens and ventral tegmental area. The combination of sudden dynamic contrast from silence to full texture and melodic appoggiatura resolution creates predictive violation followed by reward, the core neurological mechanism driving chills at intensity level 7.",
+  "structure": "The track opens with sparse fingerpicked acoustic guitar and lonesome pedal steel for 90 seconds, building melodic tension through ascending unresolved phrases before a sudden full-band explosion from complete silence marks the golden ratio point near 2 minutes 20 seconds. At that emotional peak the harmony pivots unexpectedly from the home key of G major to a distant Eb major chord, creating a stunning bVI modal mixture before resolving back through a suspended dominant. The final section releases all accumulated tension through a descending melodic cadence with warm vocal harmonies and gradually thinning instrumentation fading to single acoustic guitar.",
+  "suno_prompt": "Royalty-free country, G major with sudden bVI Eb major harmonic shift, sparse fingerpicked acoustic guitar opening, abrupt silence then explosive full band entry, pedal steel, warm baritone vocals, emotional longing, appoggiatura melodic resolution, golden ratio climax, dusty Americana, moderate tempo 84bpm, cinematic heartache, gradually fading outro, acoustic warmth"
 }
