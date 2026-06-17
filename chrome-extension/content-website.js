@@ -35,24 +35,20 @@ function addSunoButton() {
       generated_at:        new Date().toISOString()
     };
 
-    // Save blueprint file immediately — before Suno even opens.
-    // This guarantees the file exists in music/ long before the MP3 finishes downloading.
-    chrome.runtime.sendMessage({
-      type: 'SAVE_BLUEPRINT',
-      url:  'data:application/json,' + encodeURIComponent(JSON.stringify(blueprint, null, 2))
-    });
-
-    chrome.storage.local.set({
-      sunoPrompt:    prompt,
-      sunoTimestamp: Date.now(),
-      sunoGenre:     folder,
-      sunoBlueprint: blueprint
-    });
-
-    window.open('https://suno.com', '_blank');
-
-    btn.textContent = 'Opening Suno...';
-    setTimeout(() => { btn.textContent = 'Open in Suno ↗'; }, 2500);
+    // Hand the job to the background coordinator. It decides whether to start
+    // now or queue behind an in-flight job — so a 2nd generation can never
+    // clobber the first. (Background also opens the Suno tab.)
+    chrome.runtime.sendMessage(
+      { type: 'ENQUEUE_JOB', job: { prompt, folder, blueprint } },
+      (resp) => {
+        if (resp && resp.queued) {
+          btn.textContent = `Queued #${resp.position} — will run automatically`;
+        } else {
+          btn.textContent = 'Opening Suno...';
+        }
+        setTimeout(() => { btn.textContent = 'Open in Suno ↗'; }, 3000);
+      }
+    );
   };
 
   actionRow.appendChild(btn);
