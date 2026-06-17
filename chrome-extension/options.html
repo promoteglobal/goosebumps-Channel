@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Goosebumps Helper — Settings</title>
+  <style>
+    body { font-family: sans-serif; background:#140a2e; color:#e8deff; padding:28px; max-width:560px; }
+    h1 { font-size:18px; margin-bottom:4px; }
+    p.sub { color:#a78bfa; margin-top:0; font-size:13px; }
+    label { display:block; margin-top:18px; font-size:13px; color:#c9b8ff; }
+    input { width:100%; padding:9px 10px; margin-top:5px; border-radius:8px;
+            border:1px solid #5a4a8f; background:#1f1340; color:#fff; font-size:13px; box-sizing:border-box; }
+    button { margin-top:22px; padding:10px 18px; border:none; border-radius:8px;
+             background:#7c5cbf; color:#fff; font-size:14px; cursor:pointer; }
+    button:hover { background:#9070d8; }
+    .status { margin-top:14px; font-size:13px; min-height:18px; }
+    .ok { color:#6ee7a8; }
+    .err { color:#ff8a8a; }
+    .note { margin-top:24px; font-size:12px; color:#8a7ab5; line-height:1.5; }
+    code { background:#1f1340; padding:1px 5px; border-radius:4px; }
+  </style>
+</head>
+<body>
+  <h1>Goosebumps Helper — GitHub Auto-Push</h1>
+  <p class="sub">Paste your GitHub token once. Until you do, the extension behaves exactly as before (the terminal watcher handles uploads).</p>
+
+  <label>GitHub Token (needs <code>repo</code> + <code>workflow</code> scope)
+    <input id="token" type="password" placeholder="ghp_..." autocomplete="off">
+  </label>
+  <label>Repo Owner
+    <input id="owner" type="text" placeholder="promoteglobal">
+  </label>
+  <label>Repo Name
+    <input id="repo" type="text" placeholder="goosebumps-Channel">
+  </label>
+
+  <button id="save">Save</button>
+  <button id="clear" style="background:#4a3a6f;">Turn OFF (clear token)</button>
+  <div class="status" id="status"></div>
+
+  <p class="note">
+    When a token is saved, after each MP3 finishes downloading the extension will:<br>
+    1. Upload the MP3 to <code>music/{genre}/</code><br>
+    2. Upload <code>blueprint.json</code> to the same folder<br>
+    3. Trigger the YouTube workflow<br>
+    — all without your terminal. Clear the token anytime to fall back to the watcher.
+  </p>
+
+  <script src="options.js"></script>
+</body>
+</html>

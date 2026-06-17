@@ -1,13 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Goosebumps Channel - Suno Helper",
-  "version": "1.1",
-  "description": "Auto-opens Suno, pastes your frisson prompt, and downloads to the right genre folder",
+  "version": "1.5",
+  "description": "Auto-opens Suno, pastes your frisson prompt, downloads to the right genre folder, and (optionally) pushes to GitHub",
   "permissions": ["storage", "tabs", "downloads"],
   "host_permissions": [
     "https://promoteglobal.github.io/*",
-    "https://suno.com/*"
+    "https://suno.com/*",
+    "https://*.suno.ai/*",
+    "https://api.github.com/*"
   ],
+  "options_page": "options.html",
   "background": {
     "service_worker": "background.js"
   },
