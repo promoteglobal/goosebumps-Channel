@@ -56,18 +56,12 @@ def git_push(mp3_path):
 
     os.chdir(REPO_PATH)
 
-    # Find the newest blueprint/download json in music/ root — Chrome names data: URL
-    # downloads "download.json", "download (N).json" instead of "blueprint_ts.json"
-    import shutil
-    bp_candidates = sorted(
-        list(MUSIC_PATH.glob("blueprint*.json")) + list(MUSIC_PATH.glob("download*.json")),
-        key=lambda p: p.stat().st_mtime, reverse=True
-    )
+    # blueprint.json is now saved directly to music/{genre}/ by the Chrome extension
     genre_bp = MUSIC_PATH / genre / "blueprint.json"
-    if bp_candidates:
-        newest_bp = bp_candidates[0]
-        shutil.copy2(newest_bp, genre_bp)
-        print(f"   📋 Copied {newest_bp.name} → music/{genre}/")
+    if genre_bp.exists():
+        print(f"   📋 Blueprint: music/{genre}/blueprint.json")
+    else:
+        print(f"   ⚠️  No blueprint.json found in music/{genre}/ — video will use fallback")
 
     subprocess.run(["git", "add", f"music/{genre}/"], capture_output=True)
     result = subprocess.run(

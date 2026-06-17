@@ -1,10 +1,11 @@
-// Save blueprint from content-suno.js after MP3 is clicked
+// Save blueprint — uses msg.filename when provided (e.g. "neosoul/blueprint.json")
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type !== 'SAVE_BLUEPRINT') return;
   chrome.downloads.download({
-    url:      msg.url,
-    filename: `blueprint_${Date.now()}.json`,  // timestamped — no conflict possible
-    saveAs:   false
+    url:            msg.url,
+    filename:       msg.filename || `blueprint_${Date.now()}.json`,
+    saveAs:         false,
+    conflictAction: 'overwrite'
   });
 });
 

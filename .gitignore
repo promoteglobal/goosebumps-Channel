@@ -6,6 +6,10 @@ youtube_token.json
 # Output files (large, no need to store in git)
 output/*.mp4
 
+# Stray blueprint/download JSON files Chrome saves to music/ root (not genre subfolders)
+music/blueprint*.json
+music/download*.json
+
 # Python
 __pycache__/
 *.py[cod]
