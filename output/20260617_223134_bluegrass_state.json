@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260617_223134_bluegrass.mp4",
+  "mp3_path": "music/bluegrass/Unresolved Fiddle.mp3",
+  "blueprint": {
+    "folder": "bluegrass",
+    "frisson_score": "81",
+    "generated_at": "2026-06-17T22:26:25.532Z",
+    "genre": "Bluegrass",
+    "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and auditory cortex simultaneously, creating dopamine-mediated chills; the sudden dynamic contrast from silence to full ensemble texture amplifies sympathetic arousal by triggering the orienting response. The golden ratio placement of the emotional peak at approximately 61.8% of track duration aligns with listener anticipatory processing, maximizing affective intensity through temporal expectancy violation.",
+    "structure": "The track opens with a lone fiddle playing a melancholic A minor melody for 8 bars, building tension through a stepwise ascending phrase that never resolves, followed by sudden complete silence for two beats. At the golden ratio point the full bluegrass ensemble explodes in with an unexpected shift from A minor to an emotionally distant F major chord, creating the harmonic shock that triggers frisson before resolving triumphantly back through the circle of fifths. The final third features layered banjo rolls, mandolin chops, and tight vocal harmonies that gradually decrescendo, leaving the fiddle alone again to mirror the opening but now with peaceful resolution in A major.",
+    "suno_prompt": "Royalty-free bluegrass, key of A minor shifting to F major, solo fiddle opening with ascending unresolved tension, two beats of complete silence, then explosive full band entry with banjo rolls mandolin chops upright bass and three-part harmony, emotional peak at golden ratio, circle of fifths resolution, triumphant then tender ending, acoustic live recording feel, 7 out of 10 intensity, 130 BPM",
+    "title": "Unresolved Fiddle - Goosebumps Music"
+  }
+}
