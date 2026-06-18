@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260618_221227_blues.mp4",
+  "mp3_path": "music/blues/Mud On My Boots.mp3",
+  "blueprint": {
+    "folder": "blues",
+    "frisson_score": "81",
+    "generated_at": "2026-06-18T21:19:38.009Z",
+    "genre": "Blues",
+    "scientific_analysis": "Frisson in blues is neurologically driven by dopaminergic reward anticipation, particularly when unexpected harmonic deviations violate learned musical schemas, triggering autonomic arousal including piloerection. The golden ratio placement of the emotional peak at approximately 61.8% track duration aligns with peak limbic activation patterns observed in fMRI studies of musical chills.",
+    "structure": "The track opens with 8 bars of sparse, dry fingerpicked Delta blues guitar in E, building melodic tension through repeated unresolved bends before a sudden full-band eruption from complete silence at bar 9. At the golden ratio point, an abrupt pivot to the flattened VI chord (C major, a tritone-adjacent surprise) creates maximum harmonic dissonance before resolving triumphantly back through a slow, emotionally saturated IV-I cadence. The final section mirrors the opening sparseness, providing psychological closure and post-frisson catharsis through dynamic withdrawal.",
+    "suno_prompt": "Raw Delta blues, slow brooding tempo 68bpm, fingerpicked acoustic guitar opening sparse and dry, sudden silence then explosive full band entry with electric slide guitar and Hammond organ, unexpected shift to flat-VI chord at emotional peak, melancholic male vocal with raspy tone, deep resonant bass, shuffled snare, dusty analog warmth, building tension resolving cadence, emotionally devastated but triumphant",
+    "title": "Mud On My Boots - Goosebumps Music"
+  }
+}
