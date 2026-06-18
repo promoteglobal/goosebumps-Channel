@@ -56,8 +56,8 @@ jobs:
         run: |
           python -m venv /tmp/ai
           /tmp/ai/bin/pip install --upgrade pip
-          /tmp/ai/bin/pip install torch==2.1.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cpu
-          /tmp/ai/bin/pip install natten==0.17.1+torch212cpu -f https://shi-labs.com/natten/wheels
+          /tmp/ai/bin/pip install torch==2.1.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/ai/bin/pip install "natten==0.17.1+torch210cpu" -f https://shi-labs.com/natten/wheels --trusted-host shi-labs.com || /tmp/ai/bin/pip install natten==0.17.1
           /tmp/ai/bin/pip install allin1
           /tmp/ai/bin/python scripts/analyze_phrases.py "music/${{ github.event.inputs.mp3_filename }}" phrases.json
 
