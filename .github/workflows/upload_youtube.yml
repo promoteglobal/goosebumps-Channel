@@ -50,6 +50,16 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg fonts-dejavu
 
+      - name: Cache all-in-one downloads (pip wheels + AI model weights)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/torch
+            ~/.cache/huggingface
+            ~/.cache/allin1
+          key: ${{ runner.os }}-allin1-cache-v1
+
       - name: Analyze structure with all-in-one + madmom (isolated, optional)
         continue-on-error: true
         timeout-minutes: 35
