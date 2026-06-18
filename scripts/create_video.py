@@ -151,50 +151,48 @@ def _best_mp4_link(video):
             return f.get("link")
     return None
 
-def get_segments(mp3_path, dur, target_seg_sec=20.0, min_segs=4, max_segs=22):
-    """Analyze the ACTUAL audio with librosa and return cut times
-    [0, t1, t2, ..., dur] at musical SECTION boundaries (where the music shifts).
-    Scene cuts placed here land on real musical moments. Falls back to evenly
-    spaced cuts if librosa is unavailable or analysis fails."""
+def get_cut_points(mp3_path, dur, target=11.0):
+    """Analyze the ACTUAL audio with librosa and return scene-cut times
+    [0, t1, ..., dur] that fall EXACTLY on downbeats (beat 1 of a bar), spaced
+    ~target seconds apart. Cutting on downbeats keeps the changes tight to the
+    music and never late. Falls back to evenly spaced cuts if librosa fails."""
     try:
         import librosa, numpy as np
         y, sr = librosa.load(str(mp3_path), sr=22050, mono=True)
-        _tempo, beats = librosa.beat.beat_track(y=y, sr=sr, trim=False)
+        _t, beats = librosa.beat.beat_track(y=y, sr=sr, trim=False, units="time")
         if len(beats) < 8:
             raise ValueError("too few beats")
-        # Combine timbre (MFCC) + harmony (chroma), summarized per beat, then
-        # cluster adjacent beats into k contiguous sections.
-        mfcc   = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
-        chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
-        feat   = np.vstack([mfcc, chroma])
-        feat_sync = librosa.util.sync(feat, beats, aggregate=np.median)
-        k = int(np.clip(round(dur / target_seg_sec), min_segs, max_segs))
-        k = min(k, feat_sync.shape[1] - 1)
-        if k < 2:
-            raise ValueError("k<2")
-        bounds = librosa.segment.agglomerative(feat_sync, k)
-        bt = librosa.frames_to_time(beats[bounds], sr=sr)
-        cuts = sorted(set([0.0] + [float(t) for t in bt if 0 < t < dur] + [float(dur)]))
-        # merge any section shorter than 4s into the previous one
-        merged = [cuts[0]]
-        for t in cuts[1:]:
-            if t - merged[-1] >= 4.0:
-                merged.append(t)
-        merged[-1] = float(dur)
-        if len(merged) >= 3:
-            print(f"librosa: {len(merged)-1} musical sections @ "
-                  + ", ".join(f"{t:.0f}s" for t in merged))
-            return merged
-        raise ValueError("not enough sections")
+        # Estimate the downbeat phase: in 4/4, the bar starts on the beat whose
+        # group has the strongest onsets. Pick phase 0-3 maximizing onset energy.
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+        bf   = np.clip(librosa.time_to_frames(beats, sr=sr), 0, len(onset_env) - 1)
+        bstr = onset_env[bf]
+        phase = max(range(4), key=lambda p: float(bstr[p::4].sum()))
+        downbeats = [float(t) for t in beats[phase::4]]
+        if len(downbeats) < 2:
+            raise ValueError("too few downbeats")
+        # Walk the downbeats, cutting on the first one past each ~target window.
+        cuts, last = [0.0], 0.0
+        for t in downbeats:
+            if t - last >= target and t < dur - 2.0:
+                cuts.append(t); last = t
+        cuts.append(float(dur))
+        cuts = sorted(set(cuts))
+        if len(cuts) >= 3:
+            print(f"librosa: {len(cuts)-1} downbeat-aligned scenes @ "
+                  + ", ".join(f"{c:.1f}" for c in cuts))
+            return cuts
+        raise ValueError("not enough cuts")
     except Exception as e:
-        n = int(max(min_segs, min(max_segs, round(dur / target_seg_sec))))
-        print(f"Section analysis fell back to {n} even cuts ({e})")
+        n = int(max(4, min(28, round(dur / target))))
+        print(f"Cut analysis fell back to {n} even cuts ({e})")
         return [dur * i / n for i in range(n)] + [float(dur)]
 
-def get_pexels_clips(query, api_key, out_dir, ts, n_clips):
-    """Download n_clips DIFFERENT genre-matched clips (one per musical section).
-    A random page offset varies the footage from one song to the next. Returns
-    a list of (path, clip_duration) tuples (possibly empty -> gradient fallback)."""
+def get_pexels_clips(query, api_key, out_dir, ts, n_clips, min_dur=0.0):
+    """Download n_clips DIFFERENT genre-matched clips (one per scene). Prefers
+    the LONGEST clips and those >= min_dur, so each can fill its scene without
+    looping. A random page offset varies footage from one song to the next.
+    Returns a list of (path, clip_duration) tuples (empty -> gradient fallback)."""
     def fetch(pg):
         api = (f"https://api.pexels.com/videos/search?query={urllib.parse.quote(query)}"
                f"&per_page=80&orientation=landscape&page={pg}")
@@ -214,17 +212,19 @@ def get_pexels_clips(query, api_key, out_dir, ts, n_clips):
     if not videos:
         return []
 
-    random.shuffle(videos)
-
-    picked = []
+    cands = []
     for v in videos:
         dur_v = v.get("duration") or 0
         link  = _best_mp4_link(v)
-        if not link or dur_v <= 0:
-            continue
-        picked.append((link, float(dur_v)))
-        if len(picked) >= n_clips:
-            break
+        if link and dur_v > 0:
+            cands.append((link, float(dur_v)))
+
+    # Prefer clips long enough to fill a scene; then take the longest available.
+    long_enough = [c for c in cands if c[1] >= min_dur]
+    pool = long_enough if len(long_enough) >= n_clips else cands
+    random.shuffle(pool)                              # variety among eligible
+    pool.sort(key=lambda c: c[1], reverse=True)       # longest first
+    picked = pool[:n_clips]
 
     clips = []
     for i, (link, dur_v) in enumerate(picked):
@@ -236,7 +236,8 @@ def get_pexels_clips(query, api_key, out_dir, ts, n_clips):
             clips.append((p, dur_v))
         except Exception as e:
             print(f"  clip {i} download failed ({e}) — skipping")
-    print(f"Downloaded {len(clips)} unique clip(s) for {n_clips} section(s)")
+    print(f"Downloaded {len(clips)} unique clip(s) for {n_clips} scene(s) "
+          f"(min scene {min_dur:.1f}s)")
     return clips
 
 def create_video(mp3_path, output_dir):
@@ -270,10 +271,11 @@ def create_video(mp3_path, output_dir):
     fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
     fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
-    # Analyze the audio for musical section boundaries → scene cut points.
-    cuts     = get_segments(mp3_path, dur)
+    # Analyze the audio for downbeat-aligned scene cut points.
+    cuts     = get_cut_points(mp3_path, dur)
     seg_durs = [cuts[i+1] - cuts[i] for i in range(len(cuts) - 1)]
     n_segs   = len(seg_durs)
+    longest_scene = max(seg_durs) if seg_durs else dur
 
     # One genre-matched clip per section (key optional).
     api_key  = os.environ.get("PEXELS_API_KEY", "")
@@ -281,7 +283,8 @@ def create_video(mp3_path, output_dir):
     if api_key:
         query = PEXELS_QUERIES.get(genre_folder, PEXELS_QUERIES["default"])
         try:
-            bg_clips = get_pexels_clips(query, api_key, output_dir, ts, n_segs)
+            bg_clips = get_pexels_clips(query, api_key, output_dir, ts, n_segs,
+                                        min_dur=longest_scene + 1.0)
         except urllib.error.HTTPError as e:
             body = ""
             try: body = e.read().decode("utf-8", "ignore")[:300]
@@ -311,26 +314,41 @@ def create_video(mp3_path, output_dir):
         )
 
     if bg_clips:
-        # Assign the longest clips to the longest sections (less in-scene
-        # looping), then trim each clip to EXACTLY its section length so every
-        # scene cut lands on a musical boundary. -stream_loop fills a section if
-        # its clip happens to be shorter than the section.
+        # One unique clip per scene. Assign the longest clips to the longest
+        # scenes. NEVER loop/repeat: if a clip is long enough, trim it to the
+        # scene length; if it's a touch short, slow it slightly (setpts) to fill
+        # the scene exactly. Either way every scene is one distinct clip and
+        # every cut lands on a downbeat.
         order_long = sorted(range(n_segs), key=lambda i: seg_durs[i], reverse=True)
         clips_long = sorted(bg_clips, key=lambda c: c[1], reverse=True)
         assign = [None] * n_segs
         for rank, seg_i in enumerate(order_long):
             assign[seg_i] = clips_long[rank % len(clips_long)][0]
 
+        # Actual on-disk durations (Pexels' reported duration is rounded).
+        clip_dur = {}
+        for p in set(assign):
+            try: clip_dur[p] = get_duration(p)
+            except Exception: clip_dur[p] = 0.0
+
         cmd = ["ffmpeg", "-y"]
         for i in range(n_segs):
-            cmd += ["-stream_loop", "-1", "-i", str(assign[i])]
+            cmd += ["-i", str(assign[i])]
         cmd += ["-i", str(mp3_path)]
 
         pre, labels = "", ""
         for i in range(n_segs):
-            pre += (f"[{i}:v]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
-                    f"crop={WIDTH}:{HEIGHT},setsar=1,fps={FPS},"
-                    f"trim=duration={seg_durs[i]:.3f},setpts=PTS-STARTPTS[v{i}];")
+            sd   = seg_durs[i]
+            cdur = clip_dur.get(assign[i], 0.0)
+            base = (f"[{i}:v]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
+                    f"crop={WIDTH}:{HEIGHT},setsar=1")
+            if cdur >= sd + 0.05:
+                # long enough: play at normal speed, trim to the scene length
+                pre += f"{base},fps={FPS},trim=duration={sd:.3f},setpts=PTS-STARTPTS[v{i}];"
+            else:
+                # slightly short: stretch the whole clip to fill the scene (no loop)
+                factor = sd / max(cdur, 0.1)
+                pre += f"{base},setpts={factor:.5f}*(PTS-STARTPTS),fps={FPS}[v{i}];"
             labels += f"[v{i}]"
         pre += f"{labels}concat=n={n_segs}:v=1:a=0[cat];[cat]eq=brightness=-0.06[bgv];"
         fc = pre + overlay_chain("bgv")
