@@ -50,16 +50,15 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg fonts-dejavu
 
-      - name: Analyze music structure with all-in-one (isolated, optional)
+      - name: Detect downbeats with madmom (isolated, optional)
         continue-on-error: true
-        timeout-minutes: 25
+        timeout-minutes: 15
         run: |
-          python -m venv /tmp/ai
-          /tmp/ai/bin/pip install --upgrade pip
-          /tmp/ai/bin/pip install torch==2.1.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cpu
-          /tmp/ai/bin/pip install "natten==0.17.1+torch210cpu" -f https://shi-labs.com/natten/wheels --trusted-host shi-labs.com || /tmp/ai/bin/pip install natten==0.17.1
-          /tmp/ai/bin/pip install allin1
-          /tmp/ai/bin/python scripts/analyze_phrases.py "music/${{ github.event.inputs.mp3_filename }}" phrases.json
+          python -m venv /tmp/mm
+          /tmp/mm/bin/pip install --upgrade pip setuptools wheel
+          /tmp/mm/bin/pip install "cython<3" "numpy==1.23.5" "scipy<1.13" mido
+          /tmp/mm/bin/pip install "madmom @ git+https://github.com/CPJKU/madmom.git"
+          /tmp/mm/bin/python scripts/analyze_phrases.py "music/${{ github.event.inputs.mp3_filename }}" phrases.json
 
       - name: Create video with FFmpeg
         env:
