@@ -50,6 +50,17 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg fonts-dejavu
 
+      - name: Analyze music structure with all-in-one (isolated, optional)
+        continue-on-error: true
+        timeout-minutes: 25
+        run: |
+          python -m venv /tmp/ai
+          /tmp/ai/bin/pip install --upgrade pip
+          /tmp/ai/bin/pip install torch==2.1.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/ai/bin/pip install natten==0.17.1+torch212cpu -f https://shi-labs.com/natten/wheels
+          /tmp/ai/bin/pip install allin1
+          /tmp/ai/bin/python scripts/analyze_phrases.py "music/${{ github.event.inputs.mp3_filename }}" phrases.json
+
       - name: Create video with FFmpeg
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}

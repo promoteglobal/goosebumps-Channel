@@ -151,39 +151,116 @@ def _best_mp4_link(video):
             return f.get("link")
     return None
 
-def get_cut_points(mp3_path, dur, target=11.0):
-    """Analyze the ACTUAL audio with librosa and return scene-cut times
-    [0, t1, ..., dur] that fall EXACTLY on downbeats (beat 1 of a bar), spaced
-    ~target seconds apart. Cutting on downbeats keeps the changes tight to the
-    music and never late. Falls back to evenly spaced cuts if librosa fails."""
+def _load_analysis():
+    """Load precise analysis (downbeats + sections) from the isolated analyzer."""
+    for p in ["phrases.json", str(Path(__file__).parent.parent / "phrases.json")]:
+        try:
+            with open(p) as f:
+                data = json.load(f)
+            if data.get("downbeats") or data.get("segments"):
+                return data
+        except Exception:
+            pass
+    return {}
+
+def _section_cuts(segments, downs, dur, target=12.0, max_scene=18.0):
+    """Cut on real section changes (snapped to the nearest downbeat), and
+    subdivide any long section on downbeats so no single scene runs too long."""
+    downs = sorted(float(d) for d in downs if 0 <= d < dur)
+    if not downs:
+        return None
+    snap = lambda t: min(downs, key=lambda d: abs(d - t))
+    cuts = {0.0, float(dur)}
+    for seg in segments:
+        s = float(seg.get("start", 0))
+        if 0 < s < dur - 2.0:
+            cuts.add(round(snap(s), 3))
+    cuts = sorted(cuts)
+    # subdivide long gaps using downbeats ~every target seconds
+    final = [cuts[0]]
+    for b in cuts[1:]:
+        a = final[-1]
+        if b - a > max_scene:
+            last = a
+            for d in downs:
+                if d <= a + 1.0:
+                    continue
+                if d >= b - 1.0:
+                    break
+                if d - last >= target:
+                    final.append(round(d, 3)); last = d
+        final.append(b)
+    final = sorted(set(final))
+    if len(final) >= 3:
+        print(f"allin1 sections: {len(final)-1} scenes (section changes + downbeats) @ "
+              + ", ".join(f"{c:.1f}" for c in final))
+        return final
+    return None
+
+def _phrase_cuts(downs, dur, target, source):
+    """Group bar downbeats into 4/8-bar phrases and return cut times on the
+    phrase boundaries (always a bar's beat 1)."""
+    import statistics
+    downs = sorted(d for d in downs if 0 <= d < dur)
+    if not downs:
+        return None
+    if downs[0] > 0.4:
+        downs = [0.0] + downs
+    diffs = [downs[i+1] - downs[i] for i in range(len(downs) - 1)]
+    if not diffs:
+        return None
+    bar = statistics.median(diffs)                       # seconds per bar
+    n   = min([2, 4, 8], key=lambda k: abs(k * bar - target))  # bars per phrase
+    cuts = [downs[i] for i in range(0, len(downs), n)]
+    cuts = [c for c in cuts if c < dur - 2.0]
+    if not cuts or cuts[0] > 0.1:
+        cuts = [0.0] + cuts
+    cuts.append(float(dur))
+    cuts = sorted(set(cuts))
+    if len(cuts) >= 3:
+        print(f"{source}: {len(cuts)-1} phrase scenes, {n} bars/phrase "
+              f"(~{bar:.2f}s/bar) @ " + ", ".join(f"{c:.1f}" for c in cuts))
+        return cuts
+    return None
+
+def get_cut_points(mp3_path, dur, target=12.0):
+    """Scene-cut times. Best: real section changes snapped to downbeats
+    (all-in-one). Else: 4/8-bar phrase grid from precise downbeats. Else: a
+    librosa downbeat estimate. Else: evenly spaced. Cuts always land on beat 1."""
+    analysis = _load_analysis()
+    downs = analysis.get("downbeats") or []
+    segs  = analysis.get("segments") or []
+
+    # 1. Best: cut where the music actually changes section, on a downbeat.
+    if segs and downs:
+        cuts = _section_cuts(segs, downs, dur, target)
+        if cuts:
+            return cuts
+
+    # 2. Good: phrase grid from precise downbeats.
+    if downs:
+        cuts = _phrase_cuts([float(d) for d in downs], dur, target, "downbeat phrases")
+        if cuts:
+            return cuts
+
+    # 3. Librosa downbeat estimate (less accurate; only if the analyzer absent).
     try:
         import librosa, numpy as np
         y, sr = librosa.load(str(mp3_path), sr=22050, mono=True)
         _t, beats = librosa.beat.beat_track(y=y, sr=sr, trim=False, units="time")
         if len(beats) < 8:
             raise ValueError("too few beats")
-        # Estimate the downbeat phase: in 4/4, the bar starts on the beat whose
-        # group has the strongest onsets. Pick phase 0-3 maximizing onset energy.
         onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-        bf   = np.clip(librosa.time_to_frames(beats, sr=sr), 0, len(onset_env) - 1)
-        bstr = onset_env[bf]
+        bf    = np.clip(librosa.time_to_frames(beats, sr=sr), 0, len(onset_env) - 1)
+        bstr  = onset_env[bf]
         phase = max(range(4), key=lambda p: float(bstr[p::4].sum()))
         downbeats = [float(t) for t in beats[phase::4]]
-        if len(downbeats) < 2:
-            raise ValueError("too few downbeats")
-        # Walk the downbeats, cutting on the first one past each ~target window.
-        cuts, last = [0.0], 0.0
-        for t in downbeats:
-            if t - last >= target and t < dur - 2.0:
-                cuts.append(t); last = t
-        cuts.append(float(dur))
-        cuts = sorted(set(cuts))
-        if len(cuts) >= 3:
-            print(f"librosa: {len(cuts)-1} downbeat-aligned scenes @ "
-                  + ", ".join(f"{c:.1f}" for c in cuts))
+        cuts = _phrase_cuts(downbeats, dur, target, "librosa phrases")
+        if cuts:
             return cuts
         raise ValueError("not enough cuts")
     except Exception as e:
+        # 3. Even spacing.
         n = int(max(4, min(28, round(dur / target))))
         print(f"Cut analysis fell back to {n} even cuts ({e})")
         return [dur * i / n for i in range(n)] + [float(dur)]
