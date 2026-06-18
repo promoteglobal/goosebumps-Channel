@@ -61,6 +61,8 @@ jobs:
           /tmp/ai/bin/pip install allin1
           /tmp/ai/bin/pip install "cython<3"
           /tmp/ai/bin/pip install "madmom @ git+https://github.com/CPJKU/madmom.git"
+          # torch 2.1.0 was built against NumPy 1.x — pin <2 or torch/demucs raise "Numpy is not available"
+          /tmp/ai/bin/pip install "numpy==1.26.4"
           /tmp/ai/bin/python scripts/analyze_phrases.py "music/${{ github.event.inputs.mp3_filename }}" phrases.json
 
       - name: Create video with FFmpeg
