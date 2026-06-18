@@ -163,38 +163,50 @@ def _load_analysis():
             pass
     return {}
 
-def _section_cuts(segments, downs, dur, target=12.0, max_scene=18.0):
-    """Cut on real section changes (snapped to the nearest downbeat), and
-    subdivide any long section on downbeats so no single scene runs too long."""
+def _section_cuts(segments, downs, dur, target=20.0):
+    """Cut on REAL section changes (snapped to the nearest downbeat). Within each
+    section, re-anchor a musical phrase grid AT THE SECTION START and cut every
+    8 bars (or 4 if 8 is too long), so cuts land on true phrase boundaries
+    instead of a fixed grid drifting through the song."""
+    import statistics
     downs = sorted(float(d) for d in downs if 0 <= d < dur)
-    if not downs:
+    if len(downs) < 2:
         return None
-    snap = lambda t: min(downs, key=lambda d: abs(d - t))
-    cuts = {0.0, float(dur)}
-    for seg in segments:
-        s = float(seg.get("start", 0))
-        if 0 < s < dur - 2.0:
-            cuts.add(round(snap(s), 3))
-    cuts = sorted(cuts)
-    # subdivide long gaps using downbeats ~every target seconds
-    final = [cuts[0]]
-    for b in cuts[1:]:
-        a = final[-1]
-        if b - a > max_scene:
-            last = a
-            for d in downs:
-                if d <= a + 1.0:
-                    continue
-                if d >= b - 1.0:
-                    break
-                if d - last >= target:
-                    final.append(round(d, 3)); last = d
-        final.append(b)
-    final = sorted(set(final))
-    if len(final) >= 3:
-        print(f"allin1 sections: {len(final)-1} scenes (section changes + downbeats) @ "
-              + ", ".join(f"{c:.1f}" for c in final))
-        return final
+    snap  = lambda t: min(downs, key=lambda d: abs(d - t))
+    diffs = [downs[i+1] - downs[i] for i in range(len(downs) - 1)]
+    bar   = statistics.median(diffs)
+    # Prefer full 8-bar phrases when that's a sane scene length, else 4-bar.
+    n_bars = 8 if 10.0 <= 8 * bar <= 34.0 else 4
+
+    # Real section boundaries (where the music changes), snapped to a downbeat.
+    bounds = sorted({0.0, float(dur)} | {
+        round(snap(float(s.get("start", 0))), 3)
+        for s in segments if 0 < float(s.get("start", 0)) < dur - 2.0})
+
+    final = []
+    for i in range(len(bounds) - 1):
+        a, b = bounds[i], bounds[i + 1]
+        final.append(round(a, 3))
+        inside = [d for d in downs if a + 0.3 < d < b - 0.3]  # downbeats after the section start
+        m = 1
+        while m * n_bars - 1 < len(inside):
+            t = inside[m * n_bars - 1]                        # start of the m-th phrase in the section
+            if b - t > 3.0:
+                final.append(round(t, 3))
+            m += 1
+    final.append(float(dur))
+
+    # drop any scene shorter than 3s
+    merged = [final[0]]
+    for t in sorted(set(final))[1:]:
+        if t - merged[-1] >= 3.0:
+            merged.append(t)
+    merged[-1] = float(dur)
+    if len(merged) >= 3:
+        print(f"allin1 sections+phrases: {len(merged)-1} scenes, {n_bars}-bar phrases "
+              f"(~{bar:.2f}s/bar), {len(segments)} sections @ "
+              + ", ".join(f"{c:.1f}" for c in merged))
+        return merged
     return None
 
 def _phrase_cuts(downs, dur, target, source):
@@ -233,7 +245,7 @@ def get_cut_points(mp3_path, dur, target=12.0):
 
     # 1. Best: cut where the music actually changes section, on a downbeat.
     if segs and downs:
-        cuts = _section_cuts(segs, downs, dur, target)
+        cuts = _section_cuts(segs, downs, dur)
         if cuts:
             return cuts
 
