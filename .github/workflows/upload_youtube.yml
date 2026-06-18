@@ -34,21 +34,24 @@ jobs:
           pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
           pip install librosa soundfile
 
-      - name: Cache FFmpeg
-        id: cache-ffmpeg
-        uses: actions/cache@v4
-        with:
-          path: |
-            /usr/bin/ffmpeg
-            /usr/bin/ffprobe
-            /usr/share/fonts/truetype/dejavu
-          key: ${{ runner.os }}-ffmpeg-dejavu-v1
-
-      - name: Install FFmpeg
-        if: steps.cache-ffmpeg.outputs.cache-hit != 'true'
+      - name: Install FFmpeg (static binary — avoids slow apt mirrors)
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y ffmpeg fonts-dejavu
+          set -e
+          # ffmpeg + ffprobe from a prebuilt static build (fast, no apt dep tree).
+          if curl -fsSL -o /tmp/ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz; then
+            mkdir -p /tmp/ffx
+            tar -xf /tmp/ffmpeg.tar.xz -C /tmp/ffx --strip-components=1
+            sudo cp /tmp/ffx/ffmpeg /tmp/ffx/ffprobe /usr/local/bin/
+          else
+            echo "static download failed — falling back to apt"
+            sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -1
+          # DejaVu fonts for drawtext (usually already on the runner; install only if missing).
+          if [ ! -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf ]; then
+            sudo apt-get install -y --no-install-recommends fonts-dejavu-core
+          fi
+          ls /usr/share/fonts/truetype/dejavu/
 
       - name: Cache all-in-one downloads (pip wheels + AI model weights)
         uses: actions/cache@v4
