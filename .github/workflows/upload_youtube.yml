@@ -34,24 +34,31 @@ jobs:
           pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
           pip install librosa soundfile
 
-      - name: Install FFmpeg (static binary — avoids slow apt mirrors)
+      - name: Install FFmpeg (static binary with drawtext — avoids slow apt mirrors)
         run: |
           set -e
-          # ffmpeg + ffprobe from a prebuilt static build (fast, no apt dep tree).
-          if curl -fsSL -o /tmp/ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz; then
+          # BtbN GPL static build includes the drawtext filter (johnvansickle's
+          # build omits it, which broke our text overlays). GitHub-hosted = fast.
+          if curl -fsSL -o /tmp/ffmpeg.tar.xz https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz; then
             mkdir -p /tmp/ffx
-            tar -xf /tmp/ffmpeg.tar.xz -C /tmp/ffx --strip-components=1
-            sudo cp /tmp/ffx/ffmpeg /tmp/ffx/ffprobe /usr/local/bin/
+            tar -xf /tmp/ffmpeg.tar.xz -C /tmp/ffx
+            sudo cp "$(find /tmp/ffx -type f -name ffmpeg  | head -1)" /usr/local/bin/ffmpeg
+            sudo cp "$(find /tmp/ffx -type f -name ffprobe | head -1)" /usr/local/bin/ffprobe
+            sudo chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe
           else
             echo "static download failed — falling back to apt"
             sudo apt-get update -qq && sudo apt-get install -y ffmpeg
           fi
           ffmpeg -version | head -1
+          # Safety: if drawtext is somehow missing, fall back to apt ffmpeg (has it).
+          if ! ffmpeg -hide_banner -filters 2>/dev/null | grep -q drawtext; then
+            echo "drawtext missing — falling back to apt ffmpeg"
+            sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+          fi
           # DejaVu fonts for drawtext (usually already on the runner; install only if missing).
           if [ ! -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf ]; then
             sudo apt-get install -y --no-install-recommends fonts-dejavu-core
           fi
-          ls /usr/share/fonts/truetype/dejavu/
 
       - name: Cache all-in-one downloads (pip wheels + AI model weights)
         uses: actions/cache@v4
