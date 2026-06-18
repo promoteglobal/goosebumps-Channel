@@ -151,33 +151,50 @@ def _best_mp4_link(video):
             return f.get("link")
     return None
 
-def build_concat_bg(clips, out_path):
-    """Pass 1: scale/crop each clip to fill the frame and stitch them into one
-    normalized 1080p file. Returns the path, or None on failure."""
-    n = len(clips)
-    pre, labels = "", ""
-    for i in range(n):
-        pre += (f"[{i}:v]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
-                f"crop={WIDTH}:{HEIGHT},setsar=1,fps={FPS}[v{i}];")
-        labels += f"[v{i}]"
-    pre += f"{labels}concat=n={n}:v=1:a=0[cat]"
-    cmd = ["ffmpeg","-y"]
-    for c in clips:
-        cmd += ["-i", str(c)]
-    cmd += ["-filter_complex", pre, "-map","[cat]","-an",
-            "-c:v","libx264","-preset","veryfast","-crf","23","-pix_fmt","yuv420p",
-            str(out_path)]
-    r = subprocess.run(cmd, capture_output=True, text=True)
-    if r.returncode != 0:
-        print("Background stitch failed:"); print(r.stderr[-1500:])
-        return None
-    return out_path
+def get_segments(mp3_path, dur, target_seg_sec=20.0, min_segs=4, max_segs=22):
+    """Analyze the ACTUAL audio with librosa and return cut times
+    [0, t1, t2, ..., dur] at musical SECTION boundaries (where the music shifts).
+    Scene cuts placed here land on real musical moments. Falls back to evenly
+    spaced cuts if librosa is unavailable or analysis fails."""
+    try:
+        import librosa, numpy as np
+        y, sr = librosa.load(str(mp3_path), sr=22050, mono=True)
+        _tempo, beats = librosa.beat.beat_track(y=y, sr=sr, trim=False)
+        if len(beats) < 8:
+            raise ValueError("too few beats")
+        # Combine timbre (MFCC) + harmony (chroma), summarized per beat, then
+        # cluster adjacent beats into k contiguous sections.
+        mfcc   = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+        chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
+        feat   = np.vstack([mfcc, chroma])
+        feat_sync = librosa.util.sync(feat, beats, aggregate=np.median)
+        k = int(np.clip(round(dur / target_seg_sec), min_segs, max_segs))
+        k = min(k, feat_sync.shape[1] - 1)
+        if k < 2:
+            raise ValueError("k<2")
+        bounds = librosa.segment.agglomerative(feat_sync, k)
+        bt = librosa.frames_to_time(beats[bounds], sr=sr)
+        cuts = sorted(set([0.0] + [float(t) for t in bt if 0 < t < dur] + [float(dur)]))
+        # merge any section shorter than 4s into the previous one
+        merged = [cuts[0]]
+        for t in cuts[1:]:
+            if t - merged[-1] >= 4.0:
+                merged.append(t)
+        merged[-1] = float(dur)
+        if len(merged) >= 3:
+            print(f"librosa: {len(merged)-1} musical sections @ "
+                  + ", ".join(f"{t:.0f}s" for t in merged))
+            return merged
+        raise ValueError("not enough sections")
+    except Exception as e:
+        n = int(max(min_segs, min(max_segs, round(dur / target_seg_sec))))
+        print(f"Section analysis fell back to {n} even cuts ({e})")
+        return [dur * i / n for i in range(n)] + [float(dur)]
 
-def get_pexels_clips(query, api_key, out_dir, ts, target_dur, max_clips=45):
-    """Download enough DIFFERENT genre-matched clips to cover the ENTIRE song
-    with unique footage (no looping, no repeats). A random page offset varies
-    the footage from one song to the next. Returns a list of clip paths
-    (possibly empty -> caller falls back to gradient)."""
+def get_pexels_clips(query, api_key, out_dir, ts, n_clips):
+    """Download n_clips DIFFERENT genre-matched clips (one per musical section).
+    A random page offset varies the footage from one song to the next. Returns
+    a list of (path, clip_duration) tuples (possibly empty -> gradient fallback)."""
     def fetch(pg):
         api = (f"https://api.pexels.com/videos/search?query={urllib.parse.quote(query)}"
                f"&per_page=80&orientation=landscape&page={pg}")
@@ -199,31 +216,28 @@ def get_pexels_clips(query, api_key, out_dir, ts, target_dur, max_clips=45):
 
     random.shuffle(videos)
 
-    # Pick distinct clips (using Pexels' own duration field) until the summed
-    # footage exceeds the song length. Cap at max_clips (~10 min) as a safety.
-    picked, total = [], 0.0
+    picked = []
     for v in videos:
         dur_v = v.get("duration") or 0
         link  = _best_mp4_link(v)
         if not link or dur_v <= 0:
             continue
-        picked.append(link)
-        total += dur_v
-        if total >= target_dur + 5 or len(picked) >= max_clips:
+        picked.append((link, float(dur_v)))
+        if len(picked) >= n_clips:
             break
 
-    paths = []
-    for i, link in enumerate(picked):
+    clips = []
+    for i, (link, dur_v) in enumerate(picked):
         p = out_dir / f"bg_{ts}_{i}.mp4"
         try:
             dreq = urllib.request.Request(link, headers={"User-Agent": BROWSER_UA})
             with urllib.request.urlopen(dreq, timeout=120) as r, open(p, "wb") as fh:
                 fh.write(r.read())
-            paths.append(p)
+            clips.append((p, dur_v))
         except Exception as e:
             print(f"  clip {i} download failed ({e}) — skipping")
-    print(f"Downloaded {len(paths)} unique clip(s), ~{total:.0f}s footage for a {target_dur:.0f}s song")
-    return paths
+    print(f"Downloaded {len(clips)} unique clip(s) for {n_clips} section(s)")
+    return clips
 
 def create_video(mp3_path, output_dir):
     mp3_path = Path(mp3_path)
@@ -256,15 +270,18 @@ def create_video(mp3_path, output_dir):
     fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
     fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
-    # Try genre-matched moving backgrounds from Pexels (key is optional).
-    # We grab several DIFFERENT clips and stitch them so the footage covers the
-    # whole song with no repeating loop.
+    # Analyze the audio for musical section boundaries → scene cut points.
+    cuts     = get_segments(mp3_path, dur)
+    seg_durs = [cuts[i+1] - cuts[i] for i in range(len(cuts) - 1)]
+    n_segs   = len(seg_durs)
+
+    # One genre-matched clip per section (key optional).
     api_key  = os.environ.get("PEXELS_API_KEY", "")
     bg_clips = []
     if api_key:
         query = PEXELS_QUERIES.get(genre_folder, PEXELS_QUERIES["default"])
         try:
-            bg_clips = get_pexels_clips(query, api_key, output_dir, ts, dur)
+            bg_clips = get_pexels_clips(query, api_key, output_dir, ts, n_segs)
         except urllib.error.HTTPError as e:
             body = ""
             try: body = e.read().decode("utf-8", "ignore")[:300]
@@ -293,24 +310,37 @@ def create_video(mp3_path, output_dir):
             f":x=(w-text_w)/2:y=h-85:box=1:boxcolor=black@0.55:boxborderw=14[vout]"
         )
 
-    # Pass 1: stitch the clips into one normalized background file.
-    bg_concat = build_concat_bg(bg_clips, output_dir / f"bgcat_{ts}.mp4") if bg_clips else None
+    if bg_clips:
+        # Assign the longest clips to the longest sections (less in-scene
+        # looping), then trim each clip to EXACTLY its section length so every
+        # scene cut lands on a musical boundary. -stream_loop fills a section if
+        # its clip happens to be shorter than the section.
+        order_long = sorted(range(n_segs), key=lambda i: seg_durs[i], reverse=True)
+        clips_long = sorted(bg_clips, key=lambda c: c[1], reverse=True)
+        assign = [None] * n_segs
+        for rank, seg_i in enumerate(order_long):
+            assign[seg_i] = clips_long[rank % len(clips_long)][0]
 
-    if bg_concat:
-        # Pass 2: the stitched background already covers the whole song with
-        # unique footage (no loop). Dim slightly for text contrast, overlay
-        # branding, trim to song length. -stream_loop is a freeze-safety only
-        # in case the footage came up a hair short.
-        fc = f"[0:v]fps={FPS},eq=brightness=-0.06[bgv];" + overlay_chain("bgv")
-        cmd = [
-            "ffmpeg","-y","-stream_loop","1","-i",str(bg_concat),"-i",str(mp3_path),
-            "-filter_complex", fc,
-            "-map","[vout]","-map","1:a",
-            "-c:v","libx264","-preset","veryfast","-crf","23",
-            "-c:a","aac","-b:a","192k",
-            "-t",str(dur),"-pix_fmt","yuv420p",
-            "-movflags","+faststart", str(out)
-        ]
+        cmd = ["ffmpeg", "-y"]
+        for i in range(n_segs):
+            cmd += ["-stream_loop", "-1", "-i", str(assign[i])]
+        cmd += ["-i", str(mp3_path)]
+
+        pre, labels = "", ""
+        for i in range(n_segs):
+            pre += (f"[{i}:v]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
+                    f"crop={WIDTH}:{HEIGHT},setsar=1,fps={FPS},"
+                    f"trim=duration={seg_durs[i]:.3f},setpts=PTS-STARTPTS[v{i}];")
+            labels += f"[v{i}]"
+        pre += f"{labels}concat=n={n_segs}:v=1:a=0[cat];[cat]eq=brightness=-0.06[bgv];"
+        fc = pre + overlay_chain("bgv")
+
+        cmd += ["-filter_complex", fc,
+                "-map","[vout]","-map",f"{n_segs}:a",
+                "-c:v","libx264","-preset","veryfast","-crf","23",
+                "-c:a","aac","-b:a","192k",
+                "-t",str(dur),"-pix_fmt","yuv420p",
+                "-movflags","+faststart", str(out)]
     else:
         fc = (
             f"color=c=0x{bg}:s={WIDTH}x{HEIGHT}:r={FPS}[bgv];"
@@ -326,17 +356,15 @@ def create_video(mp3_path, output_dir):
             "-movflags","+faststart", str(out)
         ]
 
-    print(f"Creating: {out.name} | {genre} | {dur:.1f}s | bg={f'Pexels x{len(bg_clips)} unique' if bg_concat else 'gradient'}")
+    print(f"Creating: {out.name} | {genre} | {dur:.1f}s | "
+          f"{f'{n_segs} sections x Pexels' if bg_clips else 'gradient'}")
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
         print("FFmpeg error:"); print(r.stderr[-2000:])
         raise RuntimeError("FFmpeg failed")
 
-    for p in bg_clips:
+    for p, _d in bg_clips:
         try: Path(p).unlink()
-        except: pass
-    if bg_concat:
-        try: Path(bg_concat).unlink()
         except: pass
 
     # Save full unicode title in state for YouTube upload

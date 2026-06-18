@@ -32,6 +32,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+          pip install librosa soundfile
 
       - name: Cache FFmpeg
         id: cache-ffmpeg
