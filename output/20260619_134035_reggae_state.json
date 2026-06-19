@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260619_134035_reggae.mp4",
+  "mp3_path": "music/reggae/Blue Horn Prayer.mp3",
+  "blueprint": {
+    "folder": "reggae",
+    "frisson_score": "82",
+    "generated_at": "2026-06-18T23:14:00.171Z",
+    "genre": "Reggae",
+    "scientific_analysis": "Reggae's syncopated offbeat rhythmic structure (skank guitar on beats 2 and 4) creates anticipatory tension that primes dopaminergic reward pathways, making unexpected harmonic shifts disproportionately effective at triggering frisson responses. The sudden silence-to-full-sound transition activates the auditory startle reflex while the golden ratio emotional peak (~61.8% into the track) aligns with neurological arousal buildup patterns documented in Music Perception research.",
+    "structure": "The track opens with sparse bass and kick for 16 bars before collapsing into complete silence, then erupts into full reggae ensemble with an unexpected shift from I to bVII chord creating immediate harmonic surprise. Tension builds through a rising melodic motif over a IV-bII substitution progression across the middle section, with layered harmonics and rising reverb density driving toward the golden ratio climax at approximately 2:28 of a 4:02 track. Resolution arrives through a stepwise melodic descent back to tonic with stripped-down instrumentation, creating cathartic release before a gentle outro fades with only bass and organ.",
+    "suno_prompt": "Royalty-free reggae, 72 BPM, key of D major, sudden dramatic silence then full band explosion, unexpected bII chord substitution for frisson, rising melodic tension with Lydian passing tones, emotional climax with lush horn stabs and choral ah vocals, warm vintage organ skank, deep roots bassline, live drumkit, golden ratio peak, cinematic resolution, melancholic yet uplifting",
+    "title": "Blue Horn Prayer - Goosebumps Music"
+  }
+}
