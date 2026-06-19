@@ -142,6 +142,26 @@ def safe_ffmpeg(text, n=55):
     t = ' '.join(t.split())
     return (t[:n]+"...") if len(t)>n else t or "Goosebumps Music"
 
+# ── Animated text alpha (fade in/out) ───────────────────────────────────────
+# Commas are escaped (\,) because the whole filtergraph is one ffmpeg arg.
+def _fade(start, end, fin=1.2, fout=1.5):
+    """One-shot alpha: invisible, fade in over `fin`, hold, fade out over `fout`."""
+    s, e = start, end
+    return (f"'if(lt(t\\,{s})\\,0\\,"
+            f"if(lt(t\\,{s+fin})\\,(t-{s})/{fin}\\,"
+            f"if(lt(t\\,{e-fout})\\,1\\,"
+            f"if(lt(t\\,{e})\\,({e}-t)/{fout}\\,0))))'")
+
+def _fade_cycle(cycle, on, off, fin=1.0, fout=1.2):
+    """Repeating alpha: every `cycle`s, fade in at `on`, hold, fade out by `off`,
+    then stay invisible until the next cycle (clean full-screen visuals)."""
+    m = f"mod(t\\,{cycle})"
+    s, e = on, off
+    return (f"'if(lt({m}\\,{s})\\,0\\,"
+            f"if(lt({m}\\,{s+fin})\\,({m}-{s})/{fin}\\,"
+            f"if(lt({m}\\,{e-fout})\\,1\\,"
+            f"if(lt({m}\\,{e})\\,({e}-{m})/{fout}\\,0))))'")
+
 def _best_mp4_link(video):
     """Pick the mp4 file whose width is closest to 1920 (>=1280)."""
     files = sorted(video.get("video_files", []),
@@ -386,20 +406,29 @@ def create_video(mp3_path, output_dir):
     else:
         print("No PEXELS_API_KEY — using gradient fallback")
 
-    # Branded text overlay — white text in dark/accent boxes so it's readable
-    # over ANY footage. Score (top-left), Title (top-center, fades in),
-    # CTA (accent box), brand line (bottom).
+    # Animated text overlay — clean outline + soft shadow (no blocky boxes),
+    # fading in/out so it grabs attention, with stretches of NO text so the
+    # full visuals breathe. Readable over any footage via the dark outline.
+    # Rhythm: every CYCLE secs -> score+brand appear early, subscribe hook
+    # appears mid, then a clean window. Title shows once at the start.
+    CYCLE = 36
+    style  = "borderw=4:bordercolor=black@0.85:shadowcolor=black@0.5:shadowx=2:shadowy=2"
+    a_title = _fade(0.5, 12.0, fin=1.4, fout=1.6)          # intro identity, once
+    a_score = _fade_cycle(CYCLE, 0.5, 9.0)                 # top-left, early in cycle
+    a_brand = _fade_cycle(CYCLE, 0.5, 9.0)                 # bottom, pairs with score
+    a_cta   = _fade_cycle(CYCLE, 16.0, 25.0, fin=1.0, fout=1.4)  # subscribe hook, mid cycle
+
     def overlay_chain(src):
         return (
             f"[{src}]drawtext=fontfile={fb}:text='{score_txt}':fontcolor=white:fontsize=50"
-            f":x=50:y=45:box=1:boxcolor=black@0.6:boxborderw=20[s];"
-            f"[s]drawtext=fontfile={fb}:text='{ffmpeg_title}':fontcolor=white:fontsize=52"
-            f":x=(w-text_w)/2:y=160:box=1:boxcolor=black@0.5:boxborderw=16"
-            f":alpha='if(lt(t\\,1.5)\\,t/1.5\\,1)'[t1];"
-            f"[t1]drawtext=fontfile={fb}:text='{cta}':fontcolor=white:fontsize=42"
-            f":x=(w-text_w)/2:y=h-175:box=1:boxcolor=0x{ac}@0.85:boxborderw=18[t2];"
+            f":x=50:y=48:{style}:alpha={a_score}[s];"
+            f"[s]drawtext=fontfile={fb}:text='{ffmpeg_title}':fontcolor=white:fontsize=56"
+            f":x=(w-text_w)/2:y=150:{style}:alpha={a_title}[t1];"
+            f"[t1]drawtext=fontfile={fb}:text='{cta}':fontcolor=white:fontsize=46"
+            f":x=(w-text_w)/2:y=h-180:borderw=5:bordercolor=0x{ac}@0.95"
+            f":shadowcolor=black@0.5:shadowx=2:shadowy=2:alpha={a_cta}[t2];"
             f"[t2]drawtext=fontfile={fr}:text='{brand}':fontcolor=white:fontsize=34"
-            f":x=(w-text_w)/2:y=h-85:box=1:boxcolor=black@0.55:boxborderw=14[vout]"
+            f":x=(w-text_w)/2:y=h-90:{style}:alpha={a_brand}[vout]"
         )
 
     if bg_clips:
