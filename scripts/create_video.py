@@ -162,6 +162,31 @@ def _fade_cycle(cycle, on, off, fin=1.0, fout=1.2):
             f"if(lt({m}\\,{e-fout})\\,1\\,"
             f"if(lt({m}\\,{e})\\,({e}-{m})/{fout}\\,0))))'")
 
+def _fade_rotate(cycle, n, idx, on, off, fin=1.0, fout=1.3):
+    """Rotation alpha: across a period of n*cycle secs, message `idx` is the
+    only one visible during its own cycle's [on,off] window (fades in/out)."""
+    P = cycle * n
+    m = f"mod(t\\,{P})"
+    s = idx * cycle + on
+    e = idx * cycle + off
+    return (f"'if(lt({m}\\,{s})\\,0\\,"
+            f"if(lt({m}\\,{s+fin})\\,({m}-{s})/{fin}\\,"
+            f"if(lt({m}\\,{e-fout})\\,1\\,"
+            f"if(lt({m}\\,{e})\\,({e}-{m})/{fout}\\,0))))'")
+
+# Rotating, benefit-driven prompts (no ' : , so FFmpeg renders cleanly).
+# Ordered by priority — earlier lines are guaranteed to show even on short
+# songs; later ones only appear on longer tracks. {genre} auto-fills.
+ROTATING_MESSAGES = [
+    "Scientifically engineered to give you goosebumps",
+    "The biggest chills hit near the peak - stay for it",
+    "Subscribe for your daily dose of goosebumps",
+    "No goosebumps yet? Turn up the volume",
+    "Did you get goosebumps? Comment where you felt it",
+    "Get real dopamine you can feel - not empty scrolling",
+    "Comment for more {genre} and I will deliver",
+]
+
 def _best_mp4_link(video):
     """Pick the mp4 file whose width is closest to 1920 (>=1280)."""
     files = sorted(video.get("video_files", []),
@@ -366,7 +391,6 @@ def create_video(mp3_path, output_dir):
     score        = bp.get("frisson_score","")
     score_txt    = safe_ffmpeg(f"FRISSON SCORE  {score}%") if score else "FRISSON SCORE"
     brand        = safe_ffmpeg(f"GOOSEBUMPS MUSIC    |    {genre.upper()}", 50)
-    cta          = "SUBSCRIBE for your daily dose of goosebumps"
 
     dur = get_duration(mp3_path)
     T = get_theme(genre)
@@ -408,28 +432,38 @@ def create_video(mp3_path, output_dir):
 
     # Animated text overlay — clean outline + soft shadow (no blocky boxes),
     # fading in/out so it grabs attention, with stretches of NO text so the
-    # full visuals breathe. Readable over any footage via the dark outline.
-    # Rhythm: every CYCLE secs -> score+brand appear early, subscribe hook
-    # appears mid, then a clean window. Title shows once at the start.
-    CYCLE = 36
-    style  = "borderw=4:bordercolor=black@0.85:shadowcolor=black@0.5:shadowx=2:shadowy=2"
-    a_title = _fade(0.5, 12.0, fin=1.4, fout=1.6)          # intro identity, once
-    a_score = _fade_cycle(CYCLE, 0.5, 9.0)                 # top-left, early in cycle
-    a_brand = _fade_cycle(CYCLE, 0.5, 9.0)                 # bottom, pairs with score
-    a_cta   = _fade_cycle(CYCLE, 16.0, 25.0, fin=1.0, fout=1.4)  # subscribe hook, mid cycle
+    # full visuals breathe. Each CYCLE: score+brand appear early; a ROTATING
+    # benefit-driven subscribe prompt appears mid (cycles through the messages);
+    # then a clean window. Title shows once at the start.
+    CYCLE = 30
+    style    = "borderw=4:bordercolor=black@0.85:shadowcolor=black@0.5:shadowx=2:shadowy=2"
+    cta_style = f"borderw=5:bordercolor=0x{ac}@0.95:shadowcolor=black@0.5:shadowx=2:shadowy=2"
+    a_title = _fade(0.5, 12.0, fin=1.4, fout=1.6)   # intro identity, once
+    a_score = _fade_cycle(CYCLE, 0.5, 8.0)          # top-left, early in cycle
+    a_brand = _fade_cycle(CYCLE, 0.5, 8.0)          # bottom, pairs with score
+    n_msgs  = len(ROTATING_MESSAGES)
 
     def overlay_chain(src):
-        return (
+        parts = [
             f"[{src}]drawtext=fontfile={fb}:text='{score_txt}':fontcolor=white:fontsize=50"
-            f":x=50:y=48:{style}:alpha={a_score}[s];"
+            f":x=50:y=48:{style}:alpha={a_score}[s]",
             f"[s]drawtext=fontfile={fb}:text='{ffmpeg_title}':fontcolor=white:fontsize=56"
-            f":x=(w-text_w)/2:y=150:{style}:alpha={a_title}[t1];"
-            f"[t1]drawtext=fontfile={fb}:text='{cta}':fontcolor=white:fontsize=46"
-            f":x=(w-text_w)/2:y=h-180:borderw=5:bordercolor=0x{ac}@0.95"
-            f":shadowcolor=black@0.5:shadowx=2:shadowy=2:alpha={a_cta}[t2];"
-            f"[t2]drawtext=fontfile={fr}:text='{brand}':fontcolor=white:fontsize=34"
-            f":x=(w-text_w)/2:y=h-90:{style}:alpha={a_brand}[vout]"
-        )
+            f":x=(w-text_w)/2:y=150:{style}:alpha={a_title}[t1]",
+        ]
+        prev = "t1"
+        # Rotating subscribe prompts (lower-center, accent outline to grab the eye)
+        for i, msg in enumerate(ROTATING_MESSAGES):
+            lbl = f"r{i}"
+            a   = _fade_rotate(CYCLE, n_msgs, i, 14.0, 23.0)
+            txt = safe_ffmpeg(msg.replace("{genre}", genre), 60)
+            parts.append(
+                f"[{prev}]drawtext=fontfile={fb}:text='{txt}':fontcolor=white:fontsize=44"
+                f":x=(w-text_w)/2:y=h-180:{cta_style}:alpha={a}[{lbl}]")
+            prev = lbl
+        parts.append(
+            f"[{prev}]drawtext=fontfile={fr}:text='{brand}':fontcolor=white:fontsize=34"
+            f":x=(w-text_w)/2:y=h-90:{style}:alpha={a_brand}[vout]")
+        return ";".join(parts)
 
     if bg_clips:
         # One unique clip per scene. Assign the longest clips to the longest
