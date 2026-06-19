@@ -336,7 +336,7 @@ def _pexels_candidates(query, api_key, page):
         dur_v = v.get("duration") or 0
         link  = _best_mp4_link(v)
         if link and dur_v > 0:
-            out.append((link, float(dur_v)))
+            out.append((link, float(dur_v), "Pexels"))
     return out
 
 def _pixabay_candidates(query, api_key, page):
@@ -354,7 +354,7 @@ def _pixabay_candidates(query, api_key, page):
         if f and f.get("url") and dur > 0:
             w, ht = f.get("width") or 0, f.get("height") or 0
             if w >= ht and w >= 1280:          # landscape, decent resolution
-                out.append((f["url"], float(dur)))
+                out.append((f["url"], float(dur), "Pixabay"))
     return out
 
 def get_clips(query, pexels_key, pixabay_key, out_dir, ts, n_clips, min_dur=0.0):
@@ -393,17 +393,19 @@ def get_clips(query, pexels_key, pixabay_key, out_dir, ts, n_clips, min_dur=0.0)
     picked = pool[:n_clips]
 
     clips = []
-    for i, (link, dur_v) in enumerate(picked):
+    src_count = {"Pexels": 0, "Pixabay": 0}
+    for i, (link, dur_v, source) in enumerate(picked):
         p = out_dir / f"bg_{ts}_{i}.mp4"
         try:
             dreq = urllib.request.Request(link, headers={"User-Agent": BROWSER_UA})
             with urllib.request.urlopen(dreq, timeout=120) as r, open(p, "wb") as fh:
                 fh.write(r.read())
             clips.append((p, dur_v))
+            src_count[source] = src_count.get(source, 0) + 1
         except Exception as e:
             print(f"  clip {i} download failed ({e}) — skipping")
     print(f"Downloaded {len(clips)} clip(s) from a pool of {len(cands)} "
-          f"(Pexels+Pixabay) for {n_clips} scene(s)")
+          f"-> {src_count.get('Pexels',0)} Pexels + {src_count.get('Pixabay',0)} Pixabay")
     return clips
 
 def create_video(mp3_path, output_dir):
