@@ -322,36 +322,68 @@ def get_cut_points(mp3_path, dur, target=12.0):
         print(f"Cut analysis fell back to {n} even cuts ({e})")
         return [dur * i / n for i in range(n)] + [float(dur)]
 
-def get_pexels_clips(query, api_key, out_dir, ts, n_clips, min_dur=0.0):
-    """Download n_clips DIFFERENT genre-matched clips (one per scene). Prefers
-    the LONGEST clips and those >= min_dur, so each can fill its scene without
-    looping. A random page offset varies footage from one song to the next.
-    Returns a list of (path, clip_duration) tuples (empty -> gradient fallback)."""
-    def fetch(pg):
-        api = (f"https://api.pexels.com/videos/search?query={urllib.parse.quote(query)}"
-               f"&per_page=80&orientation=landscape&page={pg}")
-        req = urllib.request.Request(api, headers={
-            "Authorization": api_key.strip(),
-            "User-Agent": BROWSER_UA,
-            "Accept": "application/json",
-        })
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            return json.loads(resp.read().decode()).get("videos", [])
-
-    page   = random.randint(1, 4)           # vary footage song-to-song
-    videos = fetch(page)
-    if not videos and page != 1:            # niche queries may run out of pages
-        page, videos = 1, fetch(1)
-    print(f"Pexels page {page}: {len(videos)} candidate(s) for '{query}'")
-    if not videos:
-        return []
-
-    cands = []
+def _pexels_candidates(query, api_key, page):
+    """Return [(mp4_link, duration), ...] landscape candidates from Pexels."""
+    api = (f"https://api.pexels.com/videos/search?query={urllib.parse.quote(query)}"
+           f"&per_page=80&orientation=landscape&page={page}")
+    req = urllib.request.Request(api, headers={
+        "Authorization": api_key.strip(), "User-Agent": BROWSER_UA,
+        "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        videos = json.loads(resp.read().decode()).get("videos", [])
+    out = []
     for v in videos:
         dur_v = v.get("duration") or 0
         link  = _best_mp4_link(v)
         if link and dur_v > 0:
-            cands.append((link, float(dur_v)))
+            out.append((link, float(dur_v)))
+    return out
+
+def _pixabay_candidates(query, api_key, page):
+    """Return [(mp4_link, duration), ...] landscape candidates from Pixabay."""
+    api = (f"https://pixabay.com/api/videos/?key={api_key.strip()}"
+           f"&q={urllib.parse.quote(query)}&per_page=60&page={page}")
+    req = urllib.request.Request(api, headers={"User-Agent": BROWSER_UA})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        hits = json.loads(resp.read().decode()).get("hits", [])
+    out = []
+    for h in hits:
+        dur = h.get("duration") or 0
+        v   = h.get("videos", {})
+        f   = v.get("large") or v.get("medium") or v.get("small")
+        if f and f.get("url") and dur > 0:
+            w, ht = f.get("width") or 0, f.get("height") or 0
+            if w >= ht and w >= 1280:          # landscape, decent resolution
+                out.append((f["url"], float(dur)))
+    return out
+
+def get_clips(query, pexels_key, pixabay_key, out_dir, ts, n_clips, min_dur=0.0):
+    """Gather candidates from BOTH Pexels and Pixabay into ONE pool, prefer clips
+    long enough to fill a scene, take the longest n_clips, and download them.
+    Random page per source varies footage song-to-song. Returns [(path, dur)]."""
+    cands = []
+    if pexels_key:
+        try:
+            pg = random.randint(1, 4)
+            c  = _pexels_candidates(query, pexels_key, pg)
+            if not c and pg != 1:
+                c = _pexels_candidates(query, pexels_key, 1)
+            print(f"Pexels: {len(c)} candidates (p{pg}) for '{query}'")
+            cands += c
+        except Exception as e:
+            print(f"Pexels fetch failed ({e})")
+    if pixabay_key:
+        try:
+            pg = random.randint(1, 3)
+            c  = _pixabay_candidates(query, pixabay_key, pg)
+            if not c and pg != 1:
+                c = _pixabay_candidates(query, pixabay_key, 1)
+            print(f"Pixabay: {len(c)} candidates (p{pg}) for '{query}'")
+            cands += c
+        except Exception as e:
+            print(f"Pixabay fetch failed ({e})")
+    if not cands:
+        return []
 
     # Prefer clips long enough to fill a scene; then take the longest available.
     long_enough = [c for c in cands if c[1] >= min_dur]
@@ -370,8 +402,8 @@ def get_pexels_clips(query, api_key, out_dir, ts, n_clips, min_dur=0.0):
             clips.append((p, dur_v))
         except Exception as e:
             print(f"  clip {i} download failed ({e}) — skipping")
-    print(f"Downloaded {len(clips)} unique clip(s) for {n_clips} scene(s) "
-          f"(min scene {min_dur:.1f}s)")
+    print(f"Downloaded {len(clips)} clip(s) from a pool of {len(cands)} "
+          f"(Pexels+Pixabay) for {n_clips} scene(s)")
     return clips
 
 def create_video(mp3_path, output_dir):
@@ -410,25 +442,21 @@ def create_video(mp3_path, output_dir):
     n_segs   = len(seg_durs)
     longest_scene = max(seg_durs) if seg_durs else dur
 
-    # One genre-matched clip per section (key optional).
-    api_key  = os.environ.get("PEXELS_API_KEY", "")
+    # One genre-matched clip per section, pulled from a combined Pexels+Pixabay
+    # pool (either key optional — works with whichever is set).
+    pexels_key  = os.environ.get("PEXELS_API_KEY", "")
+    pixabay_key = os.environ.get("PIXABAY_API_KEY", "")
     bg_clips = []
-    if api_key:
+    if pexels_key or pixabay_key:
         query = PEXELS_QUERIES.get(genre_folder, PEXELS_QUERIES["default"])
         try:
-            bg_clips = get_pexels_clips(query, api_key, output_dir, ts, n_segs,
-                                        min_dur=longest_scene + 1.0)
-        except urllib.error.HTTPError as e:
-            body = ""
-            try: body = e.read().decode("utf-8", "ignore")[:300]
-            except Exception: pass
-            print(f"Pexels HTTP {e.code} {e.reason}: {body} — using gradient fallback")
-            bg_clips = []
+            bg_clips = get_clips(query, pexels_key, pixabay_key, output_dir, ts,
+                                 n_segs, min_dur=longest_scene + 1.0)
         except Exception as e:
-            print(f"Pexels fetch failed ({e}) — using gradient fallback")
+            print(f"Footage fetch failed ({e}) — using gradient fallback")
             bg_clips = []
     else:
-        print("No PEXELS_API_KEY — using gradient fallback")
+        print("No PEXELS_API_KEY / PIXABAY_API_KEY — using gradient fallback")
 
     # Animated text overlay — clean outline + soft shadow (no blocky boxes),
     # fading in/out so it grabs attention, with stretches of NO text so the
