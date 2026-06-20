@@ -1,0 +1,42 @@
+name: Auto-rename buffered songs
+
+on:
+  push:
+    paths:
+      - 'music/**/*.json'
+  workflow_dispatch: {}
+
+# One at a time — never two renamers committing at once.
+concurrency:
+  group: uniquify
+  cancel-in-progress: false
+
+jobs:
+  rename:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip + Whisper model
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/huggingface
+          key: ${{ runner.os }}-uniquify-whisper-small-v1
+
+      - name: Install dependencies
+        run: pip install anthropic faster-whisper
+
+      - name: Transcribe + give buffered songs unique titles
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/uniquify_songs.py

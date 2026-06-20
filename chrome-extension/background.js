@@ -211,19 +211,22 @@ async function autoPushToGitHub(genre, mp3Url, mp3Filename) {
     // 3. Push the blueprint PAIRED WITH THE SONG by name — music/<genre>/<Song>.json
     //    so the posting bot can later use this song's EXACT description. (Also
     //    write blueprint.json for the immediate-post path / backward compat.)
+    //    Tag with buffered=true when not posting now, so the auto-renamer only
+    //    renames songs waiting in the buffer (never one being posted live).
+    const { gbBufferMode } = await chrome.storage.local.get('gbBufferMode');
     const { sunoBlueprint } = await chrome.storage.local.get('sunoBlueprint');
     if (sunoBlueprint) {
-      const bpStr = JSON.stringify(sunoBlueprint, null, 2);
+      const bp = { ...sunoBlueprint, buffered: !!gbBufferMode };
+      const bpStr = JSON.stringify(bp, null, 2);
       await putFile(cfg, `music/${genre}/${trackName}.json`, strToBase64(bpStr), `Blueprint for ${genre}: ${trackName}`);
       await putFile(cfg, `music/${genre}/blueprint.json`,    strToBase64(bpStr), `Blueprint (latest) for ${genre}`);
-      console.log(`[GB] ✅ Blueprint pushed (paired: ${trackName}.json).`);
+      console.log(`[GB] ✅ Blueprint pushed (paired: ${trackName}.json, buffered=${!!gbBufferMode}).`);
     } else {
       console.warn('[GB] No blueprint in storage — video will use the fallback description.');
     }
 
     // 4. Post now — UNLESS Buffer mode is on, then just leave it in GitHub for
     //    the daily auto-poster bot to pick up later.
-    const { gbBufferMode } = await chrome.storage.local.get('gbBufferMode');
     if (gbBufferMode) {
       console.log('[GB] 🪣 Buffer mode ON — saved to GitHub, NOT posting. The daily bot will post it.');
     } else {
