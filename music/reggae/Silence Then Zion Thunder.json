@@ -6,5 +6,9 @@
   "scientific_analysis": "Reggae's syncopated offbeat rhythmic structure ('skank') combined with a tempo near 65 BPM entrains the autonomic nervous system to resting heart rate, priming the limbic system for heightened emotional reactivity. The deliberate stacking of frisson triggers—unexpected distant harmonic modulation, sudden silence-to-full-texture dynamics, and a raw unaccompanied vocal at the golden ratio point—creates cascading dopaminergic prediction-error responses that produce intense piloerection.",
   "structure": "The track opens with sparse, hypnotic one-drop drumming and bass at 65 BPM, building call-and-response tension between rhythm guitar and melodic horn stabs before collapsing into complete silence. At the golden ratio point (~61% through), a lone raw Jamaican patois voice enters unaccompanied, then a sudden full-band explosion erupts with an unexpected key change up a minor third, joined by a ghostly melodic instrument never heard before in the track. A long sustained note from a soprano saxophone resolves into a lush unexpected chord borrowed from a distant harmonic realm, then the full ensemble locks into ecstatic unison resolution.",
   "suno_prompt": "Royalty-free roots reggae, 65 BPM, Jamaican patois vocals, one-drop drumbeat, heavy sub-bass, offbeat guitar skank, sudden full silence then explosive full-band re-entry, raw unaccompanied male voice at emotional peak, unexpected key change up minor third, surprise soprano saxophone entry, call-and-response horns and guitar, distant borrowed chord harmonic shift, long sustained note resolving to lush harmony, intense emotional catharsis, authentic Kingston studio sound",
-  "buffered": false
+  "buffered": false,
+  "lyrics": "",
+  "instrumental": true,
+  "lyric_segments": [],
+  "final_title": "Silence Then Zion Thunder"
 }
