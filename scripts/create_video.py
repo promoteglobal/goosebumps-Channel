@@ -100,6 +100,15 @@ def normalize_blueprint(bp):
     return bp
 
 def find_blueprint(mp3_path):
+    # 1. Per-song blueprint paired by name (music/<genre>/<Song Name>.json) —
+    #    this is the song's EXACT description, used by the posting bot so the
+    #    description always matches the song.
+    per_song = mp3_path.with_suffix(".json")
+    if per_song.exists():
+        with open(per_song, encoding="utf-8") as f:
+            return normalize_blueprint(json.load(f))
+
+    # 2. Per-genre blueprint (legacy / immediate-post fallback).
     local = mp3_path.parent / "blueprint.json"
     if local.exists():
         with open(local) as f:

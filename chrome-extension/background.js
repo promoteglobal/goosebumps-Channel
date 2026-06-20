@@ -181,12 +181,15 @@ async function autoPushToGitHub(genre, mp3Url, mp3Filename) {
     await putFile(cfg, `music/${genre}/${mp3Filename}`, base64Mp3, `Add ${genre}: ${trackName}`);
     console.log('[GB] ✅ MP3 pushed.');
 
-    // 3. Push the blueprint (from storage)
+    // 3. Push the blueprint PAIRED WITH THE SONG by name — music/<genre>/<Song>.json
+    //    so the posting bot can later use this song's EXACT description. (Also
+    //    write blueprint.json for the immediate-post path / backward compat.)
     const { sunoBlueprint } = await chrome.storage.local.get('sunoBlueprint');
     if (sunoBlueprint) {
       const bpStr = JSON.stringify(sunoBlueprint, null, 2);
-      await putFile(cfg, `music/${genre}/blueprint.json`, strToBase64(bpStr), `Blueprint for ${genre}: ${trackName}`);
-      console.log('[GB] ✅ Blueprint pushed.');
+      await putFile(cfg, `music/${genre}/${trackName}.json`, strToBase64(bpStr), `Blueprint for ${genre}: ${trackName}`);
+      await putFile(cfg, `music/${genre}/blueprint.json`,    strToBase64(bpStr), `Blueprint (latest) for ${genre}`);
+      console.log(`[GB] ✅ Blueprint pushed (paired: ${trackName}.json).`);
     } else {
       console.warn('[GB] No blueprint in storage — video will use the fallback description.');
     }
