@@ -1,0 +1,10 @@
+{
+  "folder": "blues",
+  "frisson_score": "97",
+  "generated_at": "2026-06-20T17:21:05.681Z",
+  "genre": "Blues",
+  "scientific_analysis": "Blues music activates the limbic system and triggers dopaminergic frisson responses through its inherent tension-resolution cycles, particularly when unexpected harmonic deviations from the I-IV-V framework collide with rhythmic anticipation near 65 BPM, synchronizing with resting cardiac rhythm to amplify emotional arousal. The golden ratio emotional peak placement (approximately 61.8% through the track) maximizes listener vulnerability by delivering the key change and new instrument entry precisely when the brain's predictive coding systems are most susceptible to pleasurable violation.",
+  "structure": "The track opens with absolute silence breaking into a full Delta-style band at 65 BPM, establishing a slow-burn 12-bar blues in E major with call-and-response between slide guitar and harmonica building melodic tension over the first third. At the golden ratio point (roughly 3:45 of a 6-minute track), a raw unaccompanied male voice delivers one devastating verse before the entire band re-enters with a sudden key change to G major, featuring an unexpected cello entering the mix for haunting countermelody. A long sustained note on the slide guitar resolves into a lush unexpected shift to a bVI chord (Eb major), creating maximum harmonic surprise before the final cathartic resolution collapses everything back into silence.",
+  "suno_prompt": "Delta Blues, 65 BPM, English vocals, raw male voice, unaccompanied vocal verse, sudden silence to full band explosion, slide guitar and harmonica call and response, unexpected key change from E to G major, distant bVI chord harmonic shift, cello entering at emotional peak, golden ratio climax, long sustained note resolving to harmony, slow burn intensity, cathartic resolution, 10/10 emotional intensity",
+  "buffered": false
+}
