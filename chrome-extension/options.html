@@ -38,6 +38,14 @@
   <button id="clear" style="background:#4a3a6f;">Turn OFF (clear token)</button>
   <div class="status" id="status"></div>
 
+  <hr style="margin:26px 0; border:none; border-top:1px solid #3a2a6f;">
+
+  <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top:0;">
+    <input id="buffer" type="checkbox" style="width:auto; margin:0;">
+    <span>Buffer mode — save songs to GitHub <b>without posting</b> (the daily bot posts them later)</span>
+  </label>
+  <div class="status" id="bufStatus"></div>
+
   <p class="note">
     When a token is saved, after each MP3 finishes downloading the extension will:<br>
     1. Upload the MP3 to <code>music/{genre}/</code><br>

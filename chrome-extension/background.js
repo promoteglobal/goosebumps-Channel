@@ -194,9 +194,15 @@ async function autoPushToGitHub(genre, mp3Url, mp3Filename) {
       console.warn('[GB] No blueprint in storage — video will use the fallback description.');
     }
 
-    // 4. Trigger the YouTube workflow (input excludes the "music/" prefix — workflow adds it)
-    await triggerWorkflow(cfg, `${genre}/${mp3Filename}`);
-    console.log('[GB] ✅ Workflow triggered. Watch GitHub Actions — no terminal needed.');
+    // 4. Post now — UNLESS Buffer mode is on, then just leave it in GitHub for
+    //    the daily auto-poster bot to pick up later.
+    const { gbBufferMode } = await chrome.storage.local.get('gbBufferMode');
+    if (gbBufferMode) {
+      console.log('[GB] 🪣 Buffer mode ON — saved to GitHub, NOT posting. The daily bot will post it.');
+    } else {
+      await triggerWorkflow(cfg, `${genre}/${mp3Filename}`);
+      console.log('[GB] ✅ Workflow triggered. Watch GitHub Actions — no terminal needed.');
+    }
   } finally {
     // Advance the serial queue whether the push succeeded or fell back.
     await finishActiveAndNext();

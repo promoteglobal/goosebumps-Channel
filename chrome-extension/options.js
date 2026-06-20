@@ -32,3 +32,21 @@ $('clear').onclick = () => {
     setStatus('Token cleared — auto-push is OFF. The terminal watcher will handle uploads.', 'ok');
   });
 };
+
+// Buffer mode toggle — save songs to GitHub without posting (the daily bot posts them)
+function updateBufStatus(on) {
+  $('bufStatus').textContent = on
+    ? 'Buffer mode ON — new songs are saved to GitHub and NOT posted. The daily bot posts them.'
+    : 'Buffer mode OFF — new songs post to YouTube immediately.';
+  $('bufStatus').className = 'status ' + (on ? 'ok' : '');
+}
+
+chrome.storage.local.get('gbBufferMode', ({ gbBufferMode }) => {
+  $('buffer').checked = !!gbBufferMode;
+  updateBufStatus(!!gbBufferMode);
+});
+
+$('buffer').onchange = () => {
+  const on = $('buffer').checked;
+  chrome.storage.local.set({ gbBufferMode: on }, () => updateBufStatus(on));
+};
