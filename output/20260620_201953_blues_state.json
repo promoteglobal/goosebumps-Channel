@@ -1,0 +1,50 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260620_201953_blues.mp4",
+  "mp3_path": "music/blues/Hold Me Low.mp3",
+  "blueprint": {
+    "folder": "blues",
+    "frisson_score": "84",
+    "generated_at": "2026-06-20T19:36:32.319Z",
+    "genre": "Blues",
+    "scientific_analysis": "Blues music activates the mesolimbic dopamine system through its characteristic tension-resolution cycles, with unexpected harmonic shifts to borrowed chords (e.g., bVI or bII) triggering predictive coding violations that generate frisson responses in approximately 55-70% of listeners. Positioning the emotional peak at the golden ratio (~0.618 of total duration) maximizes psychophysiological arousal by aligning with natural attentional rhythms, while tempo near 65 BPM entrains cardiovascular resonance and deepens emotional immersion.",
+    "structure": "The track opens with raw unaccompanied male voice in a slow 12-bar blues at 65 BPM, building melodic tension through bent notes and long sustained tones before a sudden full-band eruption creates a silence-to-sound shock. At the golden ratio point (approximately 2:30 of a 4:04 track), a sudden key change up a minor third and entry of a mournful harmonica triggers the emotional peak, with call-and-response trading between guitar and voice amplifying cathartic release. The track resolves through a descending turnaround where a long held note finally collapses into a warm tonic harmony, leaving resonant silence.",
+    "suno_prompt": "Raw Delta Blues, 65 BPM, English vocals, male voice singing unaccompanied opening verse, sudden full band eruption from silence, slow 12-bar progression, unexpected harmonic shift to bVI chord, harmonica enters unexpectedly at emotional peak, guitar and voice call and response, key modulation up minor third, long bent note resolving into tonic harmony, golden ratio climax, intensity 7 out of 10, deeply emotional, authentic vintage Blues",
+    "buffered": true,
+    "lyrics": "Baby, I was lost before I could break Hold me, hold me low Don't let me go Hold me, hold me low I can't walk slow Hold me low",
+    "instrumental": false,
+    "lyric_segments": [
+      {
+        "start": 112.0,
+        "end": 117.2,
+        "text": "Baby, I was lost before I could break"
+      },
+      {
+        "start": 117.2,
+        "end": 119.6,
+        "text": "Hold me, hold me low"
+      },
+      {
+        "start": 121.4,
+        "end": 123.4,
+        "text": "Don't let me go"
+      },
+      {
+        "start": 124.6,
+        "end": 128.4,
+        "text": "Hold me, hold me low"
+      },
+      {
+        "start": 128.7,
+        "end": 132.6,
+        "text": "I can't walk slow"
+      },
+      {
+        "start": 138.2,
+        "end": 139.8,
+        "text": "Hold me low"
+      }
+    ],
+    "final_title": "Hold Me Low",
+    "title": "Hold Me Low - Goosebumps Music"
+  }
+}
