@@ -1,0 +1,18 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260620_164244_kpop.mp4",
+  "mp3_path": "music/kpop/숨결의 균열.mp3",
+  "blueprint": {
+    "folder": "kpop",
+    "frisson_score": "81",
+    "generated_at": "2026-06-20T16:12:44.021Z",
+    "genre": "K-Pop",
+    "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the brain's reward circuitry, particularly when a distant chromatic pivot chord breaches established tonal expectations, triggering dopaminergic release. The golden-ratio emotional apex (≈61.8% into the track) maximizes physiological arousal by aligning melodic resolution with peak predictive tension, exploiting the anterior cingulate cortex's sensitivity to expectancy fulfillment.",
+    "structure": "The track opens with sparse piano and breathy Korean vocals building melodic tension over a minor progression, then a sudden silence creates anticipatory suspension before the full production explodes back in. A bold harmonic pivot to a distant flat-VI major chord arrives unexpectedly, destabilizing the tonal center and triggering the chills response. At the golden ratio moment (approximately 2:30 of a 4-minute track), layered synths, soaring vocals, and a sweeping resolution to the tonic create the emotional climax.",
+    "suno_prompt": "K-Pop emotional ballad with synth-pop production, Korean female vocals sung in Korean, sparse piano intro building melodic tension, sudden silence then explosive full-band drop, unexpected chromatic pivot chord to distant flat-VI, layered synths and orchestral strings, soaring emotional peak at golden ratio, chills-inducing harmonic resolution, 120 BPM, cinematic atmosphere, intensity level 7, royalty-free",
+    "buffered": true,
+    "lyrics": "",
+    "instrumental": true,
+    "final_title": "숨결의 균열",
+    "title": "숨결의 균열 - Goosebumps Music"
+  }
+}
