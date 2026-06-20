@@ -446,6 +446,125 @@ def get_clips(query, pexels_key, pixabay_key, out_dir, ts, n_clips, min_dur=0.0)
           f"-> {src_count.get('Pexels',0)} Pexels + {src_count.get('Pixabay',0)} Pixabay")
     return clips
 
+def _gather_candidates(query, pexels_key, pixabay_key):
+    """Pooled Pexels+Pixabay candidates for one query: [(link, dur, source), ...]."""
+    cands = []
+    if pexels_key:
+        try:
+            pg = random.randint(1, 3)
+            c = _pexels_candidates(query, pexels_key, pg)
+            if not c and pg != 1:
+                c = _pexels_candidates(query, pexels_key, 1)
+            cands += c
+        except Exception:
+            pass
+    if pixabay_key:
+        try:
+            pg = random.randint(1, 2)
+            c = _pixabay_candidates(query, pixabay_key, pg)
+            if not c and pg != 1:
+                c = _pixabay_candidates(query, pixabay_key, 1)
+            cands += c
+        except Exception:
+            pass
+    return cands
+
+def build_section_queries(bp, cuts, genre, title):
+    """One English stock-video search query per section, matched to the lyrics
+    sung there (or the title/mood for instrumentals). Needs ANTHROPIC_API_KEY;
+    returns None to fall back to the single genre query."""
+    key = os.environ.get("ANTHROPIC_API_KEY", "")
+    n = len(cuts) - 1
+    if not key or n < 1:
+        return None
+    segs = bp.get("lyric_segments") or []
+    instrumental = bp.get("instrumental", not segs)
+    snippets = []
+    for i in range(n):
+        s_i, e_i = cuts[i], cuts[i + 1]
+        snippets.append(" ".join(
+            sg.get("text", "") for sg in segs
+            if sg.get("end", 0) > s_i and sg.get("start", 1e9) < e_i).strip())
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=key)
+        if instrumental or not any(snippets):
+            ctx = (f"INSTRUMENTAL {genre} track titled '{title}'. "
+                   f"Mood/structure: {(bp.get('structure') or '')[:400]}")
+            ask = (f"Give {n} short 2-4 word ENGLISH stock-video search queries for "
+                   f"visuals fitting the title and mood, varied across the {n} sections "
+                   f"so the video is not repetitive.")
+        else:
+            lines = "\n".join(f"{i}: {snippets[i] or '(instrumental)'}" for i in range(n))
+            ctx = (f"A {genre} song titled '{title}'. Lyrics sung in each of its {n} "
+                   f"sections (some may be empty):\n{lines}")
+            ask = (f"For EACH of the {n} sections give ONE short 2-4 word ENGLISH "
+                   f"stock-video search query for footage matching what is sung there "
+                   f"(translate non-English lyrics to English; concrete filmable imagery). "
+                   f"For empty sections use a query fitting the {genre} mood.")
+        prompt = (f"{ctx}\n\n{ask}\n\nReply with ONLY a JSON array of exactly {n} "
+                  f"strings, no markdown, no other text.")
+        msg = client.messages.create(model="claude-opus-4-8", max_tokens=700,
+                                     messages=[{"role": "user", "content": prompt}])
+        raw = next((b.text for b in msg.content if b.type == "text"), "").strip()
+        raw = raw.replace("```json", "").replace("```", "").strip()
+        qs = json.loads(raw)
+        if isinstance(qs, list) and len(qs) >= n:
+            print(f"Lyric-matched queries built for {n} sections "
+                  f"({'instrumental' if instrumental else 'vocal'}).")
+            return [(str(q).strip() or None) for q in qs[:n]]
+    except Exception as e:
+        print(f"Section-query generation failed ({e}) — using genre pool")
+    return None
+
+def get_section_clips(queries, pexels_key, pixabay_key, out_dir, ts, seg_durs, fallback_query):
+    """Download one clip per section matching that section's query (fallback to
+    the genre query). Returns [(path, dur), ...] aligned to sections (gaps filled
+    by reusing matched clips), or [] if nothing could be fetched."""
+    cache = {}
+    def cands(q):
+        if q not in cache:
+            cache[q] = _gather_candidates(q, pexels_key, pixabay_key)
+        return cache[q]
+    used, clips, src_count = set(), [], {}
+    for i, q in enumerate(queries):
+        min_dur = seg_durs[i]
+        picked = None
+        for qq in [q, fallback_query]:
+            if not qq:
+                continue
+            pool = [c for c in cands(qq) if c[0] not in used]
+            if not pool:
+                continue
+            long_enough = [c for c in pool if c[1] >= min_dur]
+            pp = long_enough or pool
+            random.shuffle(pp)
+            picked = (pp[0], qq)
+            break
+        if not picked:
+            clips.append(None)
+            continue
+        (link, dur, source), used_q = picked
+        used.add(link)
+        p = out_dir / f"bg_{ts}_{i}.mp4"
+        try:
+            dreq = urllib.request.Request(link, headers={"User-Agent": BROWSER_UA})
+            with urllib.request.urlopen(dreq, timeout=120) as r, open(p, "wb") as fh:
+                fh.write(r.read())
+            clips.append((p, dur))
+            src_count[source] = src_count.get(source, 0) + 1
+            print(f"  section {i}: '{used_q}' -> {source} ({dur:.0f}s)")
+        except Exception as e:
+            print(f"  section {i} download failed ({e})")
+            clips.append(None)
+    good = [c for c in clips if c]
+    if not good:
+        return []
+    clips = [c if c else good[i % len(good)] for i, c in enumerate(clips)]
+    print(f"Per-section footage: {len(good)}/{len(queries)} matched "
+          f"({src_count.get('Pexels',0)} Pexels + {src_count.get('Pixabay',0)} Pixabay)")
+    return clips
+
 def create_video(mp3_path, output_dir):
     mp3_path = Path(mp3_path)
     bp = find_blueprint(mp3_path)
@@ -486,15 +605,28 @@ def create_video(mp3_path, output_dir):
     # pool (either key optional — works with whichever is set).
     pexels_key  = os.environ.get("PEXELS_API_KEY", "")
     pixabay_key = os.environ.get("PIXABAY_API_KEY", "")
-    bg_clips = []
+    genre_query = PEXELS_QUERIES.get(genre_folder, PEXELS_QUERIES["default"])
+    bg_clips, matched = [], False
     if pexels_key or pixabay_key:
-        query = PEXELS_QUERIES.get(genre_folder, PEXELS_QUERIES["default"])
-        try:
-            bg_clips = get_clips(query, pexels_key, pixabay_key, output_dir, ts,
-                                 n_segs, min_dur=longest_scene + 1.0)
-        except Exception as e:
-            print(f"Footage fetch failed ({e}) — using gradient fallback")
-            bg_clips = []
+        # Phase B: lyric-matched footage — one clip per section from the words
+        # sung there (or the title/mood for instrumentals). Falls back to the
+        # single genre pool if unavailable.
+        section_queries = build_section_queries(bp, cuts, genre_folder, full_title)
+        if section_queries:
+            try:
+                sc = get_section_clips(section_queries, pexels_key, pixabay_key,
+                                       output_dir, ts, seg_durs, genre_query)
+                if sc:
+                    bg_clips, matched = sc, True
+            except Exception as e:
+                print(f"Lyric-matched footage failed ({e}) — using genre pool")
+        if not matched:
+            try:
+                bg_clips = get_clips(genre_query, pexels_key, pixabay_key, output_dir,
+                                     ts, n_segs, min_dur=longest_scene + 1.0)
+            except Exception as e:
+                print(f"Footage fetch failed ({e}) — using gradient fallback")
+                bg_clips = []
     else:
         print("No PEXELS_API_KEY / PIXABAY_API_KEY — using gradient fallback")
 
@@ -539,11 +671,16 @@ def create_video(mp3_path, output_dir):
         # scene length; if it's a touch short, slow it slightly (setpts) to fill
         # the scene exactly. Either way every scene is one distinct clip and
         # every cut lands on a downbeat.
-        order_long = sorted(range(n_segs), key=lambda i: seg_durs[i], reverse=True)
-        clips_long = sorted(bg_clips, key=lambda c: c[1], reverse=True)
-        assign = [None] * n_segs
-        for rank, seg_i in enumerate(order_long):
-            assign[seg_i] = clips_long[rank % len(clips_long)][0]
+        if matched:
+            # Lyric-matched: clip i belongs to section i (keep the story order).
+            assign = [bg_clips[i][0] for i in range(n_segs)]
+        else:
+            # Genre pool: longest clips to longest scenes (no lyric matching).
+            order_long = sorted(range(n_segs), key=lambda i: seg_durs[i], reverse=True)
+            clips_long = sorted(bg_clips, key=lambda c: c[1], reverse=True)
+            assign = [None] * n_segs
+            for rank, seg_i in enumerate(order_long):
+                assign[seg_i] = clips_long[rank % len(clips_long)][0]
 
         # Actual on-disk durations (Pexels' reported duration is rounded).
         clip_dur = {}

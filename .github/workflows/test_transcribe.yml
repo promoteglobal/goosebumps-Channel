@@ -1,0 +1,38 @@
+name: Test transcription (dry run, read-only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      song:
+        description: 'Song path e.g. kpop/Some Song.mp3'
+        required: true
+
+# Read-only: no contents:write, so this job CANNOT change or push anything.
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip + Whisper model
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/huggingface
+          key: ${{ runner.os }}-uniquify-whisper-medium-v1
+
+      - name: Install faster-whisper
+        run: pip install faster-whisper
+
+      - name: Transcribe (read-only)
+        run: python scripts/uniquify_songs.py --dry-run "${{ github.event.inputs.song }}"

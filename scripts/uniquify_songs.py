@@ -204,5 +204,25 @@ def main():
     log("Pushed renamed songs.")
 
 
+def dry_run(rel):
+    """Read-only: transcribe one existing song and print the result. Renames
+    nothing, pushes nothing, changes nothing — safe on any song, even posted."""
+    mp3 = (ROOT / rel) if rel.startswith("music/") else (MUSIC / rel)
+    if not mp3.exists():
+        log(f"Not found: {mp3}")
+        return
+    lang = lang_for_genre(mp3.parent.name)
+    log(f"DRY RUN — transcribing {mp3.name} (genre={mp3.parent.name}, lang hint={lang}) with the medium model...")
+    lyrics, instrumental, segs = transcribe(mp3, lang)
+    log(f"  instrumental: {instrumental}")
+    log(f"  lyrics ({len(lyrics)} chars): {lyrics[:400]}")
+    log(f"  segments: {len(segs)}")
+    for s in segs[:10]:
+        log(f"    [{s['start']:.0f}-{s['end']:.0f}s] {s['text']}")
+
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 2 and sys.argv[1] == "--dry-run":
+        dry_run(sys.argv[2])
+    else:
+        main()

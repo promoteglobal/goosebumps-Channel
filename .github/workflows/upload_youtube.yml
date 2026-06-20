@@ -33,6 +33,7 @@ jobs:
         run: |
           pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
           pip install librosa soundfile
+          pip install anthropic
 
       - name: Install FFmpeg (static binary with drawtext — avoids slow apt mirrors)
         run: |
@@ -92,6 +93,7 @@ jobs:
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scripts/create_video.py "music/${{ github.event.inputs.mp3_filename }}"
 
       - name: Upload to YouTube
