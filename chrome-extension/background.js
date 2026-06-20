@@ -154,6 +154,33 @@ async function triggerWorkflow(cfg, mp3RepoRelative) {
   if (!res.ok) throw new Error(`workflow dispatch → ${res.status}: ${await res.text()}`);
 }
 
+// Get the MP3 as base64. Direct fetch for https/CDN URLs; for blob: URLs (which
+// only exist inside the Suno page) ask the Suno content script to read them —
+// it shares the page's origin and CAN fetch the blob.
+async function fetchMp3Base64(mp3Url) {
+  if (!mp3Url.startsWith('blob:')) {
+    const r = await fetch(mp3Url);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return arrayBufferToBase64(await r.arrayBuffer());
+  }
+  const tabs = await chrome.tabs.query({ url: 'https://suno.com/*' });
+  if (!tabs.length) throw new Error('blob URL but no Suno tab open to read it');
+  let lastErr = 'no Suno tab responded';
+  for (const tab of tabs) {
+    try {
+      const resp = await chrome.tabs.sendMessage(tab.id, { type: 'GB_FETCH_BLOB', url: mp3Url });
+      if (resp && resp.ok && resp.base64) {
+        console.log('[GB] Read blob via Suno content script.');
+        return resp.base64;
+      }
+      if (resp && resp.error) lastErr = resp.error;
+    } catch (e) {
+      lastErr = e.message;
+    }
+  }
+  throw new Error(`Suno tab could not read the blob (${lastErr})`);
+}
+
 async function autoPushToGitHub(genre, mp3Url, mp3Filename) {
   const cfg = await getConfig();
   if (!cfg.token) {
@@ -164,12 +191,12 @@ async function autoPushToGitHub(genre, mp3Url, mp3Filename) {
   try {
     console.log(`[GB] Auto-push starting: music/${genre}/${mp3Filename}`);
 
-    // 1. Fetch the MP3 bytes from Suno's download URL (freshest at this moment)
+    // 1. Fetch the MP3 bytes. A normal https CDN URL the service worker can fetch
+    //    directly; a blob: URL is scoped to the Suno page, so the service worker
+    //    cannot read it — hand that case to the Suno content script.
     let base64Mp3;
     try {
-      const r = await fetch(mp3Url);
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      base64Mp3 = arrayBufferToBase64(await r.arrayBuffer());
+      base64Mp3 = await fetchMp3Base64(mp3Url);
     } catch (e) {
       console.error(`[GB] Could NOT fetch MP3 bytes (${e.message}). url=${mp3Url}`);
       console.error('[GB] Falling back: leave watch_and_push.py to push this one.');

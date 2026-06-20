@@ -3,6 +3,28 @@
 const delay = ms => new Promise(r => setTimeout(r, ms));
 let watching = false;
 
+// The background service worker can't read Suno's blob: download URLs (they're
+// scoped to this page). It asks us to read them here, where the blob is valid.
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  if (!msg || msg.type !== 'GB_FETCH_BLOB') return;
+  (async () => {
+    try {
+      const r = await fetch(msg.url);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const bytes = new Uint8Array(await r.arrayBuffer());
+      let binary = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+      }
+      sendResponse({ ok: true, base64: btoa(binary) });
+    } catch (e) {
+      sendResponse({ ok: false, error: e.message });
+    }
+  })();
+  return true;  // keep the channel open for the async response
+});
+
 async function fullClick(el) {
   ['pointerover','pointerenter','mouseover','mouseenter'].forEach(e =>
     el.dispatchEvent(new MouseEvent(e, { bubbles: true, cancelable: true }))
