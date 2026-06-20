@@ -134,7 +134,32 @@ def generate_title(client, bp, lyrics, instrumental, avoid):
     return clean_title(text)
 
 
+def dispatch_upload(rel):
+    """Trigger the video+upload pipeline for an immediate-mode song (buffer off)."""
+    pat = os.environ.get("DISPATCH_PAT", "")
+    if not pat:
+        log(f"No DISPATCH_PAT — cannot auto-post {rel}")
+        return
+    import urllib.request
+    repo = os.environ.get("GITHUB_REPOSITORY", "promoteglobal/goosebumps-Channel")
+    body = json.dumps({"ref": "main", "inputs": {"mp3_filename": rel}}).encode("utf-8")
+    req = urllib.request.Request(
+        f"https://api.github.com/repos/{repo}/actions/workflows/upload_youtube.yml/dispatches",
+        data=body, method="POST",
+        headers={"Authorization": f"token {pat}",
+                 "Accept": "application/vnd.github+json",
+                 "Content-Type": "application/json"})
+    try:
+        urllib.request.urlopen(req)
+        log(f"Auto-posting (immediate): {rel}")
+    except Exception as e:
+        log(f"Dispatch failed for {rel}: {e}")
+
+
 def main():
+    # Process every NEW song (has the buffered flag, not yet processed) — both
+    # buffer-on and buffer-off go through the same transcribe + title + lyric
+    # path. Old songs (no buffered flag) are left alone.
     todo = []
     for mp3 in sorted(MUSIC.rglob("*.mp3")):
         jp = mp3.with_suffix(".json")
@@ -144,22 +169,26 @@ def main():
             bp = json.load(open(jp, encoding="utf-8"))
         except Exception:
             continue
-        if bp.get("buffered") and not bp.get("final_title"):
+        if "buffered" in bp and not bp.get("final_title"):
             todo.append((mp3, jp, bp))
 
     if not todo:
-        log("No buffered songs need processing.")
+        log("No songs need processing.")
         return
 
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     except Exception as e:
-        log(f"Anthropic client unavailable ({e}); leaving songs as-is.")
+        log(f"Anthropic client unavailable ({e}); posting immediate songs as-is.")
+        for mp3, jp, bp in todo:           # buffer-off must never silently fail
+            if not bp.get("buffered"):
+                dispatch_upload(f"{mp3.parent.name}/{mp3.name}")
         return
 
     used = existing_names()
     changed = False
+    immediate = []   # buffer-off songs -> auto-post once processed
     for mp3, jp, bp in todo:
         lyrics, instrumental, segs = transcribe(mp3, lang_for_genre(mp3.parent.name))
         bp["lyrics"]         = lyrics
@@ -191,6 +220,8 @@ def main():
             jp.unlink()
         log(f"Renamed: {mp3.name}  ->  {title}.mp3")
         changed = True
+        if not bp.get("buffered"):
+            immediate.append(f"{mp3.parent.name}/{title}.mp3")
 
     if not changed:
         return
@@ -210,6 +241,12 @@ def main():
             break
         log(f"push attempt {attempt + 1} failed — retrying")
     log("Pushed renamed songs." if pushed else "WARNING: push failed after retries.")
+
+    # Immediate-mode songs (buffer off): auto-post now that they're transcribed,
+    # titled, and on GitHub. Buffered songs wait for the daily bot instead.
+    if pushed:
+        for rel in immediate:
+            dispatch_upload(rel)
 
 
 def dry_run(rel):
