@@ -1,2 +1,6 @@
 .claude/
 _gb_local_songs/
+.token
+client_secrets.json
+youtube_token.json
+music/download*.json
