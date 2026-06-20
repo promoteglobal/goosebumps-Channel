@@ -27,13 +27,33 @@ def log(msg):
     sys.stderr.write(msg + "\n")
 
 
-def transcribe(mp3path):
-    """Return (lyrics_text, is_instrumental). Best-effort; never raises."""
+# Genres whose vocals are in a known language — pass it to Whisper so it
+# transcribes sung Korean/Japanese/etc. far more accurately (and stops
+# false-flagging vocals as instrumental).
+GENRE_LANG = {
+    "kpop": "ko", "kdrama": "ko", "trot": "ko",
+    "jpop": "ja", "jrock": "ja", "citypop": "ja", "anime": "ja", "enka": "ja",
+    "cpop": "zh", "mandopop": "zh", "cantopop": "zh",
+    "bollywood": "hi", "bhangra": "pa",
+    "dangdut": "id",
+    "flamenco": "es", "reggaeton": "es",
+    "chanson": "fr", "fado": "pt",
+}
+
+
+def lang_for_genre(genre):
+    return GENRE_LANG.get(re.sub(r"[^a-z]", "", (genre or "").lower()))
+
+
+def transcribe(mp3path, lang_hint=None):
+    """Return (lyrics_text, is_instrumental). Best-effort; never raises.
+    lang_hint (e.g. 'ko' for kpop) makes Whisper much better at sung lyrics."""
     try:
         from faster_whisper import WhisperModel
         model = WhisperModel("small", device="cpu", compute_type="int8")
         segments, _info = model.transcribe(
-            str(mp3path), beam_size=1, condition_on_previous_text=False)
+            str(mp3path), beam_size=1, condition_on_previous_text=False,
+            language=lang_hint)   # None = auto-detect
         parts = []
         for seg in segments:
             # Skip segments Whisper thinks are non-speech (music/hallucination).
@@ -133,7 +153,7 @@ def main():
     used = existing_names()
     changed = False
     for mp3, jp, bp in todo:
-        lyrics, instrumental = transcribe(mp3)
+        lyrics, instrumental = transcribe(mp3, lang_for_genre(mp3.parent.name))
         bp["lyrics"]       = lyrics
         bp["instrumental"] = instrumental
         log(f"{mp3.name}: {'instrumental' if instrumental else str(len(lyrics)) + ' chars of lyrics'}")
