@@ -1,0 +1,14 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260620_103910_bossanova.mp4",
+  "mp3_path": "music/bossanova/Saffron Teacup.mp3",
+  "blueprint": {
+    "folder": "bossanova",
+    "frisson_score": "82",
+    "generated_at": "2026-06-20T10:10:30.649Z",
+    "genre": "Bossa Nova",
+    "scientific_analysis": "Bossa Nova's syncopated rhythmic displacement activates dopaminergic reward circuits when combined with harmonic violations such as tritone substitutions and chromatic mediants, creating prediction error signals that manifest as frisson. The golden ratio emotional peak placement at approximately 61.8% of track duration aligns with accumulated tension resolution, maximizing autonomic nervous system response including piloerection and heart rate synchronization near the 65 BPM isochronous pulse.",
+    "structure": "The track opens with sparse solo guitar establishing a gentle samba-feel groove at 65 BPM in D major, building melodic tension through ascending chromatic lines before a sudden silence fractures the texture at the 38% mark. At the golden ratio point near 62%, a shocking key shift to Bb major arrives simultaneously with an unexpected solo flugelhorn entrance over full ensemble, resolving the accumulated harmonic tension through a lush descending progression. The final third uses gentle rhythmic deceleration and soft vocal harmonics to bring the listener down from the emotional peak, concluding with a single unresolved seventh chord fading into silence.",
+    "suno_prompt": "Royalty-free bossa nova, 65 BPM, D major shifting to Bb major, sparse nylon guitar opening, sudden silence break, full ensemble explosion, unexpected flugelhorn solo, chromatic melodic tension, golden ratio emotional climax, tritone substitutions, warm upright bass, soft brushed drums, lush jazz harmony, intimate vocal hum, cinematic resolution, gentle melancholic sophistication",
+    "title": "Saffron Teacup - Goosebumps Music"
+  }
+}
