@@ -39,8 +39,7 @@ jobs:
       - name: Install dependencies
         run: pip install anthropic faster-whisper
 
-      - name: Transcribe + title songs (and auto-post immediate ones)
+      - name: Transcribe + give buffered songs unique titles
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          DISPATCH_PAT: ${{ secrets.DISPATCH_PAT }}
         run: python scripts/uniquify_songs.py

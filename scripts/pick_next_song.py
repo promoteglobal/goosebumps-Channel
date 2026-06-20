@@ -70,17 +70,9 @@ def main():
     by_genre, seen = {}, set()
     paired = no_pair = already = 0
     for mp3 in sorted(MUSIC.rglob("*.mp3")):
-        jp = mp3.with_suffix(".json")
-        if not jp.exists():
+        if not mp3.with_suffix(".json").exists():
             no_pair += 1
             continue                       # need the paired description
-        try:
-            bp = json.load(open(jp, encoding="utf-8"))
-        except Exception:
-            continue
-        if not bp.get("buffered"):
-            continue                       # only buffered songs are the bot's job;
-                                           # immediate (buffer-off) songs auto-post
         paired += 1
         n = norm(mp3.stem)
         if n in posted:
