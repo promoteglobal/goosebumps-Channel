@@ -1,22 +1,2 @@
-# Secrets — never commit these
-client_secrets.json
-youtube_token.json
-.token
-
-# Output files (large, no need to store in git)
-output/*.mp4
-
-# Stray blueprint/download JSON files Chrome saves to music/ root (not genre subfolders)
-music/blueprint*.json
-music/download*.json
-
-# Python
-__pycache__/
-*.py[cod]
-.env
-venv/
-.venv/
-
-# OS
-.DS_Store
-Thumbs.db
+.claude/
+_gb_local_songs/
