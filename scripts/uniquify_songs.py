@@ -198,10 +198,18 @@ def main():
     subprocess.run(["git", "config", "user.name", "goosebumps-bot"], cwd=ROOT)
     subprocess.run(["git", "config", "user.email", "bot@goosebumps-channel"], cwd=ROOT)
     subprocess.run(["git", "add", "-A", "music/"], cwd=ROOT)
-    subprocess.run(["git", "commit", "-m", "Auto-rename buffered songs to unique titles (with transcription)"], cwd=ROOT)
-    subprocess.run(["git", "pull", "--rebase", "--autostash"], cwd=ROOT)
-    subprocess.run(["git", "push"], cwd=ROOT)
-    log("Pushed renamed songs.")
+    if subprocess.run(["git", "commit", "-m",
+                       "Auto-rename buffered songs to unique titles"], cwd=ROOT).returncode != 0:
+        log("Nothing to commit.")
+        return
+    pushed = False
+    for attempt in range(3):
+        subprocess.run(["git", "pull", "--rebase", "--autostash"], cwd=ROOT)
+        if subprocess.run(["git", "push"], cwd=ROOT).returncode == 0:
+            pushed = True
+            break
+        log(f"push attempt {attempt + 1} failed — retrying")
+    log("Pushed renamed songs." if pushed else "WARNING: push failed after retries.")
 
 
 def dry_run(rel):

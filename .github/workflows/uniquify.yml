@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - 'music/**/*.json'
+      - '!music/**/blueprint.json'   # only the paired song .json triggers — not
+                                      # the per-genre blueprint.json (avoids a
+                                      # second run re-renaming the same song)
   workflow_dispatch: {}
 
 # One at a time — never two renamers committing at once.
