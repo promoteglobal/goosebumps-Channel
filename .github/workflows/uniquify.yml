@@ -31,7 +31,7 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.cache/huggingface
-          key: ${{ runner.os }}-uniquify-whisper-small-v1
+          key: ${{ runner.os }}-uniquify-whisper-medium-v1
 
       - name: Install dependencies
         run: pip install anthropic faster-whisper

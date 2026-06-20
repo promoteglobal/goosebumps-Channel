@@ -46,27 +46,35 @@ def lang_for_genre(genre):
 
 
 def transcribe(mp3path, lang_hint=None):
-    """Return (lyrics_text, is_instrumental). Best-effort; never raises.
+    """Return (lyrics_text, is_instrumental, segments). Best-effort; never raises.
+    `segments` is a list of {start, end, text} for matching footage to words.
     lang_hint (e.g. 'ko' for kpop) makes Whisper much better at sung lyrics."""
     try:
         from faster_whisper import WhisperModel
-        model = WhisperModel("small", device="cpu", compute_type="int8")
+        model = WhisperModel("medium", device="cpu", compute_type="int8")
         segments, _info = model.transcribe(
             str(mp3path), beam_size=1, condition_on_previous_text=False,
             language=lang_hint)   # None = auto-detect
-        parts = []
+        parts, segs = [], []
         for seg in segments:
             # Skip segments Whisper thinks are non-speech (music/hallucination).
             if getattr(seg, "no_speech_prob", 1.0) < 0.5 and seg.text.strip():
-                parts.append(seg.text.strip())
+                txt = seg.text.strip()
+                parts.append(txt)
+                segs.append({"start": round(seg.start, 2),
+                             "end":   round(seg.end, 2), "text": txt})
         text = re.sub(r"\s+", " ", " ".join(parts)).strip()
-        # Heuristic: real lyrics have a decent amount of distinct words.
-        distinct = len({w.lower() for w in re.findall(r"[A-Za-z']+", text)})
-        instrumental = len(text) < 20 or distinct < 6
-        return ("" if instrumental else text), instrumental
+        # Script-agnostic: count letters of ANY language (Korean, Japanese,
+        # Latin, ...). The old check only counted Latin words, so it wrongly
+        # marked fully-transcribed Korean songs as instrumental.
+        letters = re.sub(r"[\W\d_]+", "", text, flags=re.UNICODE)
+        instrumental = len(letters) < 12
+        if instrumental:
+            return "", True, []
+        return text, False, segs
     except Exception as e:
         log(f"  transcription failed ({e}); treating as instrumental.")
-        return "", True
+        return "", True, []
 
 
 def existing_names():
@@ -153,10 +161,11 @@ def main():
     used = existing_names()
     changed = False
     for mp3, jp, bp in todo:
-        lyrics, instrumental = transcribe(mp3, lang_for_genre(mp3.parent.name))
-        bp["lyrics"]       = lyrics
-        bp["instrumental"] = instrumental
-        log(f"{mp3.name}: {'instrumental' if instrumental else str(len(lyrics)) + ' chars of lyrics'}")
+        lyrics, instrumental, segs = transcribe(mp3, lang_for_genre(mp3.parent.name))
+        bp["lyrics"]         = lyrics
+        bp["instrumental"]   = instrumental
+        bp["lyric_segments"] = segs        # timestamped, for footage matching
+        log(f"{mp3.name}: {'instrumental' if instrumental else str(len(lyrics)) + ' chars of lyrics, ' + str(len(segs)) + ' segments'}")
 
         title = ""
         for _ in range(5):
