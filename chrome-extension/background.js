@@ -163,17 +163,35 @@ async function fetchMp3Base64(mp3Url) {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return arrayBufferToBase64(await r.arrayBuffer());
   }
+  // Inject a fresh fetch into the Suno tab's page (MAIN world, where the blob
+  // was created). Injecting on demand works even if the tab is old/stale —
+  // no reliance on a pre-loaded content script (which can be orphaned after an
+  // extension reload, giving "Receiving end does not exist").
   const tabs = await chrome.tabs.query({ url: 'https://suno.com/*' });
   if (!tabs.length) throw new Error('blob URL but no Suno tab open to read it');
-  let lastErr = 'no Suno tab responded';
+  let lastErr = 'no Suno tab could read it';
   for (const tab of tabs) {
     try {
-      const resp = await chrome.tabs.sendMessage(tab.id, { type: 'GB_FETCH_BLOB', url: mp3Url });
-      if (resp && resp.ok && resp.base64) {
-        console.log('[GB] Read blob via Suno content script.');
-        return resp.base64;
+      const [res] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        world: 'MAIN',
+        args: [mp3Url],
+        func: async (url) => {
+          const r = await fetch(url);
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          const bytes = new Uint8Array(await r.arrayBuffer());
+          let binary = '';
+          const chunk = 0x8000;
+          for (let i = 0; i < bytes.length; i += chunk) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+          }
+          return btoa(binary);
+        },
+      });
+      if (res && res.result) {
+        console.log('[GB] Read blob via injected fetch.');
+        return res.result;
       }
-      if (resp && resp.error) lastErr = resp.error;
     } catch (e) {
       lastErr = e.message;
     }
