@@ -18,6 +18,17 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Wait for the song to be present (handles push-propagation race)
+        run: |
+          f="music/${{ github.event.inputs.mp3_filename }}"
+          for i in $(seq 1 12); do
+            if [ -f "$f" ]; then echo "found: $f"; exit 0; fi
+            echo "not present yet (try $i) — fetching latest main..."
+            git fetch origin main -q && git reset --hard origin/main -q
+            sleep 5
+          done
+          echo "still missing after ~60s: $f"; exit 1
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
