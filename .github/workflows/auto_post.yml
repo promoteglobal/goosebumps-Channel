@@ -1,0 +1,48 @@
+name: Auto Post (daily)
+
+on:
+  # Once a day. 16:00 UTC ~= noon US Eastern. Adjust the time as you like.
+  schedule:
+    - cron: '0 16 * * *'
+  # Manual run for testing.
+  workflow_dispatch: {}
+
+jobs:
+  auto-post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+
+      - name: Pick the next song
+        id: pick
+        env:
+          YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+        run: |
+          SONG=$(python scripts/pick_next_song.py)
+          echo "mp3=$SONG" >> "$GITHUB_OUTPUT"
+
+      - name: Nothing to post
+        if: steps.pick.outputs.mp3 == ''
+        run: echo "No unposted, paired song available today — skipping."
+
+      - name: Post it (dispatch the existing video+upload pipeline)
+        if: steps.pick.outputs.mp3 != ''
+        env:
+          DISPATCH_PAT: ${{ secrets.DISPATCH_PAT }}
+        run: |
+          echo "Auto-posting: ${{ steps.pick.outputs.mp3 }}"
+          curl -fsS -X POST \
+            -H "Authorization: token $DISPATCH_PAT" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/upload_youtube.yml/dispatches" \
+            -d "{\"ref\":\"main\",\"inputs\":{\"mp3_filename\":\"${{ steps.pick.outputs.mp3 }}\"}}"
+          echo "Dispatched the post pipeline."
