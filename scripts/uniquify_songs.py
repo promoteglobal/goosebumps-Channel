@@ -67,7 +67,9 @@ def existing_names():
 
 def clean_title(t):
     t = t.strip().strip('"').strip("'").strip()
-    t = re.sub(r"[^A-Za-z0-9 ]", "", t)       # FFmpeg/file-safe; no ' : ,
+    # Keep unicode letters (Korean, Japanese, Hindi, ...); drop only the chars
+    # that break filenames or the FFmpeg drawtext filtergraph.
+    t = re.sub(r'[\\/:*?"<>|\'`,%\[\]\n\r\t]', " ", t)
     t = re.sub(r"\s+", " ", t).strip()
     return t
 
@@ -89,7 +91,10 @@ def generate_title(client, bp, lyrics, instrumental, avoid):
         f"Requirements:\n"
         f"- 2 to 5 words, evocative and catchy — something a listener wants to click\n"
         f"- ORIGINAL: must NOT be the title of any known or famous song\n"
-        f"- Title Case, only letters/numbers/spaces (no quotes, colons, commas, emojis)\n"
+        f"- Write it in the language that fits the song: the lyrics' language for "
+        f"vocal tracks (native script is great — Korean for K-pop, Japanese for "
+        f"J-pop, Hindi for Bollywood), or the genre's natural language for instrumentals\n"
+        f"- Only letters/numbers/spaces — no quotes, colons, commas, or emojis\n"
         f"- Do NOT reuse any of these already-taken names: {avoid_list}\n\n"
         f"Reply with ONLY the title — no quotes, no explanation, nothing else."
     )

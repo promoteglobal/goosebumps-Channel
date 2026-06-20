@@ -59,6 +59,9 @@ jobs:
           if [ ! -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf ]; then
             sudo apt-get install -y --no-install-recommends fonts-dejavu-core
           fi
+          # Noto fonts so non-Latin titles render (Korean/Japanese/Chinese, Hindi, etc.)
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk fonts-noto-core || true
 
       - name: Cache all-in-one downloads (pip wheels + AI model weights)
         uses: actions/cache@v4

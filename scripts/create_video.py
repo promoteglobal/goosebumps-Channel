@@ -145,11 +145,40 @@ def get_duration(mp3):
     return float(r.stdout.strip())
 
 def safe_ffmpeg(text, n=55):
-    """Strip to ASCII for FFmpeg drawtext — FFmpeg can't render unicode."""
-    t = str(text).encode("ascii","ignore").decode().strip()
+    """Make text safe for an FFmpeg drawtext arg. Keeps unicode (Korean, Japanese,
+    Hindi, ...) and only removes characters that would break the filtergraph."""
+    t = str(text).strip()
     for c in ["'",'"',':',',','[',']','\\','%','`']: t = t.replace(c,' ')
     t = ' '.join(t.split())
     return (t[:n]+"...") if len(t)>n else t or "Goosebumps Music"
+
+import glob as _glob
+def _find_font(*names):
+    for name in names:
+        hits = sorted(_glob.glob(f"/usr/share/fonts/**/{name}", recursive=True))
+        if hits:
+            return hits[0]
+    return None
+
+# Fonts for non-Latin titles (installed in the workflow); fall back to DejaVu.
+_DEJAVU_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+FONT_CJK  = _find_font("NotoSansCJK-Bold.ttc", "NotoSansCJK-Regular.ttc",
+                       "NotoSansCJKkr-*.otf", "NotoSansCJK*.ttc")
+FONT_DEVA = _find_font("NotoSansDevanagari-Bold.ttf",
+                       "NotoSansDevanagari-Regular.ttf", "NotoSansDevanagari*.ttf")
+
+def title_font(text):
+    """Pick a font whose glyphs cover the title's script — so non-Latin titles
+    (Korean, Japanese, Chinese, Hindi) render instead of showing empty boxes."""
+    for ch in str(text):
+        o = ord(ch)
+        if (0xAC00 <= o <= 0xD7A3 or 0x1100 <= o <= 0x11FF or   # Korean Hangul
+            0x3040 <= o <= 0x30FF or                             # Japanese kana
+            0x4E00 <= o <= 0x9FFF or 0x3400 <= o <= 0x4DBF):     # CJK Han
+            return FONT_CJK or _DEJAVU_BOLD
+        if 0x0900 <= o <= 0x097F:                                # Devanagari (Hindi)
+            return FONT_DEVA or _DEJAVU_BOLD
+    return _DEJAVU_BOLD
 
 # ── Animated text alpha (fade in/out) ───────────────────────────────────────
 # Commas are escaped (\,) because the whole filtergraph is one ffmpeg arg.
@@ -486,7 +515,7 @@ def create_video(mp3_path, output_dir):
         parts = [
             f"[{src}]drawtext=fontfile={fb}:text='{score_txt}':fontcolor=white:fontsize=50"
             f":x=50:y=48:{style}:alpha={a_score}[s]",
-            f"[s]drawtext=fontfile={fb}:text='{ffmpeg_title}':fontcolor=white:fontsize=56"
+            f"[s]drawtext=fontfile={title_font(ffmpeg_title)}:text='{ffmpeg_title}':fontcolor=white:fontsize=56"
             f":x=(w-text_w)/2:y=150:{style}:alpha={a_title}[t1]",
         ]
         prev = "t1"

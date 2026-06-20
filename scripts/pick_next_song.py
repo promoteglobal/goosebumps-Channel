@@ -27,7 +27,7 @@ def norm(s):
     s = s.lower()
     s = s.split(" - goosebumps")[0]      # drop the "- Goosebumps Music" suffix
     s = re.sub(r"\(\s*\d+\s*\)", "", s)   # drop " (1)" duplicate markers
-    s = re.sub(r"[^a-z0-9]+", "", s)      # keep alphanumerics only
+    s = re.sub(r"[^\w]+", "", s)          # keep letters of all scripts (Korean, etc.)
     return s
 
 
