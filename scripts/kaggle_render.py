@@ -121,13 +121,16 @@ import json, os, sys, base64, subprocess, traceback
 def pipi(*pkgs):
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *pkgs])
 
-# LTXPipeline lives in recent diffusers; install video IO deps too.
-# Pin torch 2.4.1: its CUDA build still includes kernels for BOTH the older
-# Kaggle P100 (sm_60) and the T4 (sm_75). Newer torch drops Pascal, which caused
-# "no kernel image available for execution on the device" on a P100.
-pipi("torch==2.4.1", "torchvision==0.19.1",
-     "diffusers>=0.32.0", "transformers>=4.44.0", "accelerate",
-     "sentencepiece", "imageio", "imageio-ffmpeg")
+# Kaggle ships a torch built for its OWN GPUs (both P100 sm_60 and T4 sm_75).
+# The trap: a plain `pip install -U diffusers ...` can UPGRADE torch to a newer
+# wheel that dropped Pascal -> "no kernel image available" on a P100. So pin
+# torch to the already-installed version (no heavy reinstall — just stops -U
+# from bumping it).
+import torch as _t
+_TVER = _t.__version__.split("+")[0]
+print("Kaggle torch:", _t.__version__)
+pipi("-U", "diffusers>=0.32.0", "transformers>=4.44.0", "accelerate",
+     "sentencepiece", "imageio", "imageio-ffmpeg", f"torch=={_TVER}")
 
 import torch
 from diffusers import LTXPipeline
@@ -248,15 +251,26 @@ def render(mp3_path):
     else:
         print("Kernel timed out — pulling whatever rendered.")
 
-    # Pull outputs (clips land in OUT_DIR).
+    # Pull outputs (clips + the kernel's own log land in OUT_DIR).
     o = _kaggle("kernels", "output", slug, "-p", str(OUT_DIR))
     print(o.stdout.strip()); print(o.stderr.strip())
+
+    # Print the kernel's log so a GPU-side failure is visible HERE (not hidden
+    # on Kaggle). This is what tells us WHY a render produced no clips.
+    for lg in sorted(OUT_DIR.glob("*.log")):
+        try:
+            txt = lg.read_text(errors="ignore")
+            print(f"\n----- Kaggle kernel log: {lg.name} (tail) -----")
+            print(txt[-3500:])
+            print("----- end kernel log -----\n")
+        except Exception:
+            pass
 
     clips = sorted(OUT_DIR.glob("clip_*.mp4"))
     print(f"Retrieved {len(clips)} AI clip(s).")
     rep = OUT_DIR / "render_report.json"
     if rep.exists():
-        print("Render report:", rep.read_text()[:800])
+        print("Render report:", rep.read_text()[:1200])
     return len(clips) > 0
 
 
