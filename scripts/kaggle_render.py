@@ -125,10 +125,12 @@ def pipi(*pkgs):
 # "no kernel image available for execution on the device" on a P100. torch 2.4.1
 # (cu121) ships kernels for sm_60 AND sm_75 (T4), so it runs on either Kaggle GPU.
 # ARCH_LIST printed below is the proof that sm_60 is in the build.
-# transformers 5.x broke diffusers' LTX import (proven: TRANSFORMERS 5.12.1 ->
-# `from transformers import T5EncoderModel` fails). Cap below 5 so pip resolves a
-# compatible 4.x + diffusers pair. torch 2.4.1 confirmed to run on the P100.
-pipi("-U", "torch==2.4.1",
+# Proven, layer by layer:
+#  - Kaggle's default torch lacks P100/sm_60 kernels -> pin torch==2.4.1 (has sm_60).
+#  - torchvision MUST match torch or you get "operator torchvision::nms does not
+#    exist" (ABI mismatch) -> torchvision==0.19.1 pairs with torch 2.4.1.
+#  - transformers 5.x breaks diffusers' LTX T5 import -> cap <5.
+pipi("-U", "torch==2.4.1", "torchvision==0.19.1",
      "diffusers>=0.32.0,<0.40", "transformers>=4.44.0,<5", "accelerate",
      "sentencepiece", "imageio", "imageio-ffmpeg")
 
