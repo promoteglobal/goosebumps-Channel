@@ -26,16 +26,30 @@ sys.path.insert(0, str(Path(__file__).parent))
 from create_video import find_blueprint, get_duration, get_cut_points
 
 FPS = 24
-# Short clips that LOOP to fill their scene = cheap on a T4 but still real motion.
-NUM_FRAMES = int(os.environ.get("AI_NUM_FRAMES", "121"))   # ~5s @24fps (must be 8k+1)
-AI_W       = int(os.environ.get("AI_W", "704"))            # both divisible by 32
-AI_H       = int(os.environ.get("AI_H", "448"))
-AI_STEPS   = int(os.environ.get("AI_STEPS", "25"))         # LTX sweet spot; ~17% faster than 30
-MAX_CLIPS  = int(os.environ.get("AI_MAX_CLIPS", "40"))     # bound GPU time/quota
+# Path B = NO LOOPS: each scene gets its own unique clip rendered to the scene's
+# length (no repeating). Scenes are short (~AI_SCENE_SECS) so clips stay short =
+# fewer AI artifacts AND no looping. Higher resolution than the looped prototype
+# for more clarity (832x480 upscales to 1080p far cleaner than 704x448).
+AI_SCENE_SECS = float(os.environ.get("AI_SCENE_SECS", "6.5"))
+AI_W       = int(os.environ.get("AI_W", "832"))            # both divisible by 32
+AI_H       = int(os.environ.get("AI_H", "480"))
+AI_STEPS   = int(os.environ.get("AI_STEPS", "25"))         # LTX sweet spot
+MAX_CLIPS  = int(os.environ.get("AI_MAX_CLIPS", "60"))     # allow more short scenes
 POLL_SECS  = 30
-# Measured on a Kaggle P100: ~4.2 min/clip at full settings + ~5 min model load.
-# 19 clips ~= 70-85 min, so allow generous margin.
-TIMEOUT_MIN= int(os.environ.get("AI_TIMEOUT_MIN", "150"))
+# No-loop renders the WHOLE song length of unique video, so it is long: at
+# 832x480 on a P100, budget several hours. The smoke probe measures the real
+# per-clip time before any full run (see [[feedback-no-guessing-expensive-tests]]).
+TIMEOUT_MIN= int(os.environ.get("AI_TIMEOUT_MIN", "330"))
+
+
+def frames_for(secs):
+    """Frame count covering `secs` (plus a small margin so create_video can trim
+    cleanly with NO loop), rounded up to LTX's required 8*k+1."""
+    f = int(round((secs + 0.5) * FPS))
+    while (f - 1) % 8 != 0:
+        f += 1
+    return max(25, f)
+
 
 OUT_DIR = Path("output/ai_clips")
 
@@ -53,16 +67,19 @@ def _section_snippets(bp, cuts):
 
 
 def build_video_prompts(bp, cuts, genre, title):
-    """Build ONE continuous cinematic STORY across the scenes: Claude first invents
-    a single consistent world (a recurring character + setting + film style), then
-    writes the scenes as a connected story arc following the song's emotional
-    journey. The shared 'world' string is appended to every shot so independent
-    AI clips feel like one short film, not random vignettes. Needs ANTHROPIC_API_KEY;
-    falls back to mood prompts if unavailable."""
+    """Direct a CINEMATIC MINI-MOVIE across the scenes. Claude casts ONE recurring
+    OTHERWORLDLY protagonist (a surreal being — so AI's anatomy/motion glitches read
+    as intentional 'ethereal', not 'broken'), writes an emotional story arc that
+    interprets the song, designs shots that avoid realistic human locomotion (camera
+    moves, not bodies) and save AI-strong spectacle (water/fire/auroras/cosmic light)
+    for the frisson PEAK. The shared 'world' is appended to every shot for continuity.
+    Needs ANTHROPIC_API_KEY; falls back to mood prompts if unavailable."""
     n = len(cuts) - 1
     snippets = _section_snippets(bp, cuts)
     instrumental = bp.get("instrumental", not any(snippets))
     key = os.environ.get("ANTHROPIC_API_KEY", "")
+    score = bp.get("frisson_score", "")
+    peak  = max(1, round(0.62 * n))   # golden-ratio frisson peak (~62% through)
 
     if key and n >= 1:
         try:
@@ -72,28 +89,41 @@ def build_video_prompts(bp, cuts, genre, title):
             lines = "\n".join(
                 f"{i}: {snippets[i] or '(instrumental / no words here)'}" for i in range(n))
             prompt = (
-                f"You are a music-video director creating ONE continuous cinematic STORY "
-                f"for a song, told across {n} sequential shots.\n\n"
-                f"Song: '{title}' ({genre})\n"
-                f"Full lyrics (for the real meaning and emotional arc):\n{full}\n\n"
-                f"What is sung in each of the {n} shots, in order:\n{lines}\n\n"
-                f"FIRST invent a SINGLE consistent visual world for the whole video:\n"
-                f"- ONE recurring main character (specific: age, clothing, distinguishing "
-                f"features) — the same person in every shot\n"
-                f"- ONE coherent location/setting and time period\n"
-                f"- ONE consistent film style (camera, film stock/color grade, lighting, mood)\n"
-                f"This world is IDENTICAL in every shot so it reads as one story.\n\n"
-                f"THEN write {n} shots that PROGRESS AS A STORY following the song's "
-                f"emotional arc — setup, rising tension, the peak, resolution. Each shot "
-                f"continues from the previous (same character, evolving situation). Match the "
-                f"EMOTIONAL MEANING of the lyrics in that shot, NOT the literal objects "
-                f"(e.g. 'dont close the door' = being left behind -> the character alone at a "
-                f"rain-streaked window, not a closing door). Each shot: subject + action + a "
-                f"slow gentle camera move. NO on-screen text, words, captions or logos.\n\n"
+                f"You are the DIRECTOR of a cinematic music video — a mini-movie — for this "
+                f"song. Tell ONE emotional STORY across {n} sequential shots that interprets "
+                f"the song's meaning and amplifies its goosebumps (frisson).\n\n"
+                f"Song: '{title}' ({genre}). Frisson score: {score}.\n"
+                f"The emotional PEAK lands around shot {peak} of {n} — save the most "
+                f"breathtaking, awe-inducing visual for there (and the shots near it).\n"
+                f"Full lyrics (for the real meaning and arc):\n{full}\n\n"
+                f"What is sung in each shot, in order:\n{lines}\n\n"
+                f"CAST A PROTAGONIST the audience can FEEL for — a single recurring being on "
+                f"a journey (longing, loss, struggle, hope, transcendence). Give it a clear "
+                f"emotional arc with stakes.\n\n"
+                f"CRITICAL — design to flatter AI video's strengths and hide its weaknesses:\n"
+                f"- Make the protagonist OTHERWORLDLY / surreal — a luminous spirit, a lone "
+                f"alien wanderer, a mythic figure — NOT an ordinary realistic human. AI "
+                f"distorts real human anatomy and walking; on a surreal being those quirks "
+                f"read as INTENTIONAL and ethereal.\n"
+                f"- AVOID realistic human locomotion (no walking/running/complex hand gestures). "
+                f"Favor the being STILL: standing, floating, gazing, slowly reaching, as a "
+                f"silhouette, backlit, seen from behind, in extreme close-up (face/eyes), or "
+                f"small within a vast world. Let the CAMERA move (slow push-in, drift, aerial, "
+                f"orbit), not the body.\n"
+                f"- Use what AI renders beautifully — oceans, water, fire, embers, smoke, mist, "
+                f"rain, storms, clouds, auroras, dust, cosmic light, glowing particles — as the "
+                f"WORLD, and especially at the PEAK to spike the chills.\n"
+                f"- Embrace a dreamlike, surreal, otherworldly look so any imperfection reads "
+                f"as style.\n\n"
+                f"Keep ONE consistent protagonist + world + film style across ALL shots. Each "
+                f"shot: the being + a slow camera move + atmospheric phenomena, matching the "
+                f"EMOTIONAL meaning of that shot's lyric (not literal objects). NO on-screen "
+                f"text, words, captions or logos.\n\n"
                 f"Reply with ONLY JSON (no markdown):\n"
-                f'{{"world": "<one detailed sentence: the SAME character + setting + film '
-                f'style to reuse in every shot>", "shots": ["<shot 1>", ... exactly {n} items]}}')
-            msg = client.messages.create(model="claude-opus-4-8", max_tokens=3000,
+                f'{{"concept": "<one-line logline>", "world": "<one detailed sentence: the SAME '
+                f'protagonist + world + film style to reuse in every shot>", "shots": '
+                f'["<shot 1>", ... exactly {n} items]}}')
+            msg = client.messages.create(model="claude-opus-4-8", max_tokens=4000,
                                          messages=[{"role": "user", "content": prompt}])
             raw = next((b.text for b in msg.content if b.type == "text"), "").strip()
             raw = raw.replace("```json", "").replace("```", "").strip()
@@ -101,19 +131,22 @@ def build_video_prompts(bp, cuts, genre, title):
             world = str(data.get("world", "")).strip()
             shots = data.get("shots") or []
             if isinstance(shots, list) and len(shots) >= n:
+                print(f"STORY concept: {str(data.get('concept',''))[:160]}")
                 prompts = []
                 for i in range(n):
                     shot = str(shots[i]).strip()
-                    prompts.append(f"{shot}. {world}. No text or captions." if world else shot)
-                print(f"Built a {n}-shot STORY with a consistent world "
-                      f"({'instrumental' if instrumental else 'vocal'}).")
+                    prompts.append(
+                        f"{shot}. {world}. Surreal otherworldly cinematic film, no text."
+                        if world else shot)
+                print(f"Built a {n}-shot MINI-MOVIE with an otherworldly protagonist "
+                      f"(peak ~shot {peak}, {'instrumental' if instrumental else 'vocal'}).")
                 return prompts
         except Exception as e:
             print(f"Story-prompt generation failed ({e}) — using mood fallback")
 
-    # Fallback: simple mood prompt from the title for every scene.
-    base = (f"cinematic atmospheric {genre} mood, evocative landscape, soft volumetric "
-            f"light, slow drifting camera, inspired by '{title}'")
+    # Fallback: surreal otherworldly mood prompt for every scene.
+    base = (f"a lone luminous otherworldly figure in a vast surreal {genre} dreamscape, "
+            f"glowing mist and cosmic light, slow drifting camera, ethereal and cinematic")
     return [base for _ in range(n)]
 
 
@@ -218,27 +251,32 @@ def render(mp3_path):
     title = bp.get("title") or mp3_path.stem
     dur   = get_duration(mp3_path)
 
+    # NO-LOOP scene grid: even scenes of ~AI_SCENE_SECS each; each clip is rendered
+    # a hair longer than its scene so create_video trims it with no repeat. All
+    # scenes equal length -> one uniform frame count (simpler, predictable kernel).
+    n = max(8, min(MAX_CLIPS, round(dur / AI_SCENE_SECS)))
+    scene_len = dur / n
+    nframes, nsteps = frames_for(scene_len), AI_STEPS
+    cuts = [round(dur * i / n, 3) for i in range(n)] + [float(dur)]
+
     smoke = os.environ.get("AI_SMOKE", "").lower() in ("1", "true", "yes")
     if smoke:
-        # ~10-min probe: render 2 clips at FULL settings (so we measure the real
-        # per-clip GPU time before committing to a 19-clip run) + GPU diagnostics.
-        # Skips analysis + Claude. The kernel prints "[i/n] OK" with timestamps,
-        # so the marginal per-clip time = t(clip2) - t(clip1).
-        cuts = [0.0, dur / 2, dur] if dur > 4 else [0.0, dur]
-        prompts = ["a calm cinematic landscape at dawn, slow gentle camera drift",
-                   "a lone figure on a rain-streaked street at dusk, slow push in"][:len(cuts) - 1]
-        nframes, nsteps = NUM_FRAMES, AI_STEPS
-        print("SMOKE/TIMING: 2 clips at FULL settings, skipping analysis + Claude.")
+        # ~12-min probe: render just 2 clips at the SAME resolution/frames/steps as
+        # the full run, so we measure the real per-clip time (and confirm no OOM at
+        # this resolution) BEFORE committing to a multi-hour render. Skips Claude.
+        cuts = [0.0, scene_len, min(2 * scene_len, dur)]
+        prompts = [
+            "a lone luminous spirit standing still in a vast surreal dreamscape, glowing "
+            "mist, slow camera push-in, ethereal otherworldly cinematic film, no text",
+            "an otherworldly figure silhouetted against a cosmic aurora over a dark ocean, "
+            "drifting embers, slow aerial drift, surreal cinematic film, no text"]
+        print(f"SMOKE/TIMING: 2 clips at {AI_W}x{AI_H}, {nframes}f/{nsteps}steps "
+              f"(full-run settings); skipping Claude.")
     else:
-        cuts = get_cut_points(mp3_path, dur)
-        # Cap scene count to bound GPU time/quota (re-grid evenly if over the cap).
-        if len(cuts) - 1 > MAX_CLIPS:
-            n = MAX_CLIPS
-            cuts = [round(dur * i / n, 3) for i in range(n)] + [float(dur)]
         prompts = build_video_prompts(bp, cuts, genre, title)
-        nframes, nsteps = NUM_FRAMES, AI_STEPS
     n = len(cuts) - 1
-    print(f"AI render: {n} scene(s) over {dur:.0f}s for '{title}' ({genre})")
+    print(f"AI render (NO-LOOP): {n} scene(s) ~{scene_len:.1f}s each over {dur:.0f}s, "
+          f"{AI_W}x{AI_H} {nframes}f/{nsteps}steps for '{title}' ({genre})")
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     # Write cuts FIRST so create_video can align even on a partial render.

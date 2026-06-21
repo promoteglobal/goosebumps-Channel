@@ -12,13 +12,20 @@ on:
         description: 'MP3 path e.g. blues/Blues 9679.mp3'
         required: true
       smoke:
-        description: 'Smoke test? (true = ~10-min GPU probe: 1 clip, no analysis/post)'
+        description: 'Smoke test? (true = ~12-min GPU probe: 2 clips, no post)'
+        required: false
+        default: 'false'
+      analyze:
+        description: 'Run all-in-one structure analysis? (AI no-loop path does not need it)'
         required: false
         default: 'false'
 
 jobs:
   ai-video-test:
     runs-on: ubuntu-latest
+    # No-loop renders the whole song length of unique video, so the Kaggle render
+    # can take several hours; allow the job to wait (hosted-runner hard cap is 6h).
+    timeout-minutes: 350
     permissions:
       contents: read
     steps:
@@ -71,7 +78,7 @@ jobs:
           key: ${{ runner.os }}-allin1-cache-v1
 
       - name: Analyze structure with all-in-one (optional — for scene cuts)
-        if: ${{ github.event.inputs.smoke != 'true' }}
+        if: ${{ github.event.inputs.analyze == 'true' }}
         continue-on-error: true
         timeout-minutes: 35
         run: |
