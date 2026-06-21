@@ -30,10 +30,12 @@ FPS = 24
 NUM_FRAMES = int(os.environ.get("AI_NUM_FRAMES", "121"))   # ~5s @24fps (must be 8k+1)
 AI_W       = int(os.environ.get("AI_W", "704"))            # both divisible by 32
 AI_H       = int(os.environ.get("AI_H", "448"))
-AI_STEPS   = int(os.environ.get("AI_STEPS", "30"))
+AI_STEPS   = int(os.environ.get("AI_STEPS", "25"))         # LTX sweet spot; ~17% faster than 30
 MAX_CLIPS  = int(os.environ.get("AI_MAX_CLIPS", "40"))     # bound GPU time/quota
 POLL_SECS  = 30
-TIMEOUT_MIN= int(os.environ.get("AI_TIMEOUT_MIN", "110"))
+# Measured on a Kaggle P100: ~4.2 min/clip at full settings + ~5 min model load.
+# 19 clips ~= 70-85 min, so allow generous margin.
+TIMEOUT_MIN= int(os.environ.get("AI_TIMEOUT_MIN", "150"))
 
 OUT_DIR = Path("output/ai_clips")
 
