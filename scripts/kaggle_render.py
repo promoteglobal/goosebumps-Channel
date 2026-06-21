@@ -154,10 +154,15 @@ def _kaggle(*args, **kw):
 
 def render(mp3_path):
     user = os.environ.get("KAGGLE_USERNAME", "").strip()
-    key  = os.environ.get("KAGGLE_KEY", "").strip()
-    if not user or not key:
-        print("No KAGGLE_USERNAME / KAGGLE_KEY — skipping AI render (stock fallback).")
+    # The current Kaggle CLI authenticates with a single KAGGLE_API_TOKEN (the
+    # "KGAT…" token from the settings UI), NOT the legacy username/key pair.
+    # Accept either secret name and expose it the way the CLI expects.
+    token = (os.environ.get("KAGGLE_API_TOKEN", "").strip()
+             or os.environ.get("KAGGLE_KEY", "").strip())
+    if not user or not token:
+        print("No KAGGLE_USERNAME / token — skipping AI render (stock fallback).")
         return False
+    os.environ["KAGGLE_API_TOKEN"] = token
 
     mp3_path = Path(mp3_path)
     if not mp3_path.exists():

@@ -643,9 +643,9 @@ def create_video(mp3_path, output_dir):
     ai_clips = None
     ai_mode  = False
     if ai_dir:
-        ac, acuts = load_ai_clips(ai_dir, dur)
-        if ac and acuts and len(acuts) >= 3:
-            cuts, ai_clips, ai_mode = acuts, ac, True
+        ai_c, acuts = load_ai_clips(ai_dir, dur)
+        if ai_c and acuts and len(acuts) >= 3:
+            cuts, ai_clips, ai_mode = acuts, ai_c, True
 
     seg_durs = [cuts[i+1] - cuts[i] for i in range(len(cuts) - 1)]
     n_segs   = len(seg_durs)
