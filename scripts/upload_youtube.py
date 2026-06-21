@@ -18,6 +18,7 @@ PLAYLISTS = {
     "tango":         "PL7e9dvJK1b-AxqPtnCb1XNOjwCRFSEHPx",
     "rock":          "PL7e9dvJK1b-DwFGqvE81PMqRDb_05f0hi",
     "rnb":           "PL7e9dvJK1b-DNO1bFVwdBNguwWtkP_Vnm",
+    "rb":            "PL7e9dvJK1b-DNO1bFVwdBNguwWtkP_Vnm",   # R&B alias (folder "rb")
     "reggae":        "PL7e9dvJK1b-DAIenfF6X2KfW6kZbdSajG",
     "nordicfolk":    "PL7e9dvJK1b-D0gDQgK4ypZvsOl_9vYTZC",
     "neosoul":       "PL7e9dvJK1b-D-tba90c0A7_50LYcvdIek",
@@ -39,6 +40,7 @@ PLAYLISTS = {
     "celtic":        "PL7e9dvJK1b-C_S0ViL6uS_S9p_JUKz7TK",
     "bossanova":     "PL7e9dvJK1b-C4oc6qBCFEiE_q9enMBoqT",
     "dangdut":       "PL7e9dvJK1b-BRpXwXpAu4AcnDKRgh4N5F",
+    "dangdutkoplo":  "PL7e9dvJK1b-BRpXwXpAu4AcnDKRgh4N5F",  # koplo -> dangdut playlist
     "bluegrass":     "PL7e9dvJK1b-Dof1pxAHfTPn_OQz_J_5T9"
 }
 
