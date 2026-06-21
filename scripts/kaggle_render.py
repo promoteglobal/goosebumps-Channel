@@ -139,6 +139,14 @@ try:
 except Exception as _e:
     import traceback; print("GPU_DIAG_FAIL", _e); traceback.print_exc()
 
+import transformers, diffusers
+print("TRANSFORMERS", transformers.__version__, "| DIFFUSERS", diffusers.__version__)
+try:
+    from transformers import T5EncoderModel  # the dep diffusers LTX needs
+    print("T5_IMPORT_OK")
+except Exception as _e:
+    import traceback; print("T5_IMPORT_FAIL:", repr(_e)); traceback.print_exc()
+
 from diffusers import LTXPipeline
 from diffusers.utils import export_to_video
 
@@ -272,11 +280,19 @@ def render(mp3_path):
 
     # Print the kernel's log so a GPU-side failure is visible HERE (not hidden
     # on Kaggle). This is what tells us WHY a render produced no clips.
+    keys = ("TORCH", "ARCH_LIST", "DEVICE", "GPU_OP", "GPU_DIAG", "TRANSFORMERS",
+            "DIFFUSERS", "T5_IMPORT", "RENDER_DONE", "Error", "error", "FAIL",
+            "ModuleNotFound", "ImportError")
     for lg in sorted(OUT_DIR.glob("*.log")):
         try:
             txt = lg.read_text(errors="ignore")
+            hits = [ln for ln in txt.splitlines() if any(k in ln for k in keys)]
+            if hits:
+                print(f"\n----- key diagnostic lines from {lg.name} -----")
+                for h in hits[-60:]:
+                    print(h[:500])
             print(f"\n----- Kaggle kernel log: {lg.name} (tail) -----")
-            print(txt[-3500:])
+            print(txt[-6000:])
             print("----- end kernel log -----\n")
         except Exception:
             pass
