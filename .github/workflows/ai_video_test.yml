@@ -1,0 +1,102 @@
+name: AI Video Test (Kaggle GPU)
+
+# ISOLATED prototype: renders real AI VIDEO (LTX-Video) on a free Kaggle GPU,
+# one clip per scene, then builds + uploads the video as UNLISTED so nothing
+# hits the channel feed. Does NOT touch the normal posting pipeline. If the
+# Kaggle render fails for any reason, create_video falls back to stock footage.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mp3_filename:
+        description: 'MP3 path e.g. blues/Blues 9679.mp3'
+        required: true
+
+jobs:
+  ai-video-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install kaggle
+          pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
+          pip install librosa soundfile
+          pip install anthropic
+
+      - name: Install FFmpeg (static build with drawtext) + fonts
+        run: |
+          set -e
+          if curl -fsSL -o /tmp/ffmpeg.tar.xz https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz; then
+            mkdir -p /tmp/ffx
+            tar -xf /tmp/ffmpeg.tar.xz -C /tmp/ffx
+            sudo cp "$(find /tmp/ffx -type f -name ffmpeg  | head -1)" /usr/local/bin/ffmpeg
+            sudo cp "$(find /tmp/ffx -type f -name ffprobe | head -1)" /usr/local/bin/ffprobe
+            sudo chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe
+          else
+            sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+          fi
+          if ! ffmpeg -hide_banner -filters 2>/dev/null | grep -q drawtext; then
+            sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+          fi
+          if [ ! -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf ]; then
+            sudo apt-get install -y --no-install-recommends fonts-dejavu-core
+          fi
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk fonts-noto-core || true
+
+      - name: Cache all-in-one downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/torch
+            ~/.cache/huggingface
+            ~/.cache/allin1
+          key: ${{ runner.os }}-allin1-cache-v1
+
+      - name: Analyze structure with all-in-one (optional — for scene cuts)
+        continue-on-error: true
+        timeout-minutes: 35
+        run: |
+          python -m venv /tmp/ai
+          /tmp/ai/bin/pip install --upgrade pip setuptools wheel
+          /tmp/ai/bin/pip install torch==2.1.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cpu
+          /tmp/ai/bin/pip install "natten==0.17.1+torch210cpu" -f https://shi-labs.com/natten/wheels --trusted-host shi-labs.com || /tmp/ai/bin/pip install natten==0.17.1
+          /tmp/ai/bin/pip install allin1
+          /tmp/ai/bin/pip install "cython<3"
+          /tmp/ai/bin/pip install "madmom @ git+https://github.com/CPJKU/madmom.git"
+          /tmp/ai/bin/pip install "numpy==1.26.4"
+          /tmp/ai/bin/python scripts/analyze_phrases.py "music/${{ github.event.inputs.mp3_filename }}" phrases.json
+
+      - name: Render AI video clips on Kaggle GPU
+        env:
+          KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/kaggle_render.py "music/${{ github.event.inputs.mp3_filename }}"
+
+      - name: Create video (AI clips, stock fallback)
+        env:
+          AI_CLIPS_DIR: output/ai_clips
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/create_video.py "music/${{ github.event.inputs.mp3_filename }}"
+
+      - name: Upload to YouTube (UNLISTED test)
+        env:
+          YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+          YT_PRIVACY: unlisted
+        run: python scripts/upload_youtube.py

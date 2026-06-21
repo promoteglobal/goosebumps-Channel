@@ -4,3 +4,5 @@ _gb_local_songs/
 client_secrets.json
 youtube_token.json
 music/download*.json
+
+__pycache__/

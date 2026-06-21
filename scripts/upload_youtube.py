@@ -203,12 +203,18 @@ def upload_video(youtube, state_path):
         "mental wellness", "music science", "emotional music"
     ]
 
+    # YT_PRIVACY lets a TEST run post unlisted (not public) so prototype videos
+    # never hit the channel feed or playlists. Defaults to public for normal runs.
+    privacy = os.environ.get("YT_PRIVACY", "public").lower().strip()
+    if privacy not in ("public", "unlisted", "private"):
+        privacy = "public"
+
     body = {
         "snippet": {"title": title, "description": description, "tags": tags, "categoryId": "10"},
         # General-audience music: "not made for kids" (COPPA) keeps comments,
         # notifications, and personalized ads on. This is NOT an age restriction
         # and does not mark the content as inappropriate.
-        "status": {"privacyStatus": "public", "selfDeclaredMadeForKids": False},
+        "status": {"privacyStatus": privacy, "selfDeclaredMadeForKids": False},
     }
 
     media = MediaFileUpload(video_path, mimetype="video/mp4", resumable=True)
@@ -221,11 +227,14 @@ def upload_video(youtube, state_path):
             print(f"Uploading: {int(status.progress() * 100)}%")
 
     video_id = response["id"]
-    print(f"Uploaded: https://youtube.com/watch?v={video_id}")
+    print(f"Uploaded ({privacy}): https://youtube.com/watch?v={video_id}")
 
-    playlist_id = get_playlist_id(bp, mp3_path)
-    if playlist_id:
-        add_to_playlist(youtube, video_id, playlist_id)
+    # Only add to the public playlist for real (public) posts — keep test
+    # (unlisted) videos out of the playlists.
+    if privacy == "public":
+        playlist_id = get_playlist_id(bp, mp3_path)
+        if playlist_id:
+            add_to_playlist(youtube, video_id, playlist_id)
 
     uploaded_path = Path(str(state_path).replace("_state.json", "_state.uploaded"))
     uploaded_path.touch()

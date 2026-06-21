@@ -570,6 +570,39 @@ def get_section_clips(queries, pexels_key, pixabay_key, out_dir, ts, seg_durs, f
           f"({src_count.get('Pexels',0)} Pexels + {src_count.get('Pixabay',0)} Pixabay)")
     return clips
 
+def load_ai_clips(ai_dir, dur):
+    """If a Kaggle AI render produced clips, return ([(path, clip_dur), ...] aligned
+    to the scenes in cuts.json, scene_cuts). Gaps (a clip that failed to render) are
+    filled by reusing a neighbouring clip. Returns (None, None) if no clips exist,
+    so create_video falls back to stock footage."""
+    ai_dir = Path(ai_dir)
+    cuts_f = ai_dir / "cuts.json"
+    if not cuts_f.exists():
+        return None, None
+    try:
+        cuts = [float(x) for x in json.load(open(cuts_f, encoding="utf-8"))]
+    except Exception:
+        return None, None
+    n = len(cuts) - 1
+    clips = []
+    for i in range(n):
+        p = ai_dir / f"clip_{i:03d}.mp4"
+        if p.exists() and p.stat().st_size > 2000:
+            try:
+                clips.append((p, get_duration(p)))
+            except Exception:
+                clips.append(None)
+        else:
+            clips.append(None)
+    good = [c for c in clips if c]
+    if not good:
+        return None, None
+    clips = [c if c else good[i % len(good)] for i, c in enumerate(clips)]
+    print(f"AI video: {len(good)}/{n} scenes rendered on Kaggle GPU "
+          f"(gaps filled by reuse).")
+    return clips, cuts
+
+
 def create_video(mp3_path, output_dir):
     mp3_path = Path(mp3_path)
     bp = find_blueprint(mp3_path)
@@ -602,6 +635,18 @@ def create_video(mp3_path, output_dir):
 
     # Analyze the audio for downbeat-aligned scene cut points.
     cuts     = get_cut_points(mp3_path, dur)
+
+    # AI-video mode: if a Kaggle GPU render produced clips, use those exact scene
+    # cuts + one AI clip per scene (looped at normal speed to fill the scene =
+    # real motion, no slow-mo freeze). Falls back to stock on any gap.
+    ai_dir   = os.environ.get("AI_CLIPS_DIR", "")
+    ai_clips = None
+    ai_mode  = False
+    if ai_dir:
+        ac, acuts = load_ai_clips(ai_dir, dur)
+        if ac and acuts and len(acuts) >= 3:
+            cuts, ai_clips, ai_mode = acuts, ac, True
+
     seg_durs = [cuts[i+1] - cuts[i] for i in range(len(cuts) - 1)]
     n_segs   = len(seg_durs)
     longest_scene = max(seg_durs) if seg_durs else dur
@@ -612,7 +657,11 @@ def create_video(mp3_path, output_dir):
     pixabay_key = os.environ.get("PIXABAY_API_KEY", "")
     genre_query = PEXELS_QUERIES.get(genre_folder, PEXELS_QUERIES["default"])
     bg_clips, matched = [], False
-    if pexels_key or pixabay_key:
+    if ai_mode and ai_clips:
+        # AI clips already aligned one-per-scene in story order.
+        bg_clips, matched = ai_clips, True
+        print(f"Using AI-generated video for {n_segs} scenes.")
+    elif pexels_key or pixabay_key:
         # Phase B: lyric-matched footage — one clip per section from the words
         # sung there (or the title/mood for instrumentals). Falls back to the
         # single genre pool if unavailable.
@@ -695,6 +744,10 @@ def create_video(mp3_path, output_dir):
 
         cmd = ["ffmpeg", "-y"]
         for i in range(n_segs):
+            # AI clips are short by design: loop them so they fill a longer scene
+            # at NORMAL speed (real motion). Stock clips are used as-is.
+            if ai_mode:
+                cmd += ["-stream_loop", "-1"]
             cmd += ["-i", str(assign[i])]
         cmd += ["-i", str(mp3_path)]
 
@@ -704,8 +757,9 @@ def create_video(mp3_path, output_dir):
             cdur = clip_dur.get(assign[i], 0.0)
             base = (f"[{i}:v]scale={WIDTH}:{HEIGHT}:force_original_aspect_ratio=increase,"
                     f"crop={WIDTH}:{HEIGHT},setsar=1")
-            if cdur >= sd + 0.05:
-                # long enough: play at normal speed, trim to the scene length
+            if ai_mode or cdur >= sd + 0.05:
+                # AI: looped input plays at normal speed, trimmed to the scene.
+                # Stock long enough: play at normal speed, trim to the scene length.
                 pre += f"{base},fps={FPS},trim=duration={sd:.3f},setpts=PTS-STARTPTS[v{i}];"
             else:
                 # slightly short: stretch the whole clip to fill the scene (no loop)
@@ -736,8 +790,9 @@ def create_video(mp3_path, output_dir):
             "-movflags","+faststart", str(out)
         ]
 
+    src_label = ("AI video (Kaggle)" if ai_mode else "stock footage") if bg_clips else "gradient"
     print(f"Creating: {out.name} | {genre} | {dur:.1f}s | "
-          f"{f'{n_segs} sections x Pexels' if bg_clips else 'gradient'}")
+          f"{f'{n_segs} scenes x {src_label}' if bg_clips else 'gradient'}")
     r = subprocess.run(cmd, capture_output=True, text=True)
     if r.returncode != 0:
         print("FFmpeg error:"); print(r.stderr[-2000:])
