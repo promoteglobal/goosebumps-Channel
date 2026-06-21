@@ -1,0 +1,85 @@
+{
+  "folder": "blues",
+  "frisson_score": "97",
+  "generated_at": "2026-06-21T10:22:48.453Z",
+  "genre": "Blues",
+  "scientific_analysis": "Blues music activates the dopaminergic reward system through its characteristic tension-resolution cycles, with unexpected harmonic shifts to distant chords (such as bVII or bIII substitutions) triggering predictive coding violations that generate intense chillogenic responses. The golden ratio emotional peak, combined with a 65 BPM tempo entraining cardiac rhythm and a sudden a cappella vocal moment, creates a compounded frisson cascade by simultaneously engaging auditory, limbic, and autonomic nervous system pathways.",
+  "structure": "The track opens in sparse Delta Blues silence before erupting into full electric band sound, establishing a slow 65 BPM heartbeat groove in E Blues with call-and-response interplay between guitar and harmonica. At the golden ratio point (61.8%), the band drops entirely to a single raw, unaccompanied male voice delivering a devastating melismatic cry, followed by an unexpected modulation up a minor third and the sudden entrance of a mournful cello. The track resolves with a long, aching guitar note that finally collapses into a lush IV-chord harmony, providing the cathartic release after sustained tension.",
+  "suno_prompt": "Raw Delta Blues, 65 BPM, electric guitar and harmonica call and response, sudden silence then full band explosion, unexpected bVII chord shift, long bent guitar note resolving into warm harmony, golden ratio a cappella male vocal cry in natural English, sudden key change up minor third, cello entering unexpectedly, emotional peak with overwhelming cathartic resolution, intense authentic Blues, 10/10 intensity",
+  "buffered": false,
+  "lyrics": "Mmm, mmm, mmm I live in my boots by the creek bed Then I heard that whole house shaking Like a man trying to rise from pain Hush now, hold still The room goes dead I hear my blood, I hear that hill Call my name, call my name Call my name, call my name Till the break of dawn Call my name, call my name I, I rise again Call my name, call my name Let the hurt give in",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 0.0,
+      "end": 15.4,
+      "text": "Mmm, mmm, mmm"
+    },
+    {
+      "start": 15.4,
+      "end": 28.3,
+      "text": "I live in my boots by the creek bed"
+    },
+    {
+      "start": 112.7,
+      "end": 116.76,
+      "text": "Then I heard that whole house shaking"
+    },
+    {
+      "start": 116.76,
+      "end": 120.96,
+      "text": "Like a man trying to rise from pain"
+    },
+    {
+      "start": 120.96,
+      "end": 126.12,
+      "text": "Hush now, hold still"
+    },
+    {
+      "start": 126.12,
+      "end": 129.4,
+      "text": "The room goes dead"
+    },
+    {
+      "start": 129.4,
+      "end": 134.38,
+      "text": "I hear my blood, I hear that hill"
+    },
+    {
+      "start": 134.38,
+      "end": 139.64,
+      "text": "Call my name, call my name"
+    },
+    {
+      "start": 195.94,
+      "end": 199.94,
+      "text": "Call my name, call my name"
+    },
+    {
+      "start": 199.94,
+      "end": 203.94,
+      "text": "Till the break of dawn"
+    },
+    {
+      "start": 204.52,
+      "end": 208.0,
+      "text": "Call my name, call my name"
+    },
+    {
+      "start": 208.0,
+      "end": 211.94,
+      "text": "I, I rise again"
+    },
+    {
+      "start": 212.5,
+      "end": 216.48,
+      "text": "Call my name, call my name"
+    },
+    {
+      "start": 216.48,
+      "end": 220.78,
+      "text": "Let the hurt give in"
+    }
+  ],
+  "final_title": "Hill That Calls My Name"
+}
