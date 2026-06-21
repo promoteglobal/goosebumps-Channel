@@ -33,13 +33,13 @@ FPS = 24
 AI_SCENE_SECS = float(os.environ.get("AI_SCENE_SECS", "6.5"))
 AI_W       = int(os.environ.get("AI_W", "832"))            # both divisible by 32
 AI_H       = int(os.environ.get("AI_H", "480"))
-AI_STEPS   = int(os.environ.get("AI_STEPS", "25"))         # LTX sweet spot
+AI_STEPS   = int(os.environ.get("AI_STEPS", "25"))         # full quality (async render = no 6h pressure)
 MAX_CLIPS  = int(os.environ.get("AI_MAX_CLIPS", "60"))     # allow more short scenes
 POLL_SECS  = 30
 # No-loop renders the WHOLE song length of unique video, so it is long: at
 # 832x480 on a P100, budget several hours. The smoke probe measures the real
 # per-clip time before any full run (see [[feedback-no-guessing-expensive-tests]]).
-TIMEOUT_MIN= int(os.environ.get("AI_TIMEOUT_MIN", "330"))
+TIMEOUT_MIN= int(os.environ.get("AI_TIMEOUT_MIN", "345"))
 
 
 def frames_for(secs):
@@ -101,10 +101,15 @@ def build_video_prompts(bp, cuts, genre, title):
                 f"a journey (longing, loss, struggle, hope, transcendence). Give it a clear "
                 f"emotional arc with stakes.\n\n"
                 f"CRITICAL — design to flatter AI video's strengths and hide its weaknesses:\n"
-                f"- Make the protagonist OTHERWORLDLY / surreal — a luminous spirit, a lone "
-                f"alien wanderer, a mythic figure — NOT an ordinary realistic human. AI "
-                f"distorts real human anatomy and walking; on a surreal being those quirks "
-                f"read as INTENTIONAL and ethereal.\n"
+                f"- The protagonist must be CLEARLY NON-HUMAN — an alien or otherworldly being "
+                f"with a distinct, unmistakably inhuman silhouette and features (glowing eyes, "
+                f"unusual skin/light, non-human proportions). It must NEVER read as a deformed "
+                f"or low-quality HUMAN — make its inhuman-ness obvious and intentional, so AI "
+                f"distortions look like the creature's nature, not a glitch.\n"
+                f"- Keep its IDENTITY consistent — the same distinctive silhouette, colour and "
+                f"features in every shot, so viewers always recognise it as ONE character. Any "
+                f"change of form/mood is a deliberate, expressive transformation (ethereal, "
+                f"fierce, sorrowful), still recognisably the same being.\n"
                 f"- AVOID realistic human locomotion (no walking/running/complex hand gestures). "
                 f"Favor the being STILL: standing, floating, gazing, slowly reaching, as a "
                 f"silhouette, backlit, seen from behind, in extreme close-up (face/eyes), or "
@@ -197,6 +202,16 @@ PROMPTS = json.loads(base64.b64decode("__PROMPTS_B64__").decode())
 NUM_FRAMES, W, H, FPS, STEPS = __NUM_FRAMES__, __W__, __H__, __FPS__, __STEPS__
 
 os.makedirs("/kaggle/working", exist_ok=True)
+# meta.json + cuts.json travel WITH the clips in the kernel output, so the
+# decoupled collector can build the video without the original Actions runner.
+META = json.loads(base64.b64decode("__META_B64__").decode())
+CUTS = json.loads(base64.b64decode("__CUTS_B64__").decode())
+with open("/kaggle/working/meta.json", "w") as f:
+    json.dump(META, f)
+with open("/kaggle/working/cuts.json", "w") as f:
+    json.dump(CUTS, f)
+print("RENDER_ID", META.get("render_id"))
+
 report = {"device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
           "n": len(PROMPTS), "results": {}}
 print("DEVICE:", report["device"], "| prompts:", len(PROMPTS))
@@ -242,6 +257,7 @@ def render(mp3_path):
         return False
     os.environ["KAGGLE_API_TOKEN"] = token
 
+    mp3_arg = str(mp3_path)   # repo-relative path the collector re-uses to build
     mp3_path = Path(mp3_path)
     if not mp3_path.exists():
         alt = Path(__file__).parent.parent / mp3_path
@@ -288,9 +304,16 @@ def render(mp3_path):
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
-    b64 = base64.b64encode(json.dumps(prompts).encode()).decode()
+    render_id = os.environ.get("AI_RENDER_ID") or str(int(time.time()))
+    meta_payload = {"render_id": render_id, "mp3": mp3_arg, "n": n,
+                    "w": AI_W, "h": AI_H, "frames": nframes, "steps": nsteps}
+    b64      = base64.b64encode(json.dumps(prompts).encode()).decode()
+    meta_b64 = base64.b64encode(json.dumps(meta_payload).encode()).decode()
+    cuts_b64 = base64.b64encode(json.dumps(cuts).encode()).decode()
     code = (KERNEL_TEMPLATE
             .replace("__PROMPTS_B64__", b64)
+            .replace("__META_B64__", meta_b64)
+            .replace("__CUTS_B64__", cuts_b64)
             .replace("__NUM_FRAMES__", str(nframes))
             .replace("__W__", str(AI_W)).replace("__H__", str(AI_H))
             .replace("__FPS__", str(FPS)).replace("__STEPS__", str(nsteps)))
@@ -304,13 +327,23 @@ def render(mp3_path):
     }
     (work / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
-    print(f"Pushing kernel {slug} …")
+    print(f"Pushing kernel {slug} … (render_id={render_id})")
     r = _kaggle("kernels", "push", "-p", str(work))
     print(r.stdout.strip()); print(r.stderr.strip())
     if r.returncode != 0:
         print("Kaggle push failed — stock fallback."); return False
 
-    # Poll until the kernel finishes.
+    # DECOUPLED kickoff: push and EXIT (no waiting). Kaggle renders for hours on
+    # its own (well under its ~9h session limit); the scheduled collector
+    # (kaggle_collect.py) downloads + builds + posts once the kernel completes.
+    # This is how a multi-hour, full-quality, NO-LOOP render avoids GitHub's 6h
+    # per-job cap — no single job ever waits long.
+    if os.environ.get("AI_KICKOFF", "").lower() in ("1", "true", "yes"):
+        print(f"KICKOFF complete — render_id={render_id} is now rendering on Kaggle. "
+              f"The collector will pick it up when done. Not waiting.")
+        return True
+
+    # Poll until the kernel finishes (sync mode — used by the smoke probe).
     deadline = time.time() + TIMEOUT_MIN * 60
     status = ""
     while time.time() < deadline:

@@ -769,11 +769,14 @@ def create_video(mp3_path, output_dir):
         pre += f"{labels}concat=n={n_segs}:v=1:a=0[cat];[cat]eq=brightness=-0.06[bgv];"
         fc = pre + overlay_chain("bgv")
 
+        # Cap to the scenes' actual coverage (= dur for full renders; shorter only
+        # if the cut grid doesn't span the whole song) so video & audio always match.
+        vid_dur = round(float(cuts[-1]), 3)
         cmd += ["-filter_complex", fc,
                 "-map","[vout]","-map",f"{n_segs}:a",
                 "-c:v","libx264","-preset","veryfast","-crf","23",
                 "-c:a","aac","-b:a","192k",
-                "-t",str(dur),"-pix_fmt","yuv420p",
+                "-t",str(vid_dur),"-pix_fmt","yuv420p",
                 "-movflags","+faststart", str(out)]
     else:
         fc = (
