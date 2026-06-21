@@ -218,12 +218,15 @@ def render(mp3_path):
 
     smoke = os.environ.get("AI_SMOKE", "").lower() in ("1", "true", "yes")
     if smoke:
-        # Cheap ~10-min probe: 1 tiny clip + the GPU diagnostics (ARCH_LIST etc).
-        # Confirms torch/CUDA work on Kaggle's GPU BEFORE spending a full hour.
-        cuts, prompts = [0.0, min(6.0, dur)], [
-            "a calm cinematic landscape at dawn, slow gentle camera drift"]
-        nframes, nsteps = 25, 8
-        print("SMOKE TEST: 1 diagnostic clip, skipping analysis + Claude.")
+        # ~10-min probe: render 2 clips at FULL settings (so we measure the real
+        # per-clip GPU time before committing to a 19-clip run) + GPU diagnostics.
+        # Skips analysis + Claude. The kernel prints "[i/n] OK" with timestamps,
+        # so the marginal per-clip time = t(clip2) - t(clip1).
+        cuts = [0.0, dur / 2, dur] if dur > 4 else [0.0, dur]
+        prompts = ["a calm cinematic landscape at dawn, slow gentle camera drift",
+                   "a lone figure on a rain-streaked street at dusk, slow push in"][:len(cuts) - 1]
+        nframes, nsteps = NUM_FRAMES, AI_STEPS
+        print("SMOKE/TIMING: 2 clips at FULL settings, skipping analysis + Claude.")
     else:
         cuts = get_cut_points(mp3_path, dur)
         # Cap scene count to bound GPU time/quota (re-grid evenly if over the cap).
