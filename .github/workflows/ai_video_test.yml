@@ -11,6 +11,10 @@ on:
       mp3_filename:
         description: 'MP3 path e.g. blues/Blues 9679.mp3'
         required: true
+      smoke:
+        description: 'Smoke test? (true = ~10-min GPU probe: 1 clip, no analysis/post)'
+        required: false
+        default: 'false'
 
 jobs:
   ai-video-test:
@@ -67,6 +71,7 @@ jobs:
           key: ${{ runner.os }}-allin1-cache-v1
 
       - name: Analyze structure with all-in-one (optional — for scene cuts)
+        if: ${{ github.event.inputs.smoke != 'true' }}
         continue-on-error: true
         timeout-minutes: 35
         run: |
@@ -86,9 +91,11 @@ jobs:
           KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_SMOKE: ${{ github.event.inputs.smoke }}
         run: python scripts/kaggle_render.py "music/${{ github.event.inputs.mp3_filename }}"
 
       - name: Create video (AI clips, stock fallback)
+        if: ${{ github.event.inputs.smoke != 'true' }}
         env:
           AI_CLIPS_DIR: output/ai_clips
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
@@ -97,6 +104,7 @@ jobs:
         run: python scripts/create_video.py "music/${{ github.event.inputs.mp3_filename }}"
 
       - name: Upload to YouTube (UNLISTED test)
+        if: ${{ github.event.inputs.smoke != 'true' }}
         env:
           YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
           YT_PRIVACY: unlisted

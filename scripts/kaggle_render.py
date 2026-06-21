@@ -121,18 +121,24 @@ import json, os, sys, base64, subprocess, traceback
 def pipi(*pkgs):
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *pkgs])
 
-# Kaggle ships a torch built for its OWN GPUs (both P100 sm_60 and T4 sm_75).
-# The trap: a plain `pip install -U diffusers ...` can UPGRADE torch to a newer
-# wheel that dropped Pascal -> "no kernel image available" on a P100. So pin
-# torch to the already-installed version (no heavy reinstall — just stops -U
-# from bumping it).
-import torch as _t
-_TVER = _t.__version__.split("+")[0]
-print("Kaggle torch:", _t.__version__)
-pipi("-U", "diffusers>=0.32.0", "transformers>=4.44.0", "accelerate",
-     "sentencepiece", "imageio", "imageio-ffmpeg", f"torch=={_TVER}")
+# PROVEN by kernel log: Kaggle's default torch lacks P100 (sm_60) kernels ->
+# "no kernel image available for execution on the device" on a P100. torch 2.4.1
+# (cu121) ships kernels for sm_60 AND sm_75 (T4), so it runs on either Kaggle GPU.
+# ARCH_LIST printed below is the proof that sm_60 is in the build.
+pipi("-U", "torch==2.4.1",
+     "diffusers>=0.32.0", "transformers>=4.44.0", "accelerate",
+     "sentencepiece", "imageio", "imageio-ffmpeg")
 
 import torch
+print("TORCH", torch.__version__, "| CUDA", torch.version.cuda)
+try:
+    print("ARCH_LIST", torch.cuda.get_arch_list())
+    print("DEVICE", torch.cuda.get_device_name(0))
+    _x = (torch.randn(64, 64, device="cuda") @ torch.randn(64, 64, device="cuda")).sum().item()
+    print("GPU_OP_OK", round(_x, 3))
+except Exception as _e:
+    import traceback; print("GPU_DIAG_FAIL", _e); traceback.print_exc()
+
 from diffusers import LTXPipeline
 from diffusers.utils import export_to_video
 
@@ -194,15 +200,24 @@ def render(mp3_path):
     title = bp.get("title") or mp3_path.stem
     dur   = get_duration(mp3_path)
 
-    cuts = get_cut_points(mp3_path, dur)
-    # Cap scene count to bound GPU time/quota (re-grid evenly if over the cap).
-    if len(cuts) - 1 > MAX_CLIPS:
-        n = MAX_CLIPS
-        cuts = [round(dur * i / n, 3) for i in range(n)] + [float(dur)]
+    smoke = os.environ.get("AI_SMOKE", "").lower() in ("1", "true", "yes")
+    if smoke:
+        # Cheap ~10-min probe: 1 tiny clip + the GPU diagnostics (ARCH_LIST etc).
+        # Confirms torch/CUDA work on Kaggle's GPU BEFORE spending a full hour.
+        cuts, prompts = [0.0, min(6.0, dur)], [
+            "a calm cinematic landscape at dawn, slow gentle camera drift"]
+        nframes, nsteps = 25, 8
+        print("SMOKE TEST: 1 diagnostic clip, skipping analysis + Claude.")
+    else:
+        cuts = get_cut_points(mp3_path, dur)
+        # Cap scene count to bound GPU time/quota (re-grid evenly if over the cap).
+        if len(cuts) - 1 > MAX_CLIPS:
+            n = MAX_CLIPS
+            cuts = [round(dur * i / n, 3) for i in range(n)] + [float(dur)]
+        prompts = build_video_prompts(bp, cuts, genre, title)
+        nframes, nsteps = NUM_FRAMES, AI_STEPS
     n = len(cuts) - 1
-    print(f"AI render: {n} scenes over {dur:.0f}s for '{title}' ({genre})")
-
-    prompts = build_video_prompts(bp, cuts, genre, title)
+    print(f"AI render: {n} scene(s) over {dur:.0f}s for '{title}' ({genre})")
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     # Write cuts FIRST so create_video can align even on a partial render.
@@ -217,9 +232,9 @@ def render(mp3_path):
     b64 = base64.b64encode(json.dumps(prompts).encode()).decode()
     code = (KERNEL_TEMPLATE
             .replace("__PROMPTS_B64__", b64)
-            .replace("__NUM_FRAMES__", str(NUM_FRAMES))
+            .replace("__NUM_FRAMES__", str(nframes))
             .replace("__W__", str(AI_W)).replace("__H__", str(AI_H))
-            .replace("__FPS__", str(FPS)).replace("__STEPS__", str(AI_STEPS)))
+            .replace("__FPS__", str(FPS)).replace("__STEPS__", str(nsteps)))
     (work / "gb_render.py").write_text(code, encoding="utf-8")
     slug = f"{user}/gb-render-test"
     meta = {
