@@ -145,26 +145,28 @@ def norm(s):
 def uploaded_song_names():
     """Normalized names of every video already on the channel — the GUARD so we
     never re-process/re-post an already-published song. None if lookup fails."""
-    try:
-        from google.oauth2.credentials import Credentials
-        from googleapiclient.discovery import build
-        creds = Credentials.from_authorized_user_info(json.loads(os.environ["YOUTUBE_TOKEN"]))
-        yt = build("youtube", "v3", credentials=creds)
-        uploads = yt.channels().list(part="contentDetails", mine=True).execute(
-            )["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
-        names, page = set(), None
-        while True:
-            r = yt.playlistItems().list(part="snippet", playlistId=uploads,
-                                        maxResults=50, pageToken=page).execute()
-            for it in r.get("items", []):
-                names.add(norm(it["snippet"]["title"]))
-            page = r.get("nextPageToken")
-            if not page:
-                break
-        return names
-    except Exception as e:
-        log(f"YouTube lookup failed ({e})")
-        return None
+    for attempt in range(3):
+        try:
+            from google.oauth2.credentials import Credentials
+            from googleapiclient.discovery import build
+            creds = Credentials.from_authorized_user_info(json.loads(os.environ["YOUTUBE_TOKEN"]))
+            yt = build("youtube", "v3", credentials=creds)
+            uploads = yt.channels().list(part="contentDetails", mine=True).execute(
+                )["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+            names, page = set(), None
+            while True:
+                r = yt.playlistItems().list(part="snippet", playlistId=uploads,
+                                            maxResults=50, pageToken=page).execute()
+                for it in r.get("items", []):
+                    names.add(norm(it["snippet"]["title"]))
+                page = r.get("nextPageToken")
+                if not page:
+                    break
+            log(f"YouTube: {len(names)} videos already uploaded.")
+            return names
+        except Exception as e:
+            log(f"YouTube lookup attempt {attempt + 1}/3 failed ({e})")
+    return None
 
 
 def dispatch_upload(rel):
@@ -231,6 +233,7 @@ def main():
     immediate = []   # buffer-off songs -> auto-post once processed
     touched   = []   # stage only what we changed (never sweep in strays)
     for mp3, jp, bp in todo:
+        log(f"Transcribing {mp3.name} with Whisper large-v3 (a few minutes)...")
         lyrics, instrumental, segs = transcribe(mp3, lang_for_genre(mp3.parent.name))
         bp["lyrics"]         = lyrics
         bp["instrumental"]   = instrumental
