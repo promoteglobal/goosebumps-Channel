@@ -51,8 +51,12 @@ def _section_snippets(bp, cuts):
 
 
 def build_video_prompts(bp, cuts, genre, title):
-    """One cinematic text-to-video prompt per scene. Needs ANTHROPIC_API_KEY;
-    falls back to mood prompts from the title if Claude is unavailable."""
+    """Build ONE continuous cinematic STORY across the scenes: Claude first invents
+    a single consistent world (a recurring character + setting + film style), then
+    writes the scenes as a connected story arc following the song's emotional
+    journey. The shared 'world' string is appended to every shot so independent
+    AI clips feel like one short film, not random vignettes. Needs ANTHROPIC_API_KEY;
+    falls back to mood prompts if unavailable."""
     n = len(cuts) - 1
     snippets = _section_snippets(bp, cuts)
     instrumental = bp.get("instrumental", not any(snippets))
@@ -62,38 +66,48 @@ def build_video_prompts(bp, cuts, genre, title):
         try:
             import anthropic
             client = anthropic.Anthropic(api_key=key)
-            if instrumental:
-                ctx = (f"INSTRUMENTAL {genre} track titled '{title}'. "
-                       f"Mood/structure: {(bp.get('structure') or '')[:400]}")
-                ask = (f"Write {n} cinematic AI text-to-video prompts for visuals that "
-                       f"fit the title and mood, varied across the {n} scenes.")
-            else:
-                full  = (bp.get('lyrics') or '')[:1500]
-                lines = "\n".join(f"{i}: {snippets[i] or '(no words here)'}" for i in range(n))
-                ctx = (f"A {genre} song titled '{title}'. Full lyrics (for the REAL "
-                       f"meaning):\n{full}\n\nLyrics sung in each of its {n} scenes:\n{lines}")
-                ask = (f"For EACH of the {n} scenes write ONE cinematic AI text-to-video "
-                       f"prompt for footage matching the EMOTIONAL MEANING of what is sung "
-                       f"there — the feeling and subtext, NOT the literal objects. "
-                       f"Example: 'dont close the door' is about being left -> a lone figure "
-                       f"at a rain-streaked window at dusk, NOT a closing door.")
-            rules = ("Each prompt: one vivid sentence describing subject, action, setting, "
-                     "lighting and a slow gentle camera move (push-in, drift, pan). "
-                     "Photorealistic cinematic footage. NO on-screen text, words, captions "
-                     "or logos. Keep it filmable and coherent. Vary across scenes.")
-            prompt = (f"{ctx}\n\n{ask}\n{rules}\n\nReply with ONLY a JSON array of exactly "
-                      f"{n} strings, no markdown.")
-            msg = client.messages.create(model="claude-opus-4-8", max_tokens=2000,
+            full  = (bp.get('lyrics') or bp.get('structure') or '')[:1800]
+            lines = "\n".join(
+                f"{i}: {snippets[i] or '(instrumental / no words here)'}" for i in range(n))
+            prompt = (
+                f"You are a music-video director creating ONE continuous cinematic STORY "
+                f"for a song, told across {n} sequential shots.\n\n"
+                f"Song: '{title}' ({genre})\n"
+                f"Full lyrics (for the real meaning and emotional arc):\n{full}\n\n"
+                f"What is sung in each of the {n} shots, in order:\n{lines}\n\n"
+                f"FIRST invent a SINGLE consistent visual world for the whole video:\n"
+                f"- ONE recurring main character (specific: age, clothing, distinguishing "
+                f"features) — the same person in every shot\n"
+                f"- ONE coherent location/setting and time period\n"
+                f"- ONE consistent film style (camera, film stock/color grade, lighting, mood)\n"
+                f"This world is IDENTICAL in every shot so it reads as one story.\n\n"
+                f"THEN write {n} shots that PROGRESS AS A STORY following the song's "
+                f"emotional arc — setup, rising tension, the peak, resolution. Each shot "
+                f"continues from the previous (same character, evolving situation). Match the "
+                f"EMOTIONAL MEANING of the lyrics in that shot, NOT the literal objects "
+                f"(e.g. 'dont close the door' = being left behind -> the character alone at a "
+                f"rain-streaked window, not a closing door). Each shot: subject + action + a "
+                f"slow gentle camera move. NO on-screen text, words, captions or logos.\n\n"
+                f"Reply with ONLY JSON (no markdown):\n"
+                f'{{"world": "<one detailed sentence: the SAME character + setting + film '
+                f'style to reuse in every shot>", "shots": ["<shot 1>", ... exactly {n} items]}}')
+            msg = client.messages.create(model="claude-opus-4-8", max_tokens=3000,
                                          messages=[{"role": "user", "content": prompt}])
             raw = next((b.text for b in msg.content if b.type == "text"), "").strip()
             raw = raw.replace("```json", "").replace("```", "").strip()
-            qs = json.loads(raw)
-            if isinstance(qs, list) and len(qs) >= n:
-                print(f"Built {n} cinematic AI-video prompts "
+            data  = json.loads(raw)
+            world = str(data.get("world", "")).strip()
+            shots = data.get("shots") or []
+            if isinstance(shots, list) and len(shots) >= n:
+                prompts = []
+                for i in range(n):
+                    shot = str(shots[i]).strip()
+                    prompts.append(f"{shot}. {world}. No text or captions." if world else shot)
+                print(f"Built a {n}-shot STORY with a consistent world "
                       f"({'instrumental' if instrumental else 'vocal'}).")
-                return [str(q).strip() for q in qs[:n]]
+                return prompts
         except Exception as e:
-            print(f"Prompt generation failed ({e}) — using mood fallback")
+            print(f"Story-prompt generation failed ({e}) — using mood fallback")
 
     # Fallback: simple mood prompt from the title for every scene.
     base = (f"cinematic atmospheric {genre} mood, evocative landscape, soft volumetric "
@@ -108,7 +122,11 @@ def pipi(*pkgs):
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *pkgs])
 
 # LTXPipeline lives in recent diffusers; install video IO deps too.
-pipi("-U", "diffusers>=0.32.0", "transformers>=4.44.0", "accelerate",
+# Pin torch 2.4.1: its CUDA build still includes kernels for BOTH the older
+# Kaggle P100 (sm_60) and the T4 (sm_75). Newer torch drops Pascal, which caused
+# "no kernel image available for execution on the device" on a P100.
+pipi("torch==2.4.1", "torchvision==0.19.1",
+     "diffusers>=0.32.0", "transformers>=4.44.0", "accelerate",
      "sentencepiece", "imageio", "imageio-ffmpeg")
 
 import torch
