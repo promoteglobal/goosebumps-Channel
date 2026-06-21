@@ -1,0 +1,70 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260620_211437_blues.mp4",
+  "mp3_path": "music/blues/Blues 9679.mp3",
+  "blueprint": {
+    "folder": "blues",
+    "frisson_score": "97",
+    "generated_at": "2026-06-20T17:21:05.681Z",
+    "genre": "Blues",
+    "scientific_analysis": "Blues music activates the limbic system and triggers dopaminergic frisson responses through its inherent tension-resolution cycles, particularly when unexpected harmonic deviations from the I-IV-V framework collide with rhythmic anticipation near 65 BPM, synchronizing with resting cardiac rhythm to amplify emotional arousal. The golden ratio emotional peak placement (approximately 61.8% through the track) maximizes listener vulnerability by delivering the key change and new instrument entry precisely when the brain's predictive coding systems are most susceptible to pleasurable violation.",
+    "structure": "The track opens with absolute silence breaking into a full Delta-style band at 65 BPM, establishing a slow-burn 12-bar blues in E major with call-and-response between slide guitar and harmonica building melodic tension over the first third. At the golden ratio point (roughly 3:45 of a 6-minute track), a raw unaccompanied male voice delivers one devastating verse before the entire band re-enters with a sudden key change to G major, featuring an unexpected cello entering the mix for haunting countermelody. A long sustained note on the slide guitar resolves into a lush unexpected shift to a bVI chord (Eb major), creating maximum harmonic surprise before the final cathartic resolution collapses everything back into silence.",
+    "suno_prompt": "Delta Blues, 65 BPM, English vocals, raw male voice, unaccompanied vocal verse, sudden silence to full band explosion, slide guitar and harmonica call and response, unexpected key change from E to G major, distant bVI chord harmonic shift, cello entering at emotional peak, golden ratio climax, long sustained note resolving to harmony, slow burn intensity, cathartic resolution, 10/10 emotional intensity",
+    "buffered": false,
+    "lyrics": "Hmmm, hmmm, hmmm Oh, yeah I walked out deep before dawn Mud on my boots, no help at all Mama's prayer still in my shirt Burned like coal with a cold cut first The river tall with a broken tongue I held my breath till the sun came up Lord, let me go Lord, let me go If I fall today Let mercy hold me close",
+    "instrumental": false,
+    "lyric_segments": [
+      {
+        "start": 0.0,
+        "end": 29.0,
+        "text": "Hmmm, hmmm, hmmm"
+      },
+      {
+        "start": 29.0,
+        "end": 32.0,
+        "text": "Oh, yeah"
+      },
+      {
+        "start": 33.0,
+        "end": 37.0,
+        "text": "I walked out deep before dawn"
+      },
+      {
+        "start": 37.0,
+        "end": 41.0,
+        "text": "Mud on my boots, no help at all"
+      },
+      {
+        "start": 41.0,
+        "end": 45.0,
+        "text": "Mama's prayer still in my shirt"
+      },
+      {
+        "start": 45.0,
+        "end": 49.0,
+        "text": "Burned like coal with a cold cut first"
+      },
+      {
+        "start": 49.0,
+        "end": 53.0,
+        "text": "The river tall with a broken tongue"
+      },
+      {
+        "start": 53.0,
+        "end": 57.0,
+        "text": "I held my breath till the sun came up"
+      },
+      {
+        "start": 182.72,
+        "end": 188.72,
+        "text": "Lord, let me go Lord, let me go"
+      },
+      {
+        "start": 190.72,
+        "end": 199.72,
+        "text": "If I fall today Let mercy hold me close"
+      }
+    ],
+    "final_title": "Blues 9679",
+    "title": "Blues 9679 - Goosebumps Music"
+  }
+}
