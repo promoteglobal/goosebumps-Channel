@@ -229,8 +229,8 @@ async function autoPushToGitHub(genre, mp3Url, mp3Filename) {
     // 3. Push the blueprint PAIRED WITH THE SONG by name — music/<genre>/<Song>.json
     //    so the posting bot can later use this song's EXACT description. (Also
     //    write blueprint.json for the immediate-post path / backward compat.)
-    //    Tag with buffered=true when not posting now, so the auto-renamer only
-    //    renames songs waiting in the buffer (never one being posted live).
+    //    The buffered flag tells the processor what to do after titling:
+    //    buffered -> wait for the daily bot; not buffered -> auto-post now.
     const { gbBufferMode } = await chrome.storage.local.get('gbBufferMode');
     const { sunoBlueprint } = await chrome.storage.local.get('sunoBlueprint');
     if (sunoBlueprint) {
@@ -243,14 +243,13 @@ async function autoPushToGitHub(genre, mp3Url, mp3Filename) {
       console.warn('[GB] No blueprint in storage — video will use the fallback description.');
     }
 
-    // 4. Post now — UNLESS Buffer mode is on, then just leave it in GitHub for
-    //    the daily auto-poster bot to pick up later.
-    if (gbBufferMode) {
-      console.log('[GB] 🪣 Buffer mode ON — saved to GitHub, NOT posting. The daily bot will post it.');
-    } else {
-      await triggerWorkflow(cfg, `${genre}/${mp3Filename}`);
-      console.log('[GB] ✅ Workflow triggered. Watch GitHub Actions — no terminal needed.');
-    }
+    // 4. Posting is handled server-side AFTER transcription + titling, so buffer
+    //    on/off are identical except timing: the processor transcribes, titles,
+    //    and lyric-matches EVERY new song, then buffered songs wait for the daily
+    //    bot while immediate (buffer-off) songs are auto-posted right away.
+    console.log(gbBufferMode
+      ? '[GB] 🪣 Buffer mode ON — saved; the daily bot will post it.'
+      : '[GB] ⚡ Saved; it will be transcribed, titled, then auto-posted.');
   } finally {
     // Advance the serial queue whether the push succeeded or fell back.
     await finishActiveAndNext();

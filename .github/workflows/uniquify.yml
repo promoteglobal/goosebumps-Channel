@@ -34,12 +34,14 @@ jobs:
           path: |
             ~/.cache/pip
             ~/.cache/huggingface
-          key: ${{ runner.os }}-uniquify-whisper-medium-v1
+          key: ${{ runner.os }}-uniquify-whisper-large-v3-v1
 
       - name: Install dependencies
-        run: pip install anthropic faster-whisper
+        run: pip install anthropic faster-whisper google-api-python-client google-auth-oauthlib google-auth-httplib2
 
-      - name: Transcribe + give buffered songs unique titles
+      - name: Transcribe + title songs (auto-post immediate, skip already-posted)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+          DISPATCH_PAT: ${{ secrets.DISPATCH_PAT }}
         run: python scripts/uniquify_songs.py

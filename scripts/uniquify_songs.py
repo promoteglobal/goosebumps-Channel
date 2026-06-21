@@ -51,7 +51,7 @@ def transcribe(mp3path, lang_hint=None):
     lang_hint (e.g. 'ko' for kpop) makes Whisper much better at sung lyrics."""
     try:
         from faster_whisper import WhisperModel
-        model = WhisperModel("medium", device="cpu", compute_type="int8")
+        model = WhisperModel("large-v3", device="cpu", compute_type="int8")
         segments, _info = model.transcribe(
             str(mp3path), beam_size=1, condition_on_previous_text=False,
             language=lang_hint)   # None = auto-detect
@@ -134,7 +134,67 @@ def generate_title(client, bp, lyrics, instrumental, avoid):
     return clean_title(text)
 
 
+def norm(s):
+    """Normalize a song name / video title for matching (same as the bot's)."""
+    s = s.lower().split(" - goosebumps")[0]
+    s = re.sub(r"\(\s*\d+\s*\)", "", s)
+    s = re.sub(r"[^\w]+", "", s)
+    return s
+
+
+def uploaded_song_names():
+    """Normalized names of every video already on the channel — the GUARD so we
+    never re-process/re-post an already-published song. None if lookup fails."""
+    try:
+        from google.oauth2.credentials import Credentials
+        from googleapiclient.discovery import build
+        creds = Credentials.from_authorized_user_info(json.loads(os.environ["YOUTUBE_TOKEN"]))
+        yt = build("youtube", "v3", credentials=creds)
+        uploads = yt.channels().list(part="contentDetails", mine=True).execute(
+            )["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+        names, page = set(), None
+        while True:
+            r = yt.playlistItems().list(part="snippet", playlistId=uploads,
+                                        maxResults=50, pageToken=page).execute()
+            for it in r.get("items", []):
+                names.add(norm(it["snippet"]["title"]))
+            page = r.get("nextPageToken")
+            if not page:
+                break
+        return names
+    except Exception as e:
+        log(f"YouTube lookup failed ({e})")
+        return None
+
+
+def dispatch_upload(rel):
+    """Trigger the video+upload pipeline for an immediate-mode song (buffer off)."""
+    pat = os.environ.get("DISPATCH_PAT", "")
+    if not pat:
+        log(f"No DISPATCH_PAT — cannot auto-post {rel}")
+        return
+    import urllib.request
+    repo = os.environ.get("GITHUB_REPOSITORY", "promoteglobal/goosebumps-Channel")
+    body = json.dumps({"ref": "main", "inputs": {"mp3_filename": rel}}).encode("utf-8")
+    req = urllib.request.Request(
+        f"https://api.github.com/repos/{repo}/actions/workflows/upload_youtube.yml/dispatches",
+        data=body, method="POST",
+        headers={"Authorization": f"token {pat}",
+                 "Accept": "application/vnd.github+json",
+                 "Content-Type": "application/json"})
+    try:
+        urllib.request.urlopen(req)
+        log(f"Auto-posting (immediate): {rel}")
+    except Exception as e:
+        log(f"Dispatch failed for {rel}: {e}")
+
+
 def main():
+    # Parity: process every NEW song (both buffer on/off) through the same path.
+    # GUARD: immediate (buffer-off) songs are processed only if NOT already on
+    # YouTube, so we never re-rename/re-post a published song. Buffered songs are
+    # always safe (the final_title check stops re-processing; the bot posts them).
+    posted = uploaded_song_names()   # set, or None if the lookup failed
     todo = []
     for mp3 in sorted(MUSIC.rglob("*.mp3")):
         jp = mp3.with_suffix(".json")
@@ -144,22 +204,32 @@ def main():
             bp = json.load(open(jp, encoding="utf-8"))
         except Exception:
             continue
-        if bp.get("buffered") and not bp.get("final_title"):
-            todo.append((mp3, jp, bp))
+        if "buffered" not in bp or bp.get("final_title"):
+            continue                       # old pre-flag song, or already done
+        if not bp.get("buffered"):
+            # Immediate song: only if genuinely new (guard against re-posting).
+            if posted is None or norm(mp3.stem) in posted:
+                continue
+        todo.append((mp3, jp, bp))
 
     if not todo:
-        log("No buffered songs need processing.")
+        log("No songs need processing.")
         return
 
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     except Exception as e:
-        log(f"Anthropic client unavailable ({e}); leaving songs as-is.")
+        log(f"Anthropic client unavailable ({e}); posting immediate songs as-is.")
+        for mp3, jp, bp in todo:           # buffer-off must never silently fail
+            if not bp.get("buffered"):
+                dispatch_upload(f"{mp3.parent.name}/{mp3.name}")
         return
 
     used = existing_names()
     changed = False
+    immediate = []   # buffer-off songs -> auto-post once processed
+    touched   = []   # stage only what we changed (never sweep in strays)
     for mp3, jp, bp in todo:
         lyrics, instrumental, segs = transcribe(mp3, lang_for_genre(mp3.parent.name))
         bp["lyrics"]         = lyrics
@@ -191,15 +261,19 @@ def main():
             jp.unlink()
         log(f"Renamed: {mp3.name}  ->  {title}.mp3")
         changed = True
+        touched += [mp3, jp, new_mp3, new_json]      # old (deleted) + new (added)
+        if not bp.get("buffered"):
+            immediate.append(f"{mp3.parent.name}/{title}.mp3")
 
     if not changed:
         return
 
     subprocess.run(["git", "config", "user.name", "goosebumps-bot"], cwd=ROOT)
     subprocess.run(["git", "config", "user.email", "bot@goosebumps-channel"], cwd=ROOT)
-    subprocess.run(["git", "add", "-A", "music/"], cwd=ROOT)
+    for p in touched:                       # stage only the renamed files
+        subprocess.run(["git", "add", "--", str(p)], cwd=ROOT)
     if subprocess.run(["git", "commit", "-m",
-                       "Auto-rename buffered songs to unique titles"], cwd=ROOT).returncode != 0:
+                       "Auto-rename songs to unique titles"], cwd=ROOT).returncode != 0:
         log("Nothing to commit.")
         return
     pushed = False
@@ -210,6 +284,12 @@ def main():
             break
         log(f"push attempt {attempt + 1} failed — retrying")
     log("Pushed renamed songs." if pushed else "WARNING: push failed after retries.")
+
+    # Immediate-mode songs (buffer off): auto-post now that they're transcribed,
+    # titled, and on GitHub. Buffered songs wait for the daily bot instead.
+    if pushed:
+        for rel in immediate:
+            dispatch_upload(rel)
 
 
 def dry_run(rel):
