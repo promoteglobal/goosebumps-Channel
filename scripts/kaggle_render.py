@@ -130,8 +130,11 @@ def pipi(*pkgs):
 #  - torchvision MUST match torch or you get "operator torchvision::nms does not
 #    exist" (ABI mismatch) -> torchvision==0.19.1 pairs with torch 2.4.1.
 #  - transformers 5.x breaks diffusers' LTX T5 import -> cap <5.
+#  - diffusers 0.38 registers a custom op via a torch.library schema API newer
+#    than torch 2.4.1 ("infer_schema: Parameter q unsupported") -> pin diffusers
+#    to 0.32.0 (LTX's debut, matches torch 2.4.x).
 pipi("-U", "torch==2.4.1", "torchvision==0.19.1",
-     "diffusers>=0.32.0,<0.40", "transformers>=4.44.0,<5", "accelerate",
+     "diffusers==0.32.0", "transformers>=4.44.0,<5", "accelerate",
      "sentencepiece", "imageio", "imageio-ffmpeg")
 
 import torch
