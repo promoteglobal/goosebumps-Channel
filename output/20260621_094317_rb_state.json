@@ -1,0 +1,285 @@
+{
+  "video_path": "/home/runner/work/goosebumps-Channel/goosebumps-Channel/output/20260621_094317_rb.mp4",
+  "mp3_path": "music/rb/Blade in the Line.mp3",
+  "blueprint": {
+    "folder": "rb",
+    "frisson_score": "97",
+    "generated_at": "2026-06-21T09:15:21.677Z",
+    "genre": "R&B",
+    "scientific_analysis": "R&B's combination of melismatic vocal ornamentation, unexpected harmonic borrowing from parallel keys, and rhythmic syncopation activates the nucleus accumbens and anterior insula simultaneously, maximizing dopaminergic reward cascades associated with frisson. Tempo anchored near 65 BPM entrains autonomic nervous system responses aligned with resting heartbeat, lowering psychological defenses and amplifying emotional vulnerability to each sonic surprise.",
+    "structure": "The track opens with a raw, unaccompanied solo voice in total silence, slowly building melodic tension through sustained long notes over sparse arrangement at 65 BPM before a sudden full-band eruption triggers the first major frisson wave. At the golden ratio point (approximately 61.8% through), a dramatic key change upward by a minor third arrives alongside an unexpected string orchestra entrance, creating the emotional apex through distant harmonic modulation and call-and-response between voice and instruments. The final section resolves all accumulated tension through a long sustained vocal note collapsing into lush harmonic choir, leaving the nervous system in cathartic release.",
+    "suno_prompt": "Raw emotional R&B, 65 BPM, English vocals, solo unaccompanied voice opening in silence, sudden full-band explosion, unexpected string orchestra entrance, distant harmonic modulation, minor third key change at golden ratio climax, call-and-response between voice and instruments, sustained long notes resolving into rich harmony, melismatic soul singing, cinematic intensity, goosebump-inducing, 10/10 emotional power",
+    "buffered": false,
+    "lyrics": "I stood by the door, the key in my hand Rain on my sleeve And a crack in my plan You crowed on the chair You glassed by the sink That's all it took For me to stop and think I said your name once Just to hear it stay It broke on the tile Then it slipped away And I knew, I knew That goodbye was a lie I could taste it on my tongue Like a blade in the line Don't close that door Don't close that door I'm still here, baby I'm still yours Hold me in place Hold me in place If I fall apart Let it be in your hands And I knew, I knew you were farther than skin But I heard your breath in the space between every maybe and if Don't close that door Don't close that door Don't close that door I'm still here, baby I'm still yours Hold me in place, hold me in place If I fall apart, let it be in your hands When the strings came high, I lost my name I reached for your shadow, it ain't still the same Take this hurt, take this ache, take this night from my bones Make it shake, make it shake Don't close that door Don't close that door I'm still here, baby I'm still yours Hold me in place Hold me in place Hold me in place Hold me in place if I fall apart Let it be in your hands Don't close that door I came all this way just to feel you again Hold me in place Ooh, hold me in place Ooh, hold me in place if I fall apart Let it be in your hands Mmm, mmm Let it be in your hands Mmm, mmm Let it be in your hands",
+    "instrumental": false,
+    "lyric_segments": [
+      {
+        "start": 0.0,
+        "end": 25.04,
+        "text": "I stood by the door, the key in my hand"
+      },
+      {
+        "start": 25.04,
+        "end": 29.26,
+        "text": "Rain on my sleeve"
+      },
+      {
+        "start": 29.26,
+        "end": 32.02,
+        "text": "And a crack in my plan"
+      },
+      {
+        "start": 32.02,
+        "end": 35.68,
+        "text": "You crowed on the chair"
+      },
+      {
+        "start": 35.68,
+        "end": 39.8,
+        "text": "You glassed by the sink"
+      },
+      {
+        "start": 39.8,
+        "end": 43.34,
+        "text": "That's all it took"
+      },
+      {
+        "start": 43.34,
+        "end": 47.1,
+        "text": "For me to stop and think"
+      },
+      {
+        "start": 47.1,
+        "end": 50.66,
+        "text": "I said your name once"
+      },
+      {
+        "start": 50.66,
+        "end": 54.74,
+        "text": "Just to hear it stay"
+      },
+      {
+        "start": 54.74,
+        "end": 58.5,
+        "text": "It broke on the tile"
+      },
+      {
+        "start": 58.5,
+        "end": 61.88,
+        "text": "Then it slipped away"
+      },
+      {
+        "start": 61.88,
+        "end": 66.84,
+        "text": "And I knew, I knew"
+      },
+      {
+        "start": 66.84,
+        "end": 70.22,
+        "text": "That goodbye was a lie"
+      },
+      {
+        "start": 70.22,
+        "end": 73.92,
+        "text": "I could taste it on my tongue"
+      },
+      {
+        "start": 73.92,
+        "end": 77.3,
+        "text": "Like a blade in the line"
+      },
+      {
+        "start": 77.3,
+        "end": 80.74,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 80.74,
+        "end": 84.94,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 84.94,
+        "end": 88.92,
+        "text": "I'm still here, baby"
+      },
+      {
+        "start": 88.92,
+        "end": 92.72,
+        "text": "I'm still yours"
+      },
+      {
+        "start": 92.72,
+        "end": 95.72,
+        "text": "Hold me in place"
+      },
+      {
+        "start": 95.72,
+        "end": 100.02,
+        "text": "Hold me in place"
+      },
+      {
+        "start": 100.02,
+        "end": 103.48,
+        "text": "If I fall apart"
+      },
+      {
+        "start": 103.48,
+        "end": 106.98,
+        "text": "Let it be in your hands"
+      },
+      {
+        "start": 131.4,
+        "end": 137.4,
+        "text": "And I knew, I knew you were farther than skin"
+      },
+      {
+        "start": 137.4,
+        "end": 145.4,
+        "text": "But I heard your breath in the space between every maybe and if"
+      },
+      {
+        "start": 145.4,
+        "end": 148.0,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 148.0,
+        "end": 149.92,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 149.92,
+        "end": 152.48,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 152.48,
+        "end": 156.36,
+        "text": "I'm still here, baby"
+      },
+      {
+        "start": 156.36,
+        "end": 160.4,
+        "text": "I'm still yours"
+      },
+      {
+        "start": 160.4,
+        "end": 174.68,
+        "text": "Hold me in place, hold me in place If I fall apart, let it be in your hands"
+      },
+      {
+        "start": 174.68,
+        "end": 185.02,
+        "text": "When the strings came high, I lost my name I reached for your shadow, it ain't still the same"
+      },
+      {
+        "start": 185.02,
+        "end": 188.86,
+        "text": "Take this hurt, take this ache, take this night from my bones"
+      },
+      {
+        "start": 188.86,
+        "end": 190.82,
+        "text": "Make it shake, make it shake"
+      },
+      {
+        "start": 190.82,
+        "end": 193.52,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 193.52,
+        "end": 197.5,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 197.5,
+        "end": 201.6,
+        "text": "I'm still here, baby"
+      },
+      {
+        "start": 201.6,
+        "end": 205.38,
+        "text": "I'm still yours"
+      },
+      {
+        "start": 205.38,
+        "end": 208.0,
+        "text": "Hold me in place"
+      },
+      {
+        "start": 208.0,
+        "end": 209.78,
+        "text": "Hold me in place"
+      },
+      {
+        "start": 209.78,
+        "end": 211.72,
+        "text": "Hold me in place"
+      },
+      {
+        "start": 211.72,
+        "end": 215.54,
+        "text": "Hold me in place if I fall apart"
+      },
+      {
+        "start": 215.54,
+        "end": 220.64,
+        "text": "Let it be in your hands"
+      },
+      {
+        "start": 220.64,
+        "end": 224.72,
+        "text": "Don't close that door"
+      },
+      {
+        "start": 224.72,
+        "end": 234.72,
+        "text": "I came all this way just to feel you again"
+      },
+      {
+        "start": 234.72,
+        "end": 238.04,
+        "text": "Hold me in place"
+      },
+      {
+        "start": 238.04,
+        "end": 241.78,
+        "text": "Ooh, hold me in place"
+      },
+      {
+        "start": 241.78,
+        "end": 245.92,
+        "text": "Ooh, hold me in place if I fall apart"
+      },
+      {
+        "start": 245.92,
+        "end": 251.22,
+        "text": "Let it be in your hands"
+      },
+      {
+        "start": 251.22,
+        "end": 254.4,
+        "text": "Mmm, mmm"
+      },
+      {
+        "start": 254.4,
+        "end": 259.14,
+        "text": "Let it be in your hands"
+      },
+      {
+        "start": 259.14,
+        "end": 261.94,
+        "text": "Mmm, mmm"
+      },
+      {
+        "start": 261.94,
+        "end": 266.52,
+        "text": "Let it be in your hands"
+      }
+    ],
+    "final_title": "Blade in the Line",
+    "title": "Blade in the Line - Goosebumps Music"
+  }
+}
