@@ -113,10 +113,21 @@ jobs:
         run: python scripts/upload_youtube.py --auto
 
       - name: Commit state files
+        # The video is ALREADY uploaded by this point — this just records the
+        # output/ bookkeeping. Retry on a race, and never fail the run if the
+        # push can't land (it's not worth a red ❌ over bookkeeping).
         run: |
           git config user.name "goosebumps-bot"
           git config user.email "bot@goosebumps-channel"
           git add output/
-          git diff --staged --quiet || git commit -m "Uploaded video"
-          git pull --rebase origin main
-          git push
+          if git diff --staged --quiet; then echo "no state changes"; exit 0; fi
+          git commit -m "Uploaded video"
+          for i in 1 2 3 4 5; do
+            git rebase --abort 2>/dev/null || true
+            git fetch origin main -q
+            if git rebase origin/main && git push; then
+              echo "state pushed"; exit 0
+            fi
+            echo "state push retry $i..."; sleep 3
+          done
+          echo "state-commit push did not land (non-fatal — video is posted)"; exit 0

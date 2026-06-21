@@ -280,8 +280,13 @@ def main():
         log("Nothing to commit.")
         return
     pushed = False
-    for attempt in range(3):
-        subprocess.run(["git", "pull", "--rebase", "--autostash"], cwd=ROOT)
+    for attempt in range(5):
+        # Clear any half-finished rebase from a prior failed attempt (this is why
+        # the old loop failed 3x instantly), then rebase onto the latest and push.
+        subprocess.run(["git", "rebase", "--abort"], cwd=ROOT,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["git", "fetch", "origin", "main"], cwd=ROOT)
+        subprocess.run(["git", "rebase", "origin/main"], cwd=ROOT)
         if subprocess.run(["git", "push"], cwd=ROOT).returncode == 0:
             pushed = True
             break
