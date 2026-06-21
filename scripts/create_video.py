@@ -495,13 +495,18 @@ def build_section_queries(bp, cuts, genre, title):
                    f"visuals fitting the title and mood, varied across the {n} sections "
                    f"so the video is not repetitive.")
         else:
-            lines = "\n".join(f"{i}: {snippets[i] or '(instrumental)'}" for i in range(n))
-            ctx = (f"A {genre} song titled '{title}'. Lyrics sung in each of its {n} "
-                   f"sections (some may be empty):\n{lines}")
-            ask = (f"For EACH of the {n} sections give ONE short 2-4 word ENGLISH "
-                   f"stock-video search query for footage matching what is sung there "
-                   f"(translate non-English lyrics to English; concrete filmable imagery). "
-                   f"For empty sections use a query fitting the {genre} mood.")
+            full  = (bp.get("lyrics") or "")[:1500]
+            lines = "\n".join(f"{i}: {snippets[i] or '(no words this section)'}" for i in range(n))
+            ctx = (f"A {genre} song titled '{title}'. Full lyrics (so you understand the "
+                   f"song's REAL meaning):\n{full}\n\nLyrics sung in each of its {n} "
+                   f"sections:\n{lines}")
+            ask = (f"For EACH of the {n} sections give ONE short 2-4 word ENGLISH stock-"
+                   f"video search query for footage that fits the EMOTIONAL MEANING of "
+                   f"what is sung there — the feeling and subtext, NOT the literal objects. "
+                   f"Example: 'dont close the door' is about being left / not wanting "
+                   f"someone to leave -> 'lonely person at window', NOT 'closing a door'. "
+                   f"Translate non-English lyrics. Keep it concrete and filmable, and vary "
+                   f"across sections. For sections with no words, fit the song's overall mood.")
         prompt = (f"{ctx}\n\n{ask}\n\nReply with ONLY a JSON array of exactly {n} "
                   f"strings, no markdown, no other text.")
         msg = client.messages.create(model="claude-opus-4-8", max_tokens=700,
