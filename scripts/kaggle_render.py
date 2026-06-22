@@ -267,29 +267,51 @@ def render(mp3_path):
     title = bp.get("title") or mp3_path.stem
     dur   = get_duration(mp3_path)
 
-    # NO-LOOP scene grid: even scenes of ~AI_SCENE_SECS each; each clip is rendered
-    # a hair longer than its scene so create_video trims it with no repeat. All
-    # scenes equal length -> one uniform frame count (simpler, predictable kernel).
-    n = max(8, min(MAX_CLIPS, round(dur / AI_SCENE_SECS)))
-    scene_len = dur / n
-    nframes, nsteps = frames_for(scene_len), AI_STEPS
-    cuts = [round(dur * i / n, 3) for i in range(n)] + [float(dur)]
-
+    # A hand-written storyboard ("<Song>.story.json" beside the mp3) takes priority
+    # over the auto-generator: scene count == number of shots, one clip per shot.
     smoke = os.environ.get("AI_SMOKE", "").lower() in ("1", "true", "yes")
+    story = None
+    if not smoke:
+        sp = mp3_path.parent / (mp3_path.stem + ".story.json")
+        if sp.exists():
+            try:
+                story = json.loads(sp.read_text(encoding="utf-8"))
+                if not story.get("shots"):
+                    story = None
+                else:
+                    print(f"MANUAL STORYBOARD: {len(story['shots'])} hand-written shots "
+                          f"from {sp.name}")
+            except Exception as e:
+                print(f"story file unreadable ({e}) — using auto storyboard"); story = None
+
+    # NO-LOOP scene grid: even scenes; each clip rendered a hair longer than its
+    # scene so create_video trims it with no repeat (one uniform frame count).
     if smoke:
-        # ~12-min probe: render just 2 clips at the SAME resolution/frames/steps as
-        # the full run, so we measure the real per-clip time (and confirm no OOM at
-        # this resolution) BEFORE committing to a multi-hour render. Skips Claude.
+        # ~12-min probe: 2 clips at full-run resolution/frames/steps (measure per-clip
+        # time + confirm no OOM) BEFORE a multi-hour render. Skips Claude.
+        n = max(8, round(dur / AI_SCENE_SECS))
+        scene_len = dur / n
         cuts = [0.0, scene_len, min(2 * scene_len, dur)]
         prompts = [
             "a lone luminous spirit standing still in a vast surreal dreamscape, glowing "
             "mist, slow camera push-in, ethereal otherworldly cinematic film, no text",
             "an otherworldly figure silhouetted against a cosmic aurora over a dark ocean, "
             "drifting embers, slow aerial drift, surreal cinematic film, no text"]
-        print(f"SMOKE/TIMING: 2 clips at {AI_W}x{AI_H}, {nframes}f/{nsteps}steps "
-              f"(full-run settings); skipping Claude.")
+        print(f"SMOKE/TIMING: 2 clips at {AI_W}x{AI_H}; skipping Claude.")
+    elif story:
+        shots = story["shots"]
+        world = (story.get("world") or "").strip()
+        n = len(shots)
+        scene_len = dur / n
+        cuts = [round(dur * i / n, 3) for i in range(n)] + [float(dur)]
+        prompts = [(f"{str(s).strip()}. {world}" if world else str(s).strip()) for s in shots]
     else:
+        n = max(8, min(MAX_CLIPS, round(dur / AI_SCENE_SECS)))
+        scene_len = dur / n
+        cuts = [round(dur * i / n, 3) for i in range(n)] + [float(dur)]
         prompts = build_video_prompts(bp, cuts, genre, title)
+
+    nframes, nsteps = frames_for(scene_len), AI_STEPS
     n = len(cuts) - 1
     print(f"AI render (NO-LOOP): {n} scene(s) ~{scene_len:.1f}s each over {dur:.0f}s, "
           f"{AI_W}x{AI_H} {nframes}f/{nsteps}steps for '{title}' ({genre})")
