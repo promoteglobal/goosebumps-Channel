@@ -1,0 +1,53 @@
+{
+  "_note": "CONSISTENCY BIBLE for the Blues 9679 avalanche mini-movie. Canonical, fixed descriptions for every recurring character, object, and place, plus a lighting/time arc. Use the SAME wording every time an asset appears so it stays consistent. Reusable as (a) text-to-video prompt fragments, or (b) the descriptions we generate reference images from for image-to-video. Distinctive details (scar, glasses-chain, white-cross emblem, twin peaks, the one dark boulder) are deliberate anchors that help the AI keep things the same.",
+
+  "style": "Pixar-style 3D animated feature film, warm cinematic lighting, soft rounded appealing character design, highly detailed, shallow depth of field, no text or captions anywhere",
+
+  "characters": {
+    "climber": {
+      "name_internal": "the climber",
+      "look": "a young white man about 28, athletic slim build, short tousled blonde hair (no hat), bright blue eyes, light stubble, fair skin, a small scar through his left eyebrow; wearing a fitted matte-black ski tracksuit (jacket and pants), black gloves and black snow boots; a small silver ice axe",
+      "notes": "main character. Keep hair blonde and uncovered so eyes/hair read. Expressive, determined then frightened then hopeful."
+    },
+    "grandma": {
+      "name_internal": "the grandmother",
+      "look": "a warm kind older woman about 65, soft round face with gentle wrinkles, neat wavy shoulder-length grey hair, blue eyes, fair skin, thin gold reading glasses on a beaded chain around her neck; wearing a maroon knit cardigan over a cream blouse",
+      "notes": "at home, indoors. Gentle, worried, then prayerful, then relieved."
+    },
+    "rescuer": {
+      "name_internal": "the rescuer (ONE rescuer only)",
+      "look": "a rugged friendly man about 35, short dark-brown hair, brown eyes, short dark beard, tanned skin; wearing a bright-red mountain-rescue jacket with a small white cross emblem on the chest, black snow pants, a red helmet with a headlamp, orange goggles pushed up on his forehead; carrying a long thin avalanche probe pole",
+      "notes": "ALWAYS the same single rescuer (never a crowd). Calm, urgent, determined."
+    },
+    "prayer_light": {
+      "name_internal": "the prayer light",
+      "look": "a small warm golden orb of light about the size of a fist, softly glowing with a gentle halo and faint trailing sparkles, like a tiny living sun or firefly",
+      "notes": "born from grandma's chest; travels to the real sun; returns to the climber at the end."
+    }
+  },
+
+  "objects_places": {
+    "tv": {
+      "look": "a modern flat-screen TV on a wooden stand, screen showing a news broadcast of a snowy mountain under a red 'breaking news' colour banner (shapes only, no readable text), the warm living room faintly reflected on the glass"
+    },
+    "grandma_house": {
+      "look": "a cozy warm living room: soft amber lamplight, pale floral wallpaper, a worn soft armchair, a low wooden coffee table with framed family photos, a folded knitted blanket, warm homey tones"
+    },
+    "mountain": {
+      "look": "a vast towering snow-covered alpine mountain with a distinctive TWIN-PEAKED summit, sharp rocky ridges, deep white snowfields and a few dark exposed rocks, dramatic and immense"
+    },
+    "avalanche_aftermath": {
+      "look": "a chaotic field of tumbled snow blocks and churned white powder across the slope, ONE large dark boulder (the rock the climber hid behind) half-buried in it, a small dark air-pocket gap in the snow where he is trapped"
+    }
+  },
+
+  "lighting_time_arc": {
+    "_purpose": "Time progresses with the story so it never flips randomly. Cold pre-dawn -> warm indoors -> darkening storm -> darkest under-snow night -> golden sunrise at the rescue/peak -> full warm day.",
+    "shots_1_5_climb": "cold blue PRE-DAWN light, sun still below the horizon, soft and quiet",
+    "shots_6_9_grandma_prays": "interior EVENING, warm amber lamplight indoors; then the light rises into a dark night sky",
+    "shots_10_14_avalanche": "DAYTIME but rapidly DARKENING — a grey storm rolling in, flat overcast light, shadows deepening",
+    "shots_15_24_buried_and_journey": "DARKEST stretch — under the snow it is dim and blue-black; the light's journey is across a dark starlit/moonlit night sky whose far horizon slowly begins to glow",
+    "shots_25_28_light_reaches_sun_PEAK": "SUNRISE breaks — brilliant golden dawn light floods in; this is the brightest, most radiant moment (the frisson peak)",
+    "shots_29_40_rescue_to_peace": "growing GOLDEN morning into full warm daylight, bright, clear and hopeful"
+  }
+}
