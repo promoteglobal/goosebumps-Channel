@@ -44,8 +44,39 @@ jobs:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_KEY }}
         run: python scripts/kaggle_collect.py
 
-      - name: Install FFmpeg (static build with drawtext) + fonts
+      # Atomic dedupe: CLAIM this render_id via a git push BEFORE building/uploading.
+      # The push is fast-forward-only, so if two collector runs race (e.g. a manual
+      # trigger + a delayed scheduled run), exactly ONE wins the claim and uploads;
+      # the loser re-fetches, sees the marker, and skips. Fixes the double-post.
+      - name: Claim render (atomic dedupe — prevents double-posting)
+        id: claim
         if: ${{ steps.collect.outputs.ready == 'true' }}
+        run: |
+          git config user.name "goosebumps-bot"
+          git config user.email "bot@goosebumps-channel"
+          RID="${{ steps.collect.outputs.render_id }}"
+          mkdir -p output
+          for i in 1 2 3 4 5; do
+            git fetch origin main -q
+            git reset --hard origin/main -q            # freshest marker; ignored clips survive
+            if [ "$(cat output/ai_last_posted.txt 2>/dev/null)" = "$RID" ]; then
+              echo "render $RID already claimed by another run — skip (no dupe)."
+              echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            echo "$RID" > output/ai_last_posted.txt
+            git add output/ai_last_posted.txt
+            git commit -q -m "collector: posted AI render $RID"
+            if git push -q; then
+              echo "claimed $RID — this run will build + upload."
+              echo "ok=true" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            echo "claim push lost a race — re-checking..."; sleep 3
+          done
+          echo "could not claim after 5 tries — skip to avoid a possible dupe."
+          echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+
+      - name: Install FFmpeg (static build with drawtext) + fonts
+        if: ${{ steps.claim.outputs.ok == 'true' }}
         run: |
           set -e
           if curl -fsSL -o /tmp/ffmpeg.tar.xz https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz; then
@@ -67,7 +98,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends fonts-noto-cjk fonts-noto-core || true
 
       - name: Build video from AI clips
-        if: ${{ steps.collect.outputs.ready == 'true' }}
+        if: ${{ steps.claim.outputs.ok == 'true' }}
         env:
           AI_CLIPS_DIR: output/ai_clips
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
@@ -76,24 +107,9 @@ jobs:
         run: python scripts/create_video.py "${{ steps.collect.outputs.mp3 }}"
 
       - name: Upload to YouTube (UNLISTED while testing)
-        if: ${{ steps.collect.outputs.ready == 'true' }}
+        if: ${{ steps.claim.outputs.ok == 'true' }}
         env:
           YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
           YT_PRIVACY: unlisted
         run: python scripts/upload_youtube.py
 
-      - name: Record posted render_id (idempotency)
-        if: ${{ steps.collect.outputs.ready == 'true' }}
-        run: |
-          git config user.name "goosebumps-bot"
-          git config user.email "bot@goosebumps-channel"
-          echo "${{ steps.collect.outputs.render_id }}" > output/ai_last_posted.txt
-          git add output/ai_last_posted.txt
-          git commit -m "collector: posted AI render ${{ steps.collect.outputs.render_id }}"
-          for i in 1 2 3 4 5; do
-            git fetch origin main -q
-            if git rebase origin/main && git push; then echo "recorded"; exit 0; fi
-            git rebase --abort 2>/dev/null || true
-            sleep 3
-          done
-          echo "could not record render_id (non-fatal)"; exit 0
