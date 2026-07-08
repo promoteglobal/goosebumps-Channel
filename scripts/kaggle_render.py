@@ -24,8 +24,17 @@ from pathlib import Path
 # Reuse the exact blueprint + cut logic the video builder uses, so scenes align.
 sys.path.insert(0, str(Path(__file__).parent))
 from create_video import find_blueprint, get_duration, get_cut_points
+from keyframes import (music_aligned_cuts, build_shot_specs, load_reference_b64,
+                       refs_dir_for)
 
 FPS = 24
+# --- image->video (consistent characters) settings ---
+# 1152x640 keeps SDXL peak VRAM safe on a Kaggle P100 (16GB) while giving a clean
+# 16:9 keyframe to seed LTX (which downsizes to AI_W x AI_H = 832x480 anyway).
+KF_W     = int(os.environ.get("AI_KF_W", "1152"))
+KF_H     = int(os.environ.get("AI_KF_H", "640"))
+KF_STEPS = int(os.environ.get("AI_KF_STEPS", "28"))
+IP_SCALE = float(os.environ.get("AI_IP_SCALE", "0.7"))  # IP-Adapter identity strength
 # Path B = NO LOOPS: each scene gets its own unique clip rendered to the scene's
 # length (no repeating). Scenes are short (~AI_SCENE_SECS) so clips stay short =
 # fewer AI artifacts AND no looping. Higher resolution than the looped prototype
@@ -241,8 +250,288 @@ print("RENDER_DONE")
 '''
 
 
+# ============================================================================
+# IMAGE -> VIDEO kernel (consistent characters). Two stages, ONE env:
+#   1) KEYFRAMES: SDXL + IP-Adapter, each keyframe conditioned on a LOCKED
+#      reference picture of the recurring character/place -> the SAME character
+#      every shot (the whole point). Prompt = the shot's bible-built instruction.
+#   2) ANIMATE: LTX image-to-video turns each keyframe into that shot's clip, at
+#      the shot's own frame count (length follows the music).
+# Both run on torch==2.4.1 + diffusers==0.32.0, which has sm_60 (P100) AND sm_75
+# (T4) kernels AND both pipelines — so it works on whichever GPU Kaggle assigns.
+# Heavier true-edit models (Flux Kontext / Qwen-Image-Edit) are deliberately NOT
+# used: they need a newer torch that DROPPED the P100 we can't opt out of.
+# ============================================================================
+KERNEL_TEMPLATE_I2V = r'''
+import json, os, sys, base64, subprocess, traceback, io, time, gc
+
+def pipi(*pkgs):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *pkgs])
+
+pipi("-U", "torch==2.4.1", "torchvision==0.19.1",
+     "diffusers==0.32.0", "transformers>=4.44.0,<5", "accelerate",
+     "peft", "sentencepiece", "imageio", "imageio-ffmpeg")
+
+import torch
+print("TORCH", torch.__version__, "| CUDA", torch.version.cuda)
+try:
+    print("ARCH_LIST", torch.cuda.get_arch_list())
+    print("DEVICE", torch.cuda.get_device_name(0))
+    _x = (torch.randn(64,64,device="cuda") @ torch.randn(64,64,device="cuda")).sum().item()
+    print("GPU_OP_OK", round(_x,3))
+except Exception as _e:
+    import traceback as _tb; print("GPU_DIAG_FAIL", _e); _tb.print_exc()
+
+from PIL import Image
+
+PROMPTS  = json.loads(base64.b64decode("__PROMPTS_B64__").decode())
+REFNAMES = json.loads(base64.b64decode("__REFNAMES_B64__").decode())
+FRAMES   = json.loads(base64.b64decode("__FRAMES_B64__").decode())
+REFS_B64 = json.loads(base64.b64decode("__REFS_B64__").decode())
+META     = json.loads(base64.b64decode("__META_B64__").decode())
+CUTS     = json.loads(base64.b64decode("__CUTS_B64__").decode())
+W, H, FPS, STEPS = __W__, __H__, __FPS__, __STEPS__
+KF_STEPS, IP_SCALE, KF_W, KF_H = __KF_STEPS__, __IP_SCALE__, __KF_W__, __KF_H__
+KF_ONLY, ANIMATE_N = __KF_ONLY__, __ANIMATE_N__
+
+os.makedirs("/kaggle/working", exist_ok=True)
+json.dump(META, open("/kaggle/working/meta.json","w"))
+json.dump(CUTS, open("/kaggle/working/cuts.json","w"))
+print("RENDER_ID", META.get("render_id"), "| shots", len(PROMPTS), "| KF_ONLY", KF_ONLY)
+
+REFS = {}
+for name, b in REFS_B64.items():
+    try:
+        REFS[name] = Image.open(io.BytesIO(base64.b64decode(b))).convert("RGB")
+    except Exception as e:
+        print("ref decode fail", name, e)
+print("REFERENCES:", ", ".join(sorted(REFS)))
+
+report = {"stage":"keyframes", "kf":{}, "clips":{},
+          "device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu"}
+def _save_report():
+    json.dump(report, open("/kaggle/working/render_report.json","w"), indent=2)
+
+# ---------------- STAGE 1: keyframes (SDXL + IP-Adapter) ----------------
+from diffusers import StableDiffusionXLPipeline
+from transformers import CLIPVisionModelWithProjection
+
+t0 = time.time()
+image_encoder = CLIPVisionModelWithProjection.from_pretrained(
+    "h94/IP-Adapter", subfolder="models/image_encoder", torch_dtype=torch.float16)
+sdxl = StableDiffusionXLPipeline.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16,
+    image_encoder=image_encoder, use_safetensors=True)
+sdxl.load_ip_adapter("h94/IP-Adapter", subfolder="sdxl_models",
+                     weight_name="ip-adapter-plus_sdxl_vit-h.safetensors")
+sdxl.set_ip_adapter_scale(IP_SCALE)
+# model-level CPU offload = safe on a 16GB P100 (UNet stays resident during its
+# denoise loop; only text/vae/image-encoder shuttle) so no OOM mid-generation.
+sdxl.enable_model_cpu_offload()
+try: sdxl.enable_vae_tiling()
+except Exception: pass
+
+NEG = ("worst quality, low quality, blurry, distorted, deformed, disfigured, extra "
+       "limbs, extra fingers, bad anatomy, text, caption, watermark, logo, signature, "
+       "photorealistic photo")
+gen = torch.Generator(device="cuda")
+keyframes = {}
+for i, prompt in enumerate(PROMPTS):
+    try:
+        refname = REFNAMES[i]
+        ref_img = REFS.get(refname)
+        if ref_img is not None:
+            sdxl.set_ip_adapter_scale(IP_SCALE); ipimg = ref_img
+        else:
+            sdxl.set_ip_adapter_scale(0.0)
+            ipimg = next(iter(REFS.values())) if REFS else Image.new("RGB",(224,224))
+        gen.manual_seed(9679 + i)
+        img = sdxl(prompt=prompt[:600], negative_prompt=NEG, ip_adapter_image=ipimg,
+                   num_inference_steps=KF_STEPS, guidance_scale=6.0,
+                   width=KF_W, height=KF_H, generator=gen).images[0]
+        p = f"/kaggle/working/kf_{i:03d}.png"; img.save(p); keyframes[i] = p
+        report["kf"][str(i)] = "ok:"+str(refname)
+        print(f"[KF {i+1}/{len(PROMPTS)}] ok ref={refname} ({int(time.time()-t0)}s elapsed)")
+    except Exception as e:
+        report["kf"][str(i)] = "FAIL: "+str(e)
+        print(f"[KF {i+1}/{len(PROMPTS)}] FAIL: {e}"); traceback.print_exc()
+    _save_report()
+kf_secs = int(time.time()-t0)
+print(f"KEYFRAMES_DONE {len(keyframes)}/{len(PROMPTS)} in {kf_secs}s "
+      f"(~{kf_secs/max(1,len(keyframes)):.0f}s/keyframe)")
+
+del sdxl, image_encoder; gc.collect(); torch.cuda.empty_cache()
+
+# ---------------- STAGE 2: animate (LTX image-to-video) ----------------
+animate_idxs = sorted(keyframes)
+if KF_ONLY:
+    animate_idxs = animate_idxs[:ANIMATE_N]
+    print("KF_ONLY smoke: animating only", animate_idxs)
+
+if animate_idxs:
+    report["stage"]="animate"; _save_report()
+    from diffusers import LTXImageToVideoPipeline
+    from diffusers.utils import export_to_video
+    ltx = LTXImageToVideoPipeline.from_pretrained("Lightricks/LTX-Video", torch_dtype=torch.float16)
+    ltx.enable_model_cpu_offload()
+    try: ltx.vae.enable_tiling()
+    except Exception: pass
+    NEGV = "worst quality, jittery, blurry, distorted, morphing, watermark, text, caption, logo"
+    ta = time.time()
+    for i in animate_idxs:
+        try:
+            kf = Image.open(keyframes[i]).convert("RGB").resize((W,H))
+            nf = int(FRAMES[i])
+            frames = ltx(image=kf, prompt=PROMPTS[i][:500], negative_prompt=NEGV,
+                         width=W, height=H, num_frames=nf,
+                         num_inference_steps=STEPS).frames[0]
+            export_to_video(frames, f"/kaggle/working/clip_{i:03d}.mp4", fps=FPS)
+            report["clips"][str(i)]="ok"; print(f"[CLIP {i+1}] ok ({nf}f, {int(time.time()-ta)}s elapsed)")
+        except Exception as e:
+            report["clips"][str(i)]="FAIL: "+str(e); print(f"[CLIP {i+1}] FAIL: {e}"); traceback.print_exc()
+        _save_report()
+print("RENDER_DONE")
+'''
+
+
 def _kaggle(*args, **kw):
     return subprocess.run(["kaggle", *args], capture_output=True, text=True, **kw)
+
+
+def _poll_and_pull(slug, out_dir):
+    """Wait for the kernel, pull its output, and print the key diagnostic lines so
+    a GPU-side failure/timing is visible in the Actions log (not hidden on Kaggle)."""
+    deadline = time.time() + TIMEOUT_MIN * 60
+    while time.time() < deadline:
+        time.sleep(POLL_SECS)
+        s = _kaggle("kernels", "status", slug)
+        status = (s.stdout + s.stderr).lower()
+        if "complete" in status:
+            print("Kernel complete."); break
+        if "error" in status or "cancel" in status:
+            print(f"Kernel ended badly: {status.strip()[:200]}"); break
+        print(f"  … still running ({int((deadline-time.time())/60)} min left)")
+    else:
+        print("Kernel timed out — pulling whatever rendered.")
+    o = _kaggle("kernels", "output", slug, "-p", str(out_dir))
+    print(o.stdout.strip()); print(o.stderr.strip())
+    keys = ("TORCH", "ARCH_LIST", "DEVICE", "GPU_OP", "GPU_DIAG", "REFERENCES",
+            "KEYFRAMES_DONE", "[KF ", "[CLIP ", "RENDER_DONE", "Error", "FAIL",
+            "Traceback", "OutOfMemory", "CUDA out", "No module", "no kernel image")
+    for lg in sorted(Path(out_dir).glob("*.log")):
+        try:
+            txt = lg.read_text(errors="ignore")
+            hits = [ln for ln in txt.splitlines() if any(k in ln for k in keys)]
+            if hits:
+                print(f"\n----- key lines from {lg.name} -----")
+                for h in hits[-80:]:
+                    print(h[:400])
+            print(f"\n----- {lg.name} (tail) -----"); print(txt[-4000:]); print("----- end log -----\n")
+        except Exception:
+            pass
+    rep = Path(out_dir) / "render_report.json"
+    if rep.exists():
+        print("Render report:", rep.read_text()[:2000])
+
+
+def render_i2v(mp3_path, mp3_arg, dur, story, user):
+    """IMAGE->VIDEO: one locked-reference keyframe per shot (SDXL + IP-Adapter),
+    then LTX image-to-video animates each. Returns True on success, or None to
+    signal 'no references -> fall back to text-to-video'."""
+    stem  = mp3_path.stem
+    bible = {}
+    bpath = mp3_path.parent / (stem + ".bible.json")
+    if bpath.exists():
+        try:
+            bible = json.loads(bpath.read_text(encoding="utf-8"))
+        except Exception as e:
+            print("bible unreadable:", e)
+    if not bible.get("style"):
+        bible["style"] = story.get("world", "")
+
+    refs_b64 = load_reference_b64(mp3_path)
+    if not refs_b64:
+        return None  # no locked references -> caller falls back to T2V
+
+    n    = len(story["shots"])
+    cuts = music_aligned_cuts(mp3_path, dur, n)
+    specs = build_shot_specs(story, bible, cuts, set(refs_b64))
+
+    kf_only   = os.environ.get("AI_KEYFRAMES_ONLY", "").lower() in ("1", "true", "yes")
+    animate_n = int(os.environ.get("AI_ANIMATE_N", "1"))
+
+    if kf_only:
+        # Cheap probe: the FIRST shot that uses each distinct reference (covers every
+        # character + a scenery), so we can eyeball identity-lock before the full run.
+        seen, pick = set(), []
+        for i, s in enumerate(specs):
+            key = s["ref"] or "scenery"
+            if key not in seen:
+                seen.add(key); pick.append(i)
+        pick = sorted(pick)[:8]
+        specs_used = [specs[i] for i in pick]
+        print(f"KEYFRAMES-ONLY smoke: shots {pick} refs={[specs[i]['ref'] for i in pick]}")
+    else:
+        specs_used = specs
+
+    prompts  = [s["instr"] for s in specs_used]
+    refnames = [s["ref"] or "" for s in specs_used]
+    frames   = [s["frames"] for s in specs_used]
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    with open(OUT_DIR / "cuts.json", "w", encoding="utf-8") as f:
+        json.dump(cuts, f)
+
+    work = Path("output/_kernel")
+    if work.exists():
+        shutil.rmtree(work)
+    work.mkdir(parents=True)
+    render_id = os.environ.get("AI_RENDER_ID") or str(int(time.time()))
+    meta_payload = {"render_id": render_id, "mp3": mp3_arg, "n": len(specs_used),
+                    "w": AI_W, "h": AI_H, "mode": "i2v", "smoke": kf_only}
+
+    def b(x):
+        return base64.b64encode(json.dumps(x).encode()).decode()
+    code = (KERNEL_TEMPLATE_I2V
+            .replace("__PROMPTS_B64__",  b(prompts))
+            .replace("__REFNAMES_B64__", b(refnames))
+            .replace("__FRAMES_B64__",   b(frames))
+            .replace("__REFS_B64__",     b(refs_b64))
+            .replace("__META_B64__",     b(meta_payload))
+            .replace("__CUTS_B64__",     b(cuts))
+            .replace("__W__", str(AI_W)).replace("__H__", str(AI_H))
+            .replace("__FPS__", str(FPS)).replace("__STEPS__", str(AI_STEPS))
+            .replace("__KF_STEPS__", str(KF_STEPS)).replace("__IP_SCALE__", str(IP_SCALE))
+            .replace("__KF_W__", str(KF_W)).replace("__KF_H__", str(KF_H))
+            .replace("__KF_ONLY__", "True" if kf_only else "False")
+            .replace("__ANIMATE_N__", str(animate_n)))
+    (work / "gb_render.py").write_text(code, encoding="utf-8")
+    slug = f"{user}/gb-render-test"
+    kmeta = {"id": slug, "title": "gb-render-test", "code_file": "gb_render.py",
+             "language": "python", "kernel_type": "script", "is_private": True,
+             "enable_gpu": True, "enable_internet": True,
+             "dataset_sources": [], "competition_sources": [], "kernel_sources": []}
+    (work / "kernel-metadata.json").write_text(json.dumps(kmeta, indent=2), encoding="utf-8")
+
+    print(f"IMAGE->VIDEO: {len(specs_used)} shot(s), {len(refs_b64)} locked refs, "
+          f"KF {KF_W}x{KF_H}/{KF_STEPS}st ip={IP_SCALE}, clips {AI_W}x{AI_H}/{AI_STEPS}st, "
+          f"kf_only={kf_only}, render_id={render_id}")
+    r = _kaggle("kernels", "push", "-p", str(work))
+    print(r.stdout.strip()); print(r.stderr.strip())
+    if r.returncode != 0:
+        print("Kaggle push failed."); return False
+
+    # FULL render: decoupled kickoff (push + exit; the collector posts it).
+    if not kf_only and os.environ.get("AI_KICKOFF", "").lower() in ("1", "true", "yes"):
+        print(f"KICKOFF complete — render_id={render_id} now rendering on Kaggle. Not waiting.")
+        return True
+
+    # KEYFRAMES-ONLY probe (synchronous): wait + pull the keyframes to eyeball.
+    kf_dir = Path("output/keyframes")
+    kf_dir.mkdir(parents=True, exist_ok=True)
+    _poll_and_pull(slug, kf_dir)
+    print(f"Keyframes pulled to {kf_dir} ({len(list(kf_dir.glob('kf_*.png')))} images).")
+    return True
 
 
 def render(mp3_path):
@@ -283,6 +572,16 @@ def render(mp3_path):
                           f"from {sp.name}")
             except Exception as e:
                 print(f"story file unreadable ({e}) — using auto storyboard"); story = None
+
+    # IMAGE->VIDEO (consistent characters): a hand-written story + a locked
+    # "<Song>.refs/" reference set -> one keyframe per shot generated FROM the
+    # reference picture, then LTX image-to-video. This is the whole point of the
+    # upgrade; only falls through to text-to-video if the references are missing.
+    if story and refs_dir_for(mp3_path).exists():
+        res = render_i2v(mp3_path, mp3_arg, dur, story, user)
+        if res is not None:
+            return res
+        print("Reference load failed — falling back to text-to-video.")
 
     # NO-LOOP scene grid: even scenes; each clip rendered a hair longer than its
     # scene so create_video trims it with no repeat (one uniform frame count).

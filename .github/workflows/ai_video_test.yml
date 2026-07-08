@@ -23,6 +23,10 @@ on:
         description: 'Decoupled? (true = push render to Kaggle and EXIT; the collector posts it)'
         required: false
         default: 'false'
+      keyframes_only:
+        description: 'Image->video KEYFRAME probe? (true = generate reference-locked keyframes only, no post; pulls them as an artifact to eyeball consistency)'
+        required: false
+        default: 'false'
 
 jobs:
   ai-video-test:
@@ -49,6 +53,7 @@ jobs:
           pip install google-api-python-client google-auth-oauthlib google-auth-httplib2
           pip install librosa soundfile
           pip install anthropic
+          pip install pillow
 
       - name: Install FFmpeg (static build with drawtext) + fonts
         run: |
@@ -104,10 +109,20 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           AI_SMOKE: ${{ github.event.inputs.smoke }}
           AI_KICKOFF: ${{ github.event.inputs.kickoff }}
+          AI_KEYFRAMES_ONLY: ${{ github.event.inputs.keyframes_only }}
         run: python scripts/kaggle_render.py "music/${{ github.event.inputs.mp3_filename }}"
 
+      - name: Upload keyframes artifact (image->video probe)
+        if: ${{ github.event.inputs.keyframes_only == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: keyframes
+          path: output/keyframes/**
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Create video (AI clips, stock fallback)
-        if: ${{ github.event.inputs.smoke != 'true' && github.event.inputs.kickoff != 'true' }}
+        if: ${{ github.event.inputs.smoke != 'true' && github.event.inputs.kickoff != 'true' && github.event.inputs.keyframes_only != 'true' }}
         env:
           AI_CLIPS_DIR: output/ai_clips
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
@@ -116,7 +131,7 @@ jobs:
         run: python scripts/create_video.py "music/${{ github.event.inputs.mp3_filename }}"
 
       - name: Upload to YouTube (UNLISTED test)
-        if: ${{ github.event.inputs.smoke != 'true' && github.event.inputs.kickoff != 'true' }}
+        if: ${{ github.event.inputs.smoke != 'true' && github.event.inputs.kickoff != 'true' && github.event.inputs.keyframes_only != 'true' }}
         env:
           YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
           YT_PRIVACY: unlisted

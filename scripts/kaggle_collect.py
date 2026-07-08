@@ -65,6 +65,8 @@ def main():
     meta = json.loads(meta_f.read_text(encoding="utf-8"))
     rid  = str(meta.get("render_id") or "")
     mp3  = meta.get("mp3") or ""
+    if meta.get("smoke"):
+        print("meta.json marked smoke (keyframes-only probe) — never post."); gh_out(ready="false"); return
     if not rid or not mp3:
         print("meta.json missing render_id/mp3 — skip."); gh_out(ready="false"); return
 

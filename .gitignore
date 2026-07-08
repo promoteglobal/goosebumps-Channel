@@ -6,3 +6,9 @@ youtube_token.json
 music/download*.json
 
 __pycache__/
+
+# AI image->video runtime + eyeball artifacts (locked refs live in music/<song>.refs/)
+output/keyframe_test/
+output/keyframes/
+output/ai_clips/
+output/_kernel/
