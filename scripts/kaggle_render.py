@@ -34,7 +34,9 @@ FPS = 24
 KF_W     = int(os.environ.get("AI_KF_W", "1152"))
 KF_H     = int(os.environ.get("AI_KF_H", "640"))
 KF_STEPS = int(os.environ.get("AI_KF_STEPS", "28"))
-IP_SCALE = float(os.environ.get("AI_IP_SCALE", "0.7"))  # IP-Adapter identity strength
+# 0.5 balances identity vs following the scene prompt. Higher (0.7) locks identity
+# but copies the reference's pose/plain background; lower frees the pose.
+IP_SCALE = float(os.environ.get("AI_IP_SCALE", "0.5"))
 # Path B = NO LOOPS: each scene gets its own unique clip rendered to the scene's
 # length (no repeating). Scenes are short (~AI_SCENE_SECS) so clips stay short =
 # fewer AI artifacts AND no looping. Higher resolution than the looped prototype
@@ -262,8 +264,110 @@ print("RENDER_DONE")
 # Heavier true-edit models (Flux Kontext / Qwen-Image-Edit) are deliberately NOT
 # used: they need a newer torch that DROPPED the P100 we can't opt out of.
 # ============================================================================
+# Worker run as a SEPARATE PROCESS per stage (keyframes, then animate) so SDXL's
+# RAM is fully returned to the OS before LTX loads — a single process was
+# OOM-killed on the P100's ~13GB system RAM. Reads params from _shared.json and
+# reference pictures from _ref_<name>.jpg (both written by the parent below).
+STAGE_PY = r"""
+import sys, json, os, time, traceback, glob, re
+from PIL import Image
+import torch
+
+stage = sys.argv[1]
+WORK  = "/kaggle/working"
+S = json.load(open(WORK + "/_shared.json"))
+PROMPTS, REFNAMES, FRAMES = S["prompts"], S["refnames"], S["frames"]
+W, H, FPS, STEPS = S["W"], S["H"], S["FPS"], S["STEPS"]
+KF_STEPS, IP_SCALE, KF_W, KF_H = S["KF_STEPS"], S["IP_SCALE"], S["KF_W"], S["KF_H"]
+KF_ONLY, ANIMATE_N, SWEEP = S["KF_ONLY"], S["ANIMATE_N"], S.get("sweep") or []
+
+def load_report():
+    try: return json.load(open(WORK + "/render_report.json"))
+    except Exception:
+        return {"kf": {}, "clips": {},
+                "device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu"}
+def save_report(r): json.dump(r, open(WORK + "/render_report.json", "w"), indent=2)
+
+if stage == "keyframes":
+    from diffusers import StableDiffusionXLPipeline
+    from transformers import CLIPVisionModelWithProjection
+    rep = load_report(); rep["stage"] = "keyframes"; save_report(rep)
+    REFS = {}
+    for f in glob.glob(WORK + "/_ref_*.jpg") + glob.glob(WORK + "/_ref_*.png"):
+        name = os.path.basename(f)[5:].rsplit(".", 1)[0]
+        try: REFS[name] = Image.open(f).convert("RGB")
+        except Exception as e: print("ref load fail", name, e, flush=True)
+    print("REFERENCES:", ", ".join(sorted(REFS)), flush=True)
+    ie = CLIPVisionModelWithProjection.from_pretrained(
+        "h94/IP-Adapter", subfolder="models/image_encoder", torch_dtype=torch.float16)
+    sdxl = StableDiffusionXLPipeline.from_pretrained(
+        "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16,
+        image_encoder=ie, use_safetensors=True)
+    sdxl.load_ip_adapter("h94/IP-Adapter", subfolder="sdxl_models",
+                         weight_name="ip-adapter-plus_sdxl_vit-h.safetensors")
+    sdxl.enable_model_cpu_offload()
+    try: sdxl.enable_vae_tiling()
+    except Exception: pass
+    NEG = ("worst quality, low quality, blurry, distorted, deformed, disfigured, extra "
+           "limbs, extra fingers, bad anatomy, text, caption, watermark, logo, signature, "
+           "photorealistic photo")
+    gen = torch.Generator(device="cuda"); t0 = time.time()
+    def one(i, scale, suffix):
+        rn  = REFNAMES[i]; ref = REFS.get(rn)
+        sdxl.set_ip_adapter_scale(scale if ref is not None else 0.0)
+        ip = ref if ref is not None else (next(iter(REFS.values())) if REFS else Image.new("RGB", (224, 224)))
+        gen.manual_seed(9679 + i)
+        img = sdxl(prompt=PROMPTS[i][:300], negative_prompt=NEG, ip_adapter_image=ip,
+                   num_inference_steps=KF_STEPS, guidance_scale=6.5,
+                   width=KF_W, height=KF_H, generator=gen).images[0]
+        img.save("%s/kf_%03d%s.png" % (WORK, i, suffix))
+        return rn
+    for i in range(len(PROMPTS)):
+        try:
+            rn = one(i, IP_SCALE, "")
+            rep = load_report(); rep.setdefault("kf", {})[str(i)] = "ok:" + str(rn); save_report(rep)
+            print("[KF %d/%d] ok ref=%s scale=%s (%ds)" % (i+1, len(PROMPTS), rn, IP_SCALE, int(time.time()-t0)), flush=True)
+            for sc in SWEEP:                    # extra scale variants for tuning (kf_###_sNN.png)
+                one(i, sc, "_s%03d" % int(round(sc * 100)))
+                print("    sweep kf_%03d @ %s" % (i, sc), flush=True)
+        except Exception as e:
+            rep = load_report(); rep.setdefault("kf", {})[str(i)] = "FAIL: " + str(e); save_report(rep)
+            print("[KF %d/%d] FAIL: %s" % (i+1, len(PROMPTS), e), flush=True); traceback.print_exc()
+    print("KEYFRAMES_DONE in %ds" % int(time.time() - t0), flush=True)
+
+elif stage == "animate":
+    from diffusers import LTXImageToVideoPipeline
+    from diffusers.utils import export_to_video
+    rep = load_report(); rep["stage"] = "animate"; save_report(rep)
+    idxs = sorted(int(os.path.basename(f)[3:6]) for f in glob.glob(WORK + "/kf_*.png")
+                  if re.match(r"kf_\d{3}\.png$", os.path.basename(f)))
+    if KF_ONLY: idxs = idxs[:ANIMATE_N]
+    if not idxs:
+        print("NO_KEYFRAMES_TO_ANIMATE", flush=True); sys.exit(0)
+    ltx = LTXImageToVideoPipeline.from_pretrained("Lightricks/LTX-Video", torch_dtype=torch.float16)
+    ltx.enable_model_cpu_offload()
+    try: ltx.vae.enable_tiling()
+    except Exception: pass
+    NEGV = "worst quality, jittery, blurry, distorted, morphing, watermark, text, caption, logo"
+    ta = time.time()
+    for i in idxs:
+        try:
+            kf = Image.open("%s/kf_%03d.png" % (WORK, i)).convert("RGB").resize((W, H))
+            nf = int(FRAMES[i])
+            frames = ltx(image=kf, prompt=PROMPTS[i][:300], negative_prompt=NEGV,
+                         width=W, height=H, num_frames=nf, num_inference_steps=STEPS).frames[0]
+            export_to_video(frames, "%s/clip_%03d.mp4" % (WORK, i), fps=FPS)
+            rep = load_report(); rep.setdefault("clips", {})[str(i)] = "ok"; save_report(rep)
+            print("[CLIP %d] ok (%df, %ds)" % (i, nf, int(time.time() - ta)), flush=True)
+        except Exception as e:
+            rep = load_report(); rep.setdefault("clips", {})[str(i)] = "FAIL: " + str(e); save_report(rep)
+            print("[CLIP %d] FAIL: %s" % (i, e), flush=True); traceback.print_exc()
+    print("ANIMATE_DONE", flush=True)
+"""
+
+
 KERNEL_TEMPLATE_I2V = r'''
-import json, os, sys, base64, subprocess, traceback, io, time, gc
+import json, os, sys, base64, subprocess
 
 def pipi(*pkgs):
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *pkgs])
@@ -282,114 +386,33 @@ try:
 except Exception as _e:
     import traceback as _tb; print("GPU_DIAG_FAIL", _e); _tb.print_exc()
 
-from PIL import Image
-
-PROMPTS  = json.loads(base64.b64decode("__PROMPTS_B64__").decode())
-REFNAMES = json.loads(base64.b64decode("__REFNAMES_B64__").decode())
-FRAMES   = json.loads(base64.b64decode("__FRAMES_B64__").decode())
-REFS_B64 = json.loads(base64.b64decode("__REFS_B64__").decode())
-META     = json.loads(base64.b64decode("__META_B64__").decode())
-CUTS     = json.loads(base64.b64decode("__CUTS_B64__").decode())
-W, H, FPS, STEPS = __W__, __H__, __FPS__, __STEPS__
-KF_STEPS, IP_SCALE, KF_W, KF_H = __KF_STEPS__, __IP_SCALE__, __KF_W__, __KF_H__
-KF_ONLY, ANIMATE_N = __KF_ONLY__, __ANIMATE_N__
-
 os.makedirs("/kaggle/working", exist_ok=True)
+META = json.loads(base64.b64decode("__META_B64__").decode())
+CUTS = json.loads(base64.b64decode("__CUTS_B64__").decode())
 json.dump(META, open("/kaggle/working/meta.json","w"))
 json.dump(CUTS, open("/kaggle/working/cuts.json","w"))
-print("RENDER_ID", META.get("render_id"), "| shots", len(PROMPTS), "| KF_ONLY", KF_ONLY)
-
-REFS = {}
+shared = {
+    "prompts":  json.loads(base64.b64decode("__PROMPTS_B64__").decode()),
+    "refnames": json.loads(base64.b64decode("__REFNAMES_B64__").decode()),
+    "frames":   json.loads(base64.b64decode("__FRAMES_B64__").decode()),
+    "sweep":    json.loads(base64.b64decode("__SWEEP_B64__").decode()),
+    "W": __W__, "H": __H__, "FPS": __FPS__, "STEPS": __STEPS__,
+    "KF_STEPS": __KF_STEPS__, "IP_SCALE": __IP_SCALE__, "KF_W": __KF_W__, "KF_H": __KF_H__,
+    "KF_ONLY": __KF_ONLY__, "ANIMATE_N": __ANIMATE_N__,
+}
+json.dump(shared, open("/kaggle/working/_shared.json","w"))
+REFS_B64 = json.loads(base64.b64decode("__REFS_B64__").decode())
 for name, b in REFS_B64.items():
-    try:
-        REFS[name] = Image.open(io.BytesIO(base64.b64decode(b))).convert("RGB")
-    except Exception as e:
-        print("ref decode fail", name, e)
-print("REFERENCES:", ", ".join(sorted(REFS)))
+    open("/kaggle/working/_ref_" + name + ".jpg", "wb").write(base64.b64decode(b))
+open("/kaggle/working/stage.py","w").write(base64.b64decode("__STAGE_PY_B64__").decode())
+print("RENDER_ID", META.get("render_id"), "| shots", len(shared["prompts"]),
+      "| refs", len(REFS_B64), "| KF_ONLY", __KF_ONLY__)
 
-report = {"stage":"keyframes", "kf":{}, "clips":{},
-          "device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu"}
-def _save_report():
-    json.dump(report, open("/kaggle/working/render_report.json","w"), indent=2)
-
-# ---------------- STAGE 1: keyframes (SDXL + IP-Adapter) ----------------
-from diffusers import StableDiffusionXLPipeline
-from transformers import CLIPVisionModelWithProjection
-
-t0 = time.time()
-image_encoder = CLIPVisionModelWithProjection.from_pretrained(
-    "h94/IP-Adapter", subfolder="models/image_encoder", torch_dtype=torch.float16)
-sdxl = StableDiffusionXLPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16,
-    image_encoder=image_encoder, use_safetensors=True)
-sdxl.load_ip_adapter("h94/IP-Adapter", subfolder="sdxl_models",
-                     weight_name="ip-adapter-plus_sdxl_vit-h.safetensors")
-sdxl.set_ip_adapter_scale(IP_SCALE)
-# model-level CPU offload = safe on a 16GB P100 (UNet stays resident during its
-# denoise loop; only text/vae/image-encoder shuttle) so no OOM mid-generation.
-sdxl.enable_model_cpu_offload()
-try: sdxl.enable_vae_tiling()
-except Exception: pass
-
-NEG = ("worst quality, low quality, blurry, distorted, deformed, disfigured, extra "
-       "limbs, extra fingers, bad anatomy, text, caption, watermark, logo, signature, "
-       "photorealistic photo")
-gen = torch.Generator(device="cuda")
-keyframes = {}
-for i, prompt in enumerate(PROMPTS):
-    try:
-        refname = REFNAMES[i]
-        ref_img = REFS.get(refname)
-        if ref_img is not None:
-            sdxl.set_ip_adapter_scale(IP_SCALE); ipimg = ref_img
-        else:
-            sdxl.set_ip_adapter_scale(0.0)
-            ipimg = next(iter(REFS.values())) if REFS else Image.new("RGB",(224,224))
-        gen.manual_seed(9679 + i)
-        img = sdxl(prompt=prompt[:600], negative_prompt=NEG, ip_adapter_image=ipimg,
-                   num_inference_steps=KF_STEPS, guidance_scale=6.0,
-                   width=KF_W, height=KF_H, generator=gen).images[0]
-        p = f"/kaggle/working/kf_{i:03d}.png"; img.save(p); keyframes[i] = p
-        report["kf"][str(i)] = "ok:"+str(refname)
-        print(f"[KF {i+1}/{len(PROMPTS)}] ok ref={refname} ({int(time.time()-t0)}s elapsed)")
-    except Exception as e:
-        report["kf"][str(i)] = "FAIL: "+str(e)
-        print(f"[KF {i+1}/{len(PROMPTS)}] FAIL: {e}"); traceback.print_exc()
-    _save_report()
-kf_secs = int(time.time()-t0)
-print(f"KEYFRAMES_DONE {len(keyframes)}/{len(PROMPTS)} in {kf_secs}s "
-      f"(~{kf_secs/max(1,len(keyframes)):.0f}s/keyframe)")
-
-del sdxl, image_encoder; gc.collect(); torch.cuda.empty_cache()
-
-# ---------------- STAGE 2: animate (LTX image-to-video) ----------------
-animate_idxs = sorted(keyframes)
-if KF_ONLY:
-    animate_idxs = animate_idxs[:ANIMATE_N]
-    print("KF_ONLY smoke: animating only", animate_idxs)
-
-if animate_idxs:
-    report["stage"]="animate"; _save_report()
-    from diffusers import LTXImageToVideoPipeline
-    from diffusers.utils import export_to_video
-    ltx = LTXImageToVideoPipeline.from_pretrained("Lightricks/LTX-Video", torch_dtype=torch.float16)
-    ltx.enable_model_cpu_offload()
-    try: ltx.vae.enable_tiling()
-    except Exception: pass
-    NEGV = "worst quality, jittery, blurry, distorted, morphing, watermark, text, caption, logo"
-    ta = time.time()
-    for i in animate_idxs:
-        try:
-            kf = Image.open(keyframes[i]).convert("RGB").resize((W,H))
-            nf = int(FRAMES[i])
-            frames = ltx(image=kf, prompt=PROMPTS[i][:500], negative_prompt=NEGV,
-                         width=W, height=H, num_frames=nf,
-                         num_inference_steps=STEPS).frames[0]
-            export_to_video(frames, f"/kaggle/working/clip_{i:03d}.mp4", fps=FPS)
-            report["clips"][str(i)]="ok"; print(f"[CLIP {i+1}] ok ({nf}f, {int(time.time()-ta)}s elapsed)")
-        except Exception as e:
-            report["clips"][str(i)]="FAIL: "+str(e); print(f"[CLIP {i+1}] FAIL: {e}"); traceback.print_exc()
-        _save_report()
+# Two SEPARATE processes so SDXL's RAM is freed before LTX loads.
+r1 = subprocess.run([sys.executable, "/kaggle/working/stage.py", "keyframes"])
+print("keyframes stage exit", r1.returncode)
+r2 = subprocess.run([sys.executable, "/kaggle/working/stage.py", "animate"])
+print("animate stage exit", r2.returncode)
 print("RENDER_DONE")
 '''
 
@@ -459,6 +482,10 @@ def render_i2v(mp3_path, mp3_arg, dur, story, user):
 
     kf_only   = os.environ.get("AI_KEYFRAMES_ONLY", "").lower() in ("1", "true", "yes")
     animate_n = int(os.environ.get("AI_ANIMATE_N", "1"))
+    # Optional IP-Adapter scale sweep (extra kf_###_sNN.png variants) for tuning the
+    # identity-vs-scene balance. Defaults on during the keyframe probe only.
+    sweep = [float(x) for x in os.environ.get(
+        "AI_IP_SWEEP", ("0.35,0.65" if kf_only else "")).replace(" ", "").split(",") if x]
 
     if kf_only:
         # Cheap probe: the FIRST shot that uses each distinct reference (covers every
@@ -499,6 +526,8 @@ def render_i2v(mp3_path, mp3_arg, dur, story, user):
             .replace("__REFS_B64__",     b(refs_b64))
             .replace("__META_B64__",     b(meta_payload))
             .replace("__CUTS_B64__",     b(cuts))
+            .replace("__SWEEP_B64__",    b(sweep))
+            .replace("__STAGE_PY_B64__", base64.b64encode(STAGE_PY.encode()).decode())
             .replace("__W__", str(AI_W)).replace("__H__", str(AI_H))
             .replace("__FPS__", str(FPS)).replace("__STEPS__", str(AI_STEPS))
             .replace("__KF_STEPS__", str(KF_STEPS)).replace("__IP_SCALE__", str(IP_SCALE))

@@ -167,6 +167,17 @@ ASSET_KEYWORDS = [
 ]
 
 
+# Short secondary-character tags (SDXL truncates at 77 tokens, so we can't paste
+# the full bible look for a secondary; IP-Adapter carries the PRIMARY's identity).
+SHORT_TAG = {
+    "climber":      "the blonde young man in a black ski tracksuit",
+    "grandma":      "the grey-haired grandmother in a maroon cardigan",
+    "rescuer":      "the bearded mountain rescuer in a red jacket",
+    "prayer_light": "the small glowing golden orb of light",
+}
+SHORT_STYLE = "Pixar-style 3D animated movie still, cinematic, highly detailed"
+
+
 def _bible_look(bible, asset):
     """Verbatim canonical description of an asset from the bible (characters or places)."""
     ch = (bible.get("characters") or {}).get(asset)
@@ -212,7 +223,6 @@ def assets_in_shot(shot_text):
 def build_shot_specs(story, bible, cuts, available_refs):
     """One spec per shot: {instr, ref (primary asset name or None), extra_looks, frames}.
     `available_refs` = set of asset names we actually have a reference image for."""
-    style = bible.get("style") or story.get("world") or ""
     characters = set((bible.get("characters") or {}).keys())
     shots = story["shots"]
     n = len(shots)
@@ -223,28 +233,20 @@ def build_shot_specs(story, bible, cuts, available_refs):
         # primary identity ref = first found asset we have an image for (characters
         # rank before places in ASSET_KEYWORDS, so a person wins over scenery).
         primary = next((a for a in found if a in available_refs), None)
-        # IP-Adapter carries the PRIMARY's identity from its picture, so text does
-        # not repeat the primary's look (saves SDXL's ~77 tokens). Do describe any
-        # SECONDARY CHARACTER in the shot (they aren't in the reference image), and
-        # the scene itself if the keyframe is pure scenery (a place is primary).
-        looks = []
+        # SDXL truncates at 77 tokens, so the prompt must be SHORT and put the SCENE
+        # FIRST (so the action/setting survives). IP-Adapter carries the PRIMARY's
+        # identity from its picture, so we don't repeat the primary's verbatim look;
+        # a SECONDARY character gets only a short tag (it isn't in the reference).
+        sec = []
         if primary in characters:
             for a in found:
-                if a != primary and a in characters:
-                    lk = _bible_look(bible, a)
-                    if lk:
-                        looks.append(lk)
-        else:  # scenery keyframe — give the place its verbatim look
-            lk = _bible_look(bible, primary) if primary else ""
-            if lk:
-                looks.append(lk)
+                if a != primary and a in characters and a in SHORT_TAG:
+                    sec.append(SHORT_TAG[a])
         light = _lighting_for(bible, i, n)
-        parts = [style, shot]
-        if looks:
-            parts.append("; ".join(looks))
+        parts = [shot] + sec + [SHORT_STYLE]
         if light:
             parts.append(light)
-        parts.append("no text, no captions, no watermark")
+        parts.append("no text, no watermark")
         instr = ". ".join(p.strip().rstrip(".") for p in parts if p and p.strip()) + "."
         seg = cuts[i + 1] - cuts[i]
         specs.append({"instr": instr, "ref": primary, "assets": found,
