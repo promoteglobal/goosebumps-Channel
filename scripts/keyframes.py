@@ -176,6 +176,8 @@ SHORT_TAG = {
     "prayer_light": "the small glowing golden orb of light",
 }
 SHORT_STYLE = "Pixar-style 3D animated movie still, cinematic, highly detailed"
+# Characters with a mouth → force closed (no talking faces over the music).
+HUMAN_CHARS = {"climber", "grandma", "rescuer"}
 
 
 def _bible_look(bible, asset):
@@ -189,11 +191,19 @@ def _bible_look(bible, asset):
     return ""
 
 
+def _short_light(phrase):
+    """SDXL truncates prompts at ~77 tokens, so the lighting cue must be SHORT and
+    sit EARLY in the prompt or the time-of-day gets cut off (v1 bug: random day↔night
+    flips). Keep the leading clause (which holds the time keyword) up to ~7 words."""
+    p = str(phrase).split(";")[0].replace("—", " ").replace("-", " ")
+    p = p.split(",")[0] if len(p.split(",")[0].split()) >= 4 else p
+    return " ".join(p.split()[:7]).strip().rstrip(",").lower()
+
+
 def _lighting_for(bible, i, n):
-    """Lighting-arc phrase for shot i (0-based) of n, from the bible's arc which is
-    keyed by shot ranges of the 40-shot storyboard (scaled if n != 40)."""
+    """SHORT lighting cue for shot i (0-based) of n, from the bible's arc (keyed by
+    shot ranges of the 40-shot storyboard, scaled if n != 40)."""
     arc = bible.get("lighting_time_arc") or {}
-    # map arc keys (shots_a_b_...) to (a,b)
     ranges = []
     for k, v in arc.items():
         m = re.match(r"shots?_(\d+)_(\d+)", k)
@@ -206,8 +216,8 @@ def _lighting_for(bible, i, n):
     shot_no = 1 + round(i * (total - 1) / max(1, n - 1))  # scale to the arc's numbering
     for a, b, v in ranges:
         if a <= shot_no <= b:
-            return v
-    return ranges[-1][2]
+            return _short_light(v)
+    return _short_light(ranges[-1][2])
 
 
 def assets_in_shot(shot_text):
@@ -243,10 +253,15 @@ def build_shot_specs(story, bible, cuts, available_refs):
                 if a != primary and a in characters and a in SHORT_TAG:
                     sec.append(SHORT_TAG[a])
         light = _lighting_for(bible, i, n)
-        parts = [shot] + sec + [SHORT_STYLE]
+        # Order matters (SDXL truncates at ~77 tokens): scene, then the SHORT lighting
+        # cue (so time-of-day survives — fixes v1 day/night flips), then mouth-closed
+        # for people (no talking faces), secondaries, style.
+        parts = [shot]
         if light:
             parts.append(light)
-        parts.append("no text, no watermark")
+        if primary in HUMAN_CHARS:
+            parts.append("mouth closed, calm still expression, not talking")
+        parts += sec + [SHORT_STYLE, "no text, no watermark"]
         instr = ". ".join(p.strip().rstrip(".") for p in parts if p and p.strip()) + "."
         seg = cuts[i + 1] - cuts[i]
         specs.append({"instr": instr, "ref": primary, "assets": found,

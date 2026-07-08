@@ -311,7 +311,8 @@ if stage == "keyframes":
     except Exception: pass
     NEG = ("worst quality, low quality, blurry, distorted, deformed, disfigured, extra "
            "limbs, extra fingers, bad anatomy, text, caption, watermark, logo, signature, "
-           "photorealistic photo")
+           "photorealistic photo, talking, speaking, open mouth, mouthing words, singing, "
+           "lip sync")
     gen = torch.Generator(device="cuda"); t0 = time.time()
     def one(i, scale, suffix):
         rn  = REFNAMES[i]; ref = REFS.get(rn)
@@ -349,7 +350,9 @@ elif stage == "animate":
     ltx.enable_model_cpu_offload()
     try: ltx.vae.enable_tiling()
     except Exception: pass
-    NEGV = "worst quality, jittery, blurry, distorted, morphing, watermark, text, caption, logo"
+    NEGV = ("worst quality, jittery, blurry, distorted, morphing, warping, deforming, "
+            "talking, speaking, mouth moving, lip sync, fast motion, running, watermark, "
+            "text, caption, logo")
     ta = time.time()
     for i in idxs:
         try:
