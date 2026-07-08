@@ -34,9 +34,10 @@ FPS = 24
 KF_W     = int(os.environ.get("AI_KF_W", "1152"))
 KF_H     = int(os.environ.get("AI_KF_H", "640"))
 KF_STEPS = int(os.environ.get("AI_KF_STEPS", "28"))
-# 0.5 balances identity vs following the scene prompt. Higher (0.7) locks identity
-# but copies the reference's pose/plain background; lower frees the pose.
-IP_SCALE = float(os.environ.get("AI_IP_SCALE", "0.5"))
+# 0.35 tuned via probe #2 sweep: keeps character identity clearly recognizable
+# while letting the scene prompt drive pose + background (climber kneeling in snow,
+# grandma in her living room). 0.5+ froze characters in the reference's grey pose.
+IP_SCALE = float(os.environ.get("AI_IP_SCALE", "0.35"))
 # Path B = NO LOOPS: each scene gets its own unique clip rendered to the scene's
 # length (no repeating). Scenes are short (~AI_SCENE_SECS) so clips stay short =
 # fewer AI artifacts AND no looping. Higher resolution than the looped prototype
