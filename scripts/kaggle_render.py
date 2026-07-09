@@ -489,17 +489,22 @@ def render_i2v(mp3_path, mp3_arg, dur, story, user):
     # Optional IP-Adapter scale sweep (extra kf_###_sNN.png variants) for tuning the
     # identity-vs-scene balance. Defaults on during the keyframe probe only.
     sweep = [float(x) for x in os.environ.get(
-        "AI_IP_SWEEP", ("0.35,0.65" if kf_only else "")).replace(" ", "").split(",") if x]
+        "AI_IP_SWEEP", ("0.25,0.45" if kf_only else "")).replace(" ", "").split(",") if x]
 
     if kf_only:
         # Cheap probe: the FIRST shot that uses each distinct reference (covers every
-        # character + a scenery), so we can eyeball identity-lock before the full run.
+        # character + a scenery), PLUS the first "buried" shot and a powder/dig shot,
+        # so we can eyeball identity-lock, burial continuity + motion before the full run.
         seen, pick = set(), []
         for i, s in enumerate(specs):
             key = s["ref"] or "scenery"
             if key not in seen:
                 seen.add(key); pick.append(i)
-        pick = sorted(pick)[:8]
+        for kw in ("buried", "powder flying", "sunlight floods"):
+            j = next((i for i, s in enumerate(specs) if kw in s["instr"].lower()), None)
+            if j is not None and j not in pick:
+                pick.append(j)
+        pick = sorted(set(pick))[:10]
         specs_used = [specs[i] for i in pick]
         print(f"KEYFRAMES-ONLY smoke: shots {pick} refs={[specs[i]['ref'] for i in pick]}")
     else:
