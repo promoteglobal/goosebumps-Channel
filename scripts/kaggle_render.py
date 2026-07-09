@@ -346,7 +346,7 @@ elif stage == "animate":
     if KF_ONLY: idxs = idxs[:ANIMATE_N]
     if not idxs:
         print("NO_KEYFRAMES_TO_ANIMATE", flush=True); sys.exit(0)
-    ltx = LTXImageToVideoPipeline.from_pretrained("Lightricks/LTX-Video", torch_dtype=torch.float16)
+    ltx = LTXImageToVideoPipeline.from_pretrained("Lightricks/LTX-Video-0.9.5", torch_dtype=torch.float16)
     ltx.enable_model_cpu_offload()
     try: ltx.vae.enable_tiling()
     except Exception: pass
@@ -359,7 +359,8 @@ elif stage == "animate":
             kf = Image.open("%s/kf_%03d.png" % (WORK, i)).convert("RGB").resize((W, H))
             nf = int(FRAMES[i])
             frames = ltx(image=kf, prompt=PROMPTS[i][:300], negative_prompt=NEGV,
-                         width=W, height=H, num_frames=nf, num_inference_steps=STEPS).frames[0]
+                         width=W, height=H, num_frames=nf, num_inference_steps=STEPS,
+                         decode_timestep=0.03, decode_noise_scale=0.025).frames[0]
             export_to_video(frames, "%s/clip_%03d.mp4" % (WORK, i), fps=FPS)
             rep = load_report(); rep.setdefault("clips", {})[str(i)] = "ok"; save_report(rep)
             print("[CLIP %d] ok (%df, %ds)" % (i, nf, int(time.time() - ta)), flush=True)
@@ -376,8 +377,8 @@ import json, os, sys, base64, subprocess
 def pipi(*pkgs):
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *pkgs])
 
-pipi("-U", "torch==2.4.1", "torchvision==0.19.1",
-     "diffusers==0.32.0", "transformers>=4.44.0,<5", "accelerate",
+pipi("-U", "torch==2.4.1", "torchvision==0.19.1", "torchaudio==2.4.1",
+     "diffusers==0.34.0", "transformers>=4.44.0,<5", "accelerate",
      "peft", "sentencepiece", "imageio", "imageio-ffmpeg")
 
 import torch
