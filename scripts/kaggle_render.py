@@ -436,7 +436,9 @@ def pipi(*p):
 # Latest diffusers for Wan 2.2 (WanPipeline + AutoencoderKLWan); then FORCE the
 # P100-safe torch 2.4.1 back (Wan needs torch>=2.4.0; 2.4.1 keeps sm_60 for P100).
 pipi("-U", "diffusers", "transformers", "accelerate", "ftfy", "imageio", "imageio-ffmpeg", "sentencepiece")
-pipi("torch==2.4.1", "torchvision==0.19.1")
+# torchaudio MUST match torch or diffusers' wan import dies on a stale ABI symbol
+# (undefined symbol: aoti_torch_memory_format_preserve_format).
+pipi("torch==2.4.1", "torchvision==0.19.1", "torchaudio==2.4.1")
 
 import torch, diffusers
 print("TORCH", torch.__version__, "| DIFFUSERS", diffusers.__version__, "| CUDA", torch.version.cuda)
