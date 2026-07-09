@@ -18,7 +18,7 @@ This NEVER fails the build: any problem (no keys, push error, timeout, OOM) just
 logs and exits 0, leaving output/ai_clips/ without clips so create_video.py
 falls back to stock footage. Tag-safe, opt-in.
 """
-import os, sys, json, time, base64, shutil, subprocess
+import os, sys, json, time, base64, shutil, subprocess, io
 from pathlib import Path
 
 # Reuse the exact blueprint + cut logic the video builder uses, so scenes align.
