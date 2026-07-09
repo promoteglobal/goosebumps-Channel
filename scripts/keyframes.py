@@ -243,6 +243,13 @@ def build_shot_specs(story, bible, cuts, available_refs):
         # primary identity ref = first found asset we have an image for (characters
         # rank before places in ASSET_KEYWORDS, so a person wins over scenery).
         primary = next((a for a in found if a in available_refs), None)
+        # BURIED shots: condition on the dedicated buried-face reference, not the
+        # standing full-body one (IP-Adapter copies the reference COMPOSITION, so a
+        # standing ref forces a standing figure — v2 probe showed him standing next
+        # to a snow mound instead of buried). Keeps the buried STATE consistent.
+        sl = shot.lower()
+        if ("buried" in sl or "under the snow" in sl) and "climber_buried" in available_refs:
+            primary = "climber_buried"
         # SDXL truncates at 77 tokens, so the prompt must be SHORT and put the SCENE
         # FIRST (so the action/setting survives). IP-Adapter carries the PRIMARY's
         # identity from its picture, so we don't repeat the primary's verbatim look;

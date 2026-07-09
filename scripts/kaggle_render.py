@@ -488,8 +488,9 @@ def render_i2v(mp3_path, mp3_arg, dur, story, user):
     animate_n = int(os.environ.get("AI_ANIMATE_N", "1"))
     # Optional IP-Adapter scale sweep (extra kf_###_sNN.png variants) for tuning the
     # identity-vs-scene balance. Defaults on during the keyframe probe only.
+    # Scale settled at 0.35; sweep off by default now (set AI_IP_SWEEP to re-tune).
     sweep = [float(x) for x in os.environ.get(
-        "AI_IP_SWEEP", ("0.25,0.45" if kf_only else "")).replace(" ", "").split(",") if x]
+        "AI_IP_SWEEP", "").replace(" ", "").split(",") if x]
 
     if kf_only:
         # Cheap probe: the FIRST shot that uses each distinct reference (covers every
