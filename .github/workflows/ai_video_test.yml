@@ -31,6 +31,10 @@ on:
         description: 'Wan 2.2 feasibility probe? (true = animate a couple refs with Wan2.2-TI2V-5B, no post; pulls clips as an artifact)'
         required: false
         default: 'false'
+      ltx_probe:
+        description: 'Newer-LTX probe? (true = animate a couple refs with a newer LTX checkpoint, no post; pulls clips as an artifact)'
+        required: false
+        default: 'false'
 
 jobs:
   ai-video-test:
@@ -115,10 +119,11 @@ jobs:
           AI_KICKOFF: ${{ github.event.inputs.kickoff }}
           AI_KEYFRAMES_ONLY: ${{ github.event.inputs.keyframes_only }}
           AI_WAN_PROBE: ${{ github.event.inputs.wan_probe }}
+          AI_LTX_PROBE: ${{ github.event.inputs.ltx_probe }}
         run: python scripts/kaggle_render.py "music/${{ github.event.inputs.mp3_filename }}"
 
       - name: Upload keyframes/probe artifact
-        if: ${{ github.event.inputs.keyframes_only == 'true' || github.event.inputs.wan_probe == 'true' }}
+        if: ${{ github.event.inputs.keyframes_only == 'true' || github.event.inputs.wan_probe == 'true' || github.event.inputs.ltx_probe == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: keyframes

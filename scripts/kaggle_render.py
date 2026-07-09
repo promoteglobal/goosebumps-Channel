@@ -541,6 +541,127 @@ def _wan_probe(mp3_path, user):
     return True
 
 
+# ============================================================================
+# LTX-upgrade probe — try a NEWER (still 2B, P100-viable) LTX checkpoint to see if
+# it beats our current 0.9.0 on motion/detail. The 13B 0.9.7/0.9.8 are P100-blocked
+# (too big + need modern torch), so target the 2B line. Model + diffusers version
+# are baked in below so we can iterate cheaply.
+# ============================================================================
+LTX_PROBE_MODEL     = os.environ.get("AI_LTX_MODEL", "Lightricks/LTX-Video-0.9.5")
+LTX_PROBE_DIFFUSERS = os.environ.get("AI_LTX_DIFFUSERS", "0.34.0")
+LTX_PROBE_STEPS     = int(os.environ.get("AI_LTX_STEPS", "30"))
+
+LTX_PROBE_KERNEL = r'''
+import json, os, sys, base64, subprocess, time, traceback, io
+
+def pipi(*p):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", *p])
+
+# P100-safe stack (torch 2.4.1 keeps sm_60) + a chosen diffusers that (hopefully)
+# supports this LTX version without the "infer_schema Parameter q" break. torchaudio
+# MUST match torch or diffusers' ltx import dies on a stale ABI symbol.
+pipi("-U", "diffusers==__DIFFUSERS__", "transformers>=4.44.0,<5", "accelerate", "imageio", "imageio-ffmpeg", "sentencepiece")
+pipi("torch==2.4.1", "torchvision==0.19.1", "torchaudio==2.4.1")
+
+import torch, diffusers
+print("TORCH", torch.__version__, "| DIFFUSERS", diffusers.__version__, "| CUDA", torch.version.cuda)
+try:
+    print("ARCH_LIST", torch.cuda.get_arch_list()); print("DEVICE", torch.cuda.get_device_name(0))
+    _x=(torch.randn(64,64,device="cuda")@torch.randn(64,64,device="cuda")).sum().item(); print("GPU_OP_OK", round(_x,3))
+except Exception as e:
+    import traceback as tb; print("GPU_DIAG_FAIL", e); tb.print_exc()
+
+from PIL import Image
+IMGS = json.loads(base64.b64decode("__IMGS_B64__").decode())
+os.makedirs("/kaggle/working", exist_ok=True)
+report = {"stage": "ltx", "model": "__MODEL__", "device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
+          "torch": torch.__version__, "diffusers": diffusers.__version__, "clips": {}}
+def save(): json.dump(report, open("/kaggle/working/wan_report.json", "w"), indent=2)
+save()
+
+W, H, NFRAMES, STEPS, FPS = __W__, __H__, __NFRAMES__, __STEPS__, 24
+try:
+    from diffusers import LTXImageToVideoPipeline
+    from diffusers.utils import export_to_video
+    print("Loading __MODEL__ ...")
+    pipe = LTXImageToVideoPipeline.from_pretrained("__MODEL__", torch_dtype=torch.float16)
+    pipe.enable_model_cpu_offload()
+    try: pipe.vae.enable_tiling()
+    except Exception: pass
+    print("LTX_LOADED")
+    NEG = "worst quality, jittery, blurry, distorted, morphing, warping, talking, fast motion, watermark, text"
+    for name, b in IMGS.items():
+        try:
+            img = Image.open(io.BytesIO(base64.b64decode(b))).convert("RGB").resize((W, H))
+            t0 = time.time()
+            out = pipe(image=img, prompt="cinematic film, gentle subtle motion, slow camera drift, " + name.replace("_", " "),
+                       negative_prompt=NEG, width=W, height=H, num_frames=NFRAMES,
+                       num_inference_steps=STEPS, decode_timestep=0.03, decode_noise_scale=0.025).frames[0]
+            export_to_video(out, "/kaggle/working/wan_%s.mp4" % name, fps=FPS)
+            report["clips"][name] = "ok:%ds" % int(time.time() - t0); save()
+            print("[LTX %s] ok (%ds)" % (name, int(time.time() - t0)))
+        except Exception as e:
+            report["clips"][name] = "FAIL: " + str(e); save()
+            print("[LTX %s] FAIL: %s" % (name, e)); traceback.print_exc()
+except Exception as e:
+    report["load_error"] = str(e); save()
+    print("LTX_LOAD_FAIL:", e); traceback.print_exc()
+print("WAN_PROBE_DONE")
+'''
+
+
+def _ltx_probe(mp3_path, user):
+    """Animate a couple of committed reference images with a NEWER LTX checkpoint to
+    judge if it beats our 0.9.0 while still running on the P100. Pulls clips + log."""
+    mp3_path = Path(mp3_path)
+    if not mp3_path.exists():
+        alt = Path(__file__).parent.parent / mp3_path
+        mp3_path = alt if alt.exists() else mp3_path
+    d = refs_dir_for(mp3_path)
+    from PIL import Image as _I
+    imgs = {}
+    for name in ("mountain", "climber_buried"):
+        p = d / (name + ".jpg")
+        if p.exists():
+            im = _I.open(p).convert("RGB")
+            w, h = im.size
+            if max(w, h) > 768:
+                s = 768 / float(max(w, h)); im = im.resize((int(w * s), int(h * s)))
+            buf = io.BytesIO(); im.save(buf, "JPEG", quality=88)
+            imgs[name] = base64.b64encode(buf.getvalue()).decode()
+    if not imgs:
+        print("LTX probe: no reference images at", d); return False
+    work = Path("output/_kernel")
+    if work.exists():
+        shutil.rmtree(work)
+    work.mkdir(parents=True)
+    code = (LTX_PROBE_KERNEL
+            .replace("__IMGS_B64__", base64.b64encode(json.dumps(imgs).encode()).decode())
+            .replace("__DIFFUSERS__", LTX_PROBE_DIFFUSERS).replace("__MODEL__", LTX_PROBE_MODEL)
+            .replace("__W__", str(AI_W)).replace("__H__", str(AI_H))
+            .replace("__NFRAMES__", "97").replace("__STEPS__", str(LTX_PROBE_STEPS)))
+    (work / "gb_render.py").write_text(code, encoding="utf-8")
+    slug = f"{user}/gb-render-test"
+    kmeta = {"id": slug, "title": "gb-render-test", "code_file": "gb_render.py",
+             "language": "python", "kernel_type": "script", "is_private": True,
+             "enable_gpu": True, "enable_internet": True,
+             "dataset_sources": [], "competition_sources": [], "kernel_sources": []}
+    (work / "kernel-metadata.json").write_text(json.dumps(kmeta, indent=2), encoding="utf-8")
+    print(f"LTX PROBE: {LTX_PROBE_MODEL} (diffusers {LTX_PROBE_DIFFUSERS}, {LTX_PROBE_STEPS}st) "
+          f"animating {list(imgs)} at {AI_W}x{AI_H}")
+    r = _kaggle("kernels", "push", "-p", str(work))
+    print(r.stdout.strip()); print(r.stderr.strip())
+    if r.returncode != 0:
+        print("Kaggle push failed."); return False
+    kf_dir = Path("output/keyframes")
+    kf_dir.mkdir(parents=True, exist_ok=True)
+    _poll_and_pull(slug, kf_dir)
+    rep = kf_dir / "wan_report.json"
+    if rep.exists():
+        print("LTX report:", rep.read_text()[:1500])
+    return True
+
+
 def _kaggle(*args, **kw):
     return subprocess.run(["kaggle", *args], capture_output=True, text=True, **kw)
 
@@ -709,6 +830,8 @@ def render(mp3_path):
     # Kaggle's GPU?) — separate from the pipeline; pulls clips to eyeball.
     if os.environ.get("AI_WAN_PROBE", "").lower() in ("1", "true", "yes"):
         return _wan_probe(mp3_path, user)
+    if os.environ.get("AI_LTX_PROBE", "").lower() in ("1", "true", "yes"):
+        return _ltx_probe(mp3_path, user)
 
     mp3_arg = str(mp3_path)   # repo-relative path the collector re-uses to build
     mp3_path = Path(mp3_path)
