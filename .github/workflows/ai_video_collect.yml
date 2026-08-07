@@ -7,8 +7,11 @@ name: AI Video Collect (post finished Kaggle renders)
 # Kaggle) never bumps into GitHub's 6-hour per-job cap.
 
 on:
-  schedule:
-    - cron: '*/20 * * * *'   # every 20 minutes
+  # PAUSED (resting state, 2026-08-07): auto-collect disabled while we're not
+  # auto-posting. Re-enable by uncommenting the schedule below. Manual runs
+  # still work via workflow_dispatch.
+  # schedule:
+  #   - cron: '*/20 * * * *'   # every 20 minutes
   workflow_dispatch: {}
 
 concurrency:

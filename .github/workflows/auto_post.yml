@@ -1,9 +1,11 @@
 name: Auto Post (daily)
 
 on:
+  # PAUSED (resting state, 2026-08-07): daily auto-post disabled while we're not
+  # posting on a schedule. Re-enable by uncommenting the schedule below.
   # Once a day. 16:00 UTC ~= noon US Eastern. Adjust the time as you like.
-  schedule:
-    - cron: '0 16 * * *'
+  # schedule:
+  #   - cron: '0 16 * * *'
   # Manual run for testing.
   workflow_dispatch: {}
 
