@@ -122,6 +122,7 @@ def build_description(bp, mp3_path=""):
     native = get_native_tagline(genre_folder)
 
     desc  = f"{title} is scientifically engineered to give you chills and trigger a natural dopamine release.\n\n"
+    desc += "🤖 AI disclosure: the music in this video is AI-generated; visuals are licensed stock footage.\n\n"
     if score:
         desc += f"🥶 Frisson Score: {score}% — neuroscience-based goosebump prediction\n\n"
     desc += f"{native}\n\n"

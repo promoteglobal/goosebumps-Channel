@@ -32,6 +32,8 @@ function addSunoButton() {
       scientific_analysis: document.getElementById('sa')?.textContent.trim(),
       structure:           document.getElementById('ms')?.textContent.trim(),
       suno_prompt:         prompt,
+      triggers:            (document.getElementById('rc')?.dataset.triggers || '').split('|').filter(Boolean),
+      intensity:           document.getElementById('rc')?.dataset.intensity || '',
       generated_at:        new Date().toISOString()
     };
 

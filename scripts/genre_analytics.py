@@ -22,6 +22,10 @@ import os, sys, json, smtplib, ssl
 from collections import defaultdict
 from datetime import datetime
 from email.message import EmailMessage
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent
+MUSIC = ROOT / "music"
 
 # Show times in the user's timezone (override with POST_TZ / POST_TZ_LABEL).
 try:
@@ -169,7 +173,53 @@ def best_post_time(videos):
             f"{best_win} {TZ_LABEL} - that's when your highest-viewed videos cluster.")
 
 
-def build_email(rows, unknown, total_videos, best_time):
+def experiment_report(videos):
+    """The 'scientific experiment': correlate each video's VIEWS with the frisson
+    triggers + intensity used to make it (recorded in the song's .json in the
+    repo), and recommend the best-performing intensity and triggers. Needs a few
+    tagged posts before it can recommend (older posts have no triggers recorded)."""
+    bps = {}
+    for jp in MUSIC.rglob("*.json"):
+        if jp.name == "blueprint.json":
+            continue
+        try:
+            bp = json.load(open(jp, encoding="utf-8"))
+        except Exception:
+            continue
+        bps[norm(bp.get("final_title") or jp.stem)] = {
+            "triggers": bp.get("triggers") or [],
+            "intensity": str(bp.get("intensity") or "").strip(),
+        }
+    by_int = defaultdict(lambda: [0, 0])    # intensity -> [views, n]
+    by_trig = defaultdict(lambda: [0, 0])   # trigger   -> [views, n]
+    matched = 0
+    for v in videos:
+        bp = bps.get(norm(v.get("snippet", {}).get("title", "")))
+        if not bp:
+            continue
+        views = int(v.get("statistics", {}).get("viewCount", 0) or 0)
+        if bp["intensity"]:
+            by_int[bp["intensity"]][0] += views
+            by_int[bp["intensity"]][1] += 1
+            matched += 1
+        for tg in bp["triggers"]:
+            by_trig[tg][0] += views
+            by_trig[tg][1] += 1
+    if matched < 4:
+        return ("Trigger/intensity experiment: collecting data "
+                f"({matched} tagged post(s) so far). Once ~4+ posts carry their "
+                "triggers + intensity, the best-performing settings will appear here.")
+    bi = max(by_int.items(), key=lambda kv: kv[1][0] / kv[1][1])
+    tt = sorted(by_trig.items(), key=lambda kv: kv[1][0] / kv[1][1], reverse=True)
+    out = [f"Recommended intensity: {bi[0]}/10 "
+           f"({bi[1][0] / bi[1][1]:.0f} avg views per post)."]
+    if tt:
+        out.append("Best-performing triggers so far: "
+                   + ", ".join(t for t, _ in tt[:3]) + ".")
+    return "\n".join(out)
+
+
+def build_email(rows, unknown, total_videos, best_time, experiment):
     if not rows:
         winner = "Blues"
         headline = ("No genre stats yet (no matching videos found). Post anything "
@@ -191,6 +241,8 @@ def build_email(rows, unknown, total_videos, best_time):
     body = f"""{headline}
 
 {best_time}
+
+{experiment}
 
 To post it: open the generator, pick {winner}, hit Generate Frisson Blueprint,
 then let it run through Suno - it auto-posts to YouTube.
@@ -240,7 +292,8 @@ def main():
         return
     rows, unknown = rank_genres(videos)
     best_time = best_post_time(videos)
-    subject, body, winner = build_email(rows, unknown, len(videos), best_time)
+    experiment = experiment_report(videos)
+    subject, body, winner = build_email(rows, unknown, len(videos), best_time, experiment)
     log("=" * 60)
     log(subject)
     log(body)
