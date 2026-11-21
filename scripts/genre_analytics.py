@@ -208,9 +208,11 @@ Ranked by lifetime average views per video.
 
 
 def send_email(subject, body):
-    sender = os.environ.get("GMAIL_ADDRESS", "promoteglobal@gmail.com")
-    to     = os.environ.get("EMAIL_TO", sender)
-    pw     = os.environ.get("GMAIL_APP_PASSWORD", "").replace(" ", "")
+    # `or` (not get-default): unset secrets arrive as "" from the workflow, and
+    # an empty string must still fall back to the real address / sender.
+    sender = os.environ.get("GMAIL_ADDRESS") or "promoteglobal@gmail.com"
+    to     = os.environ.get("EMAIL_TO") or sender
+    pw     = (os.environ.get("GMAIL_APP_PASSWORD") or "").replace(" ", "")
     if not pw:
         log("No GMAIL_APP_PASSWORD set - cannot send. (Set it as a repo secret.)")
         return False
