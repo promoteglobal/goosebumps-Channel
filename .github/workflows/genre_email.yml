@@ -1,0 +1,33 @@
+name: Daily genre email (what to post today)
+
+# Reads the channel's YouTube view stats, ranks genres by average views, and
+# emails the top genre + best time to post. Read-only: never posts or changes
+# anything. Needs secrets: YOUTUBE_TOKEN (already set) and GMAIL_APP_PASSWORD.
+
+on:
+  schedule:
+    - cron: '0 14 * * *'   # 14:00 UTC daily (~9am ET / 6am PT). Adjust as you like.
+  workflow_dispatch: {}      # manual "send me one now" button
+
+jobs:
+  email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install google-api-python-client google-auth-oauthlib google-auth-httplib2 tzdata
+
+      - name: Rank genres and email the pick
+        env:
+          YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python scripts/genre_analytics.py
