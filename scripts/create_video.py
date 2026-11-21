@@ -221,6 +221,7 @@ ROTATING_MESSAGES = [
     "Subscribe for your daily dose of goosebumps",
     "No goosebumps yet? Turn up the volume",
     "Did you get goosebumps? Comment where you felt it",
+    "More comments on this {genre} means more {genre} gets posted - comment below if you want more",
     "Get real dopamine you can feel - not empty scrolling",
     "Comment for more {genre} and I will deliver",
 ]
