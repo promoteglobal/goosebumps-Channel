@@ -1,9 +1,17 @@
 {
   "folder": "classical",
-  "frisson_score": "82",
-  "generated_at": "2026-06-17T13:23:57.232Z",
+  "frisson_score": "89",
+  "generated_at": "2026-11-25T06:08:19.242Z",
   "genre": "Classical",
-  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and anterior cingulate cortex, creating dopaminergic anticipation-reward cycles peaking at emotionally salient structural moments. The combination of silence-to-full-texture contrast and subdominant-to-flattened-mediant harmonic shifts (e.g., C major to Ab major) exploits predictive coding violations most strongly correlated with chills in neuroimaging studies.",
-  "structure": "The piece opens with sparse solo violin melody in C major, building tension through chromaticism over 90 seconds before collapsing into sudden silence. At the golden ratio point (approximately 61.8% through the track), a full orchestral eruption enters on an unexpected Ab major chord, resolving the melodic tension through a sweeping crescendo. The final third provides emotional release through a gradual decrescendo returning to the home key, allowing neurological reward circuits to process the climactic peak.",
-  "suno_prompt": "Royalty-free orchestral classical composition, solo violin opening sparse and yearning, C major building chromatic tension, sudden silence then explosive full orchestra surprise shift to Ab major chord, strings brass woodwinds surge, sweeping emotional crescendo at golden ratio climax, melodic resolution descending, cinematic frisson-inducing, intensity 7 out of 10, no vocals, live acoustic instruments"
+  "intensity": "7",
+  "scientific_analysis": "Abrupt silence-to-fortissimo transitions trigger amygdala-driven arousal and startle-linked dopamine release, while delayed harmonic resolution after prolonged tension activates the nucleus accumbens reward pathway. Placing the emotional peak at the golden ratio point exploits learned expectancy timing in auditory cortex, maximizing prediction-error driven chills (frisson).",
+  "structure": "The piece opens with complete silence for two seconds before an explosive full-orchestra downbeat shocks the auditory system into alertness. A slow-building string and brass crescendo introduces rising chromatic tension and suspended dissonance across the next two minutes, denying resolution to heighten anticipation. At the golden ratio mark (~2:10 of a 3:30 piece), a solo horn sustains a long tension note that finally blooms into a lush resolving major chord, delivering the frisson peak before a gentle decrescendo closes the work.",
+  "suno_prompt": "Instrumental orchestral classical piece, no vocals. Begins in total silence then bursts into a sudden fortissimo full-orchestra hit. Strings and brass build chromatic tension with suspended, unresolved harmonies over two minutes. Climax at golden ratio timestamp (~2:10 of 3:30): solo French horn holds a long sustained note that resolves into a warm, consonant major chord, swelling strings, cinematic depth, dynamic contrast, emotionally cathartic resolution.",
+  "triggers": [
+    "Dynamic contrast",
+    "Tension and release",
+    "Emotional climax",
+    "Sustained resolution"
+  ],
+  "buffered": true
 }
