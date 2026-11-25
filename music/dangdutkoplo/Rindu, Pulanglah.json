@@ -1,0 +1,19 @@
+{
+  "folder": "dangdutkoplo",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T04:42:02.637Z",
+  "genre": "Dangdut Koplo",
+  "intensity": "10",
+  "scientific_analysis": "The abrupt silence-to-full-band drop exploits auditory predictive-coding violation, triggering dopaminergic reward surges in the nucleus accumbens, while the unanticipated modulation to a distant key at the golden-ratio peak maximizes harmonic surprise, a well-documented chills correlate. Layering a new timbral voice (suling flute) atop rising kendang polyrhythms further recruits superior temporal gyrus novelty responses, compounding autonomic arousal (piloerection, skin conductance) at the climax.",
+  "structure": "Track opens in near silence with a single suling flute drone (0:00-0:20), then slams into full koplo groove—kendang, saron, bass—at 0:21, establishing tension through a repeating minor-mode vocal melody that keeps delaying resolution. At the golden-ratio point (2:10 of 3:30), the band drops to a held chord, modulates unexpectedly up a minor third, and a gamelan bonang enters for the first time as the female vocal soars into falsetto, resolving the built tension in a cathartic peak. The final third sustains the new key with escalating kendang improvisation before a sudden full-stop ending.",
+  "suno_prompt": "Dangdut koplo, vocals in Bahasa Indonesia, female powerhouse singer, lyrics about rindu (longing). Start with lone suling flute in silence, then explosive drop into driving kendang, saron, electric guitar koplo riffs. Build melodic tension via delayed vocal resolution. At climax, sudden key change up a minor third, gamelan bonang enters, falsetto vocal peak, cathartic release, then dramatic full stop.",
+  "triggers": [
+    "Unexpected harmony",
+    "Dynamic contrast",
+    "Tension and release",
+    "Emotional climax",
+    "Key change",
+    "Timbre surprise"
+  ],
+  "buffered": false
+}
