@@ -1,0 +1,17 @@
+{
+  "folder": "bossanova",
+  "frisson_score": "64",
+  "generated_at": "2026-11-25T06:27:58.895Z",
+  "genre": "Bossa Nova",
+  "intensity": "4",
+  "scientific_analysis": "Frisson arises from dopaminergic reward prediction errors triggered by harmonic surprise, particularly unresolved appoggiaturas suddenly resolving into consonance, which activates the nucleus accumbens and ventral tegmental area. A tempo near 65 BPM entrains with resting heart rate via auditory-motor coupling, lowering defensive arousal while the exposed solo voice recruits mirror-neuron empathy circuits, amplifying chills through vulnerability and acoustic intimacy.",
+  "structure": "The track opens with a solo female voice singing a cappella for eight bars, establishing raw vulnerability before any instrumentation enters. A nylon-string guitar then enters with gentle syncopated bossa chords, and at the first chorus the harmony shifts unexpectedly from the tonic to a distant flat-VI major chord, creating the primary frisson trigger. The bridge features a sustained high note held over a suspended chord that slowly resolves into warm vocal harmony, mirrored by soft brushed percussion settling precisely at 65 BPM to echo a resting heartbeat.",
+  "suno_prompt": "Bossa Nova ballad, vocals sung in Brazilian Portuguese, female voice, intimate and warm. Begin with raw unaccompanied solo voice, then gentle nylon-string guitar enters with soft syncopation. Tempo locked near 65 BPM, heartbeat-like pulse. Introduce unexpected harmonic shift to a distant chord before chorus. Bridge features a long sustained note resolving into lush vocal harmony. Subtle brushed drums, upright bass, warm reverb, emotionally restrained, delicate dynamics, cinematic intimacy, soft fade ending.",
+  "triggers": [
+    "Sustained resolution",
+    "Unexpected harmony",
+    "Heartbeat sync",
+    "Solo voice"
+  ],
+  "buffered": true
+}
