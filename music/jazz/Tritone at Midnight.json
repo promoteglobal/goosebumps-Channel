@@ -13,5 +13,9 @@
     "Tension and release",
     "Call and response"
   ],
-  "buffered": true
+  "buffered": true,
+  "lyrics": "",
+  "instrumental": true,
+  "lyric_segments": [],
+  "final_title": "Tritone at Midnight"
 }
