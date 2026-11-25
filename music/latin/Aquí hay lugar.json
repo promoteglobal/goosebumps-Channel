@@ -1,0 +1,17 @@
+{
+  "folder": "latin",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:20:29.534Z",
+  "genre": "Latin",
+  "intensity": "8",
+  "scientific_analysis": "Call-and-response patterns engage predictive coding circuits in the auditory cortex, creating expectancy that is rewarded with dopamine release in the nucleus accumbens when the answering instrument arrives. Sudden silence-to-full-sound transitions and unexpected timbral entrances spike norepinephrine-driven skin conductance responses, the physiological signature of chills, especially when paired with harmonic tension-resolution in the dominant-to-tonic cadence.",
+  "structure": "The track opens with a single hushed cuatro figure fading into near silence, then explodes into a full brass-and-percussion tutti that immediately establishes call-and-response between trumpets and congas. A tension-building bridge uses suspended harmonies and rising strings before an unexpected bandoneón enters solo, piercing the texture, which then resolves into a cathartic full-ensemble climax with layered vocals and polyrhythmic percussion.",
+  "suno_prompt": "Afro-Cuban/Latin orchestral fusion, vocals sung in Spanish, passionate and soaring. Start with solo cuatro fading to silence, then sudden explosive brass-and-percussion hit. Call-and-response between trumpets, congas, and vocals. Build tension with suspended strings and syncopated piano montuno, release into euphoric climax. Surprise bandoneón solo enters unexpectedly. Dynamic contrasts, rich harmonies, goosebump-inducing crescendo, cinematic Latin big-band energy.",
+  "triggers": [
+    "Call and response",
+    "Dynamic contrast",
+    "Tension and release",
+    "Timbre surprise"
+  ],
+  "buffered": true
+}
