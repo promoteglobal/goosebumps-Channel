@@ -50,3 +50,15 @@ $('buffer').onchange = () => {
   const on = $('buffer').checked;
   chrome.storage.local.set({ gbBufferMode: on }, () => updateBufStatus(on));
 };
+
+// Clear a jammed serial queue (active job + anything waiting behind it).
+$('resetq').onclick = () => {
+  chrome.storage.local.remove(
+    ['gbActive', 'gbQueue', 'sunoPrompt', 'sunoTimestamp', 'sunoGenre', 'sunoBlueprint'],
+    () => {
+      const el = $('resetStatus');
+      el.textContent = 'Queue cleared. Generate a fresh song to start over — one at a time.';
+      el.className = 'status ok';
+    }
+  );
+};

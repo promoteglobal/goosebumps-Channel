@@ -46,6 +46,17 @@
   </label>
   <div class="status" id="bufStatus"></div>
 
+  <hr style="margin:26px 0; border:none; border-top:1px solid #3a2a6f;">
+
+  <label>Stuck? Clear the backlog</label>
+  <p class="note" style="margin-top:6px;">
+    If songs stop opening in Suno, or "Open in Suno" says songs are queued, click
+    this to clear the queue. Then generate again &mdash; <b>one at a time, and
+    download each song before you generate the next.</b>
+  </p>
+  <button id="resetq" style="background:#6f3a3a;">Reset / clear the queue</button>
+  <div class="status" id="resetStatus"></div>
+
   <p class="note">
     When a token is saved, after each MP3 finishes downloading the extension will:<br>
     1. Upload the MP3 to <code>music/{genre}/</code><br>
