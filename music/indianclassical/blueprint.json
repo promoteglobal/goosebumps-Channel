@@ -1,9 +1,17 @@
 {
-  "genre": "Indian Classical",
   "folder": "indianclassical",
-  "frisson_score": "81",
-  "scientific_analysis": "Frisson in Indian classical music is neurologically mediated by dopaminergic reward pathways activated through violation of melodic expectation within raga grammar, particularly when unexpected swara transitions create predictive error signals in the auditory cortex. The golden ratio placement of emotional climax at approximately 61.8% track duration aligns with peak autonomic arousal windows identified in psychoacoustic research, maximizing piloerection response.",
-  "structure": "The track opens with a sparse alap in Raga Bhairav establishing modal expectancy, then abruptly shifts from complete silence to full tanpura-tabla-sarangi ensemble creating a startle-frisson cascade. Melodic tension builds through komal re and komal dha ornamentations pushing toward an unresolved Gandhar, then the unexpected modulation to Raga Yaman harmonics at the 61.8% golden ratio mark delivers the emotional peak resolution. The jhala section accelerates rhythmically with layered sitar phrases descending through a cathartic tihai cadence, releasing accumulated neural tension in a controlled emotional denouement.",
-  "suno_prompt": "Indian classical raga fusion, Bhairav opening, sparse sitar alap, sudden silence then explosive tanpura tabla sarangi entrance, komal swara tension building, unexpected harmonic pivot to Yaman scale, emotional climax at golden ratio, piloerection-inducing melodic resolution, jhala acceleration, tihai cadence ending, acoustic live instruments, deeply meditative yet emotionally overwhelming, 7 out of 10 intensity, royalty free",
-  "generated_at": "2026-06-15T10:41:00.186Z"
+  "frisson_score": "78",
+  "generated_at": "2026-11-25T06:22:00.595Z",
+  "genre": "Indian Classical",
+  "intensity": "6",
+  "scientific_analysis": "Frisson is strongly predicted by slow tempos near resting heart rate (~65 BPM) that entrain cardiac and respiratory rhythms, combined with harmonic violations of expectation that resolve unexpectedly, triggering dopaminergic reward prediction-error responses in the nucleus accumbens. Novel timbral entrances (a new instrument) act as auditory surprise stimuli, activating the amygdala and ventral tegmental area simultaneously with melodic tension-release patterns in raga ornamentation (meend/gamak), producing the characteristic skin-tingling response.",
+  "structure": "The track opens with a solo bansuri flute alap in Raga Yaman, sustaining a long held Pa note that lingers unresolved before gently resolving into a tanpura drone harmony, establishing meditative tension. A sarangi enters unexpectedly at the second phrase, weaving serpentine gamakas that build melodic tension across an ascending phrase before cascading down to rest on Sa, the tonic home. The piece closes with tabla entering softly underneath at exactly 65 BPM, its heartbeat-like theka locking listener physiology to the pulse while flute and sarangi trade resolving phrases into a final unison drone fade-out.",
+  "suno_prompt": "Instrumental Hindustani classical, Raga Yaman, 65 BPM, meditative and intimate. Bansuri flute opens with long sustained notes resolving into tanpura drone harmony. Sarangi enters unexpectedly mid-track, building melodic tension through gamak ornamentation then resolving to tonic Sa. Tabla enters softly, heartbeat-paced theka. Spacious reverb, warm analog texture, no vocals, slow dynamic swells, goosebump-inducing resolution moments, authentic Indian classical instrumentation throughout.",
+  "triggers": [
+    "Sustained resolution",
+    "Tension and release",
+    "Timbre surprise",
+    "Heartbeat sync"
+  ],
+  "buffered": true
 }
