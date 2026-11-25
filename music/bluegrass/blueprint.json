@@ -1,10 +1,17 @@
 {
   "folder": "bluegrass",
-  "frisson_score": "84",
-  "generated_at": "2026-11-21T08:21:55.301Z",
+  "frisson_score": "78",
+  "generated_at": "2026-11-25T06:39:42.490Z",
   "genre": "Bluegrass",
-  "scientific_analysis": "The sudden drop from silence into a full, dense bluegrass ensemble triggers a strong auditory surprise response, activating the amygdala and nucleus accumbens via violated temporal expectancy. Layering this with an unanticipated modulation to a distant key (e.g., bVI) at the golden-ratio climax exploits the brain's dopaminergic reward prediction-error mechanism, intensifying chills through harmonic surprise coinciding with peak structural tension-release.",
-  "structure": "The track opens in near silence with a single plucked banjo motif, then bursts suddenly into full bluegrass instrumentation (fiddle, banjo, mandolin, upright bass) establishing driving rhythmic momentum. A rising melodic sequence builds tension through tight vocal harmonies and syncopated interplay, delaying resolution until the golden-ratio point (~2:04 of a 3:20 track), where an unexpected modulation to a distant chord delivers the emotional peak. The piece then resolves gradually, settling into a warm, harmonically grounded outro that echoes the opening motif with added resonance.",
-  "suno_prompt": "Instrumental bluegrass with occasional English vocals, acoustic banjo, fiddle, mandolin, upright bass, medium-fast tempo (120 BPM), dynamic contrast from silence to full ensemble, tight close-harmony singing, build rising tension through modal interchange, unexpected modulation to a distant chord at 60% mark for emotional peak, authentic Appalachian string-band energy, warm analog tone, lyrics in English about longing and homecoming.",
+  "intensity": "6",
+  "scientific_analysis": "Call-and-response phrasing between banjo and fiddle creates predictive expectancy violations in the auditory cortex, triggering dopaminergic reward signals when tension resolves. The sudden entrance of an unaccompanied raw human voice recruits limbic and mirror-neuron circuits tied to emotional contagion, intensifying skin-conductance and chill responses as predicted by Huron's ITPRA model.",
+  "structure": "The track opens with banjo and fiddle trading short melodic phrases in tightening call-and-response, gradually raising harmonic tension through modal shifts. At the midpoint, all instruments drop out for a raw, unaccompanied solo vocal line carrying the emotional peak before a mandolin unexpectedly re-enters with a sparkling counter-melody. The final section layers all instruments together, resolving the built tension into a joyous, full-band climax before a gentle fade.",
+  "suno_prompt": "Bluegrass track, English vocals, Appalachian storytelling tone. Banjo and fiddle trade call-and-response licks building melodic tension through modal shifts. Midway, instruments cut to a raw, unaccompanied solo male vocal, emotionally exposed. A mandolin unexpectedly enters with bright counter-melody, resolving tension into a joyful full-band climax with upright bass and dobro, warm acoustic production, intensity 6/10.",
+  "triggers": [
+    "Call and response",
+    "Tension and release",
+    "Solo voice",
+    "Timbre surprise"
+  ],
   "buffered": true
 }
