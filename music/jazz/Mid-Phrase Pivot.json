@@ -1,0 +1,17 @@
+{
+  "folder": "jazz",
+  "frisson_score": "74",
+  "generated_at": "2026-11-25T06:02:50.566Z",
+  "genre": "Jazz",
+  "intensity": "6",
+  "scientific_analysis": "Frisson arises when the brain's predictive auditory system (per Huron's ITPRA model) is violated by an unexpected tritone-substitution chord shift, triggering a dopaminergic surge in the nucleus accumbens. This is amplified by call-and-response phrasing and a new instrument's entrance, which reactivate attention networks and heighten anticipatory tension before melodic resolution releases it as a pleasurable chill.",
+  "structure": "The piece opens with a mellow piano-bass duo establishing a familiar ii-V-I jazz vamp, lulling the listener into predictable harmonic expectation. At the bridge, the band unexpectedly modulates to a distant key via a tritone substitution while a muted trumpet enters mid-phrase, answered by saxophone in call-and-response, building melodic tension through ascending sequences. The tension peaks with a suspended chord before resolving back to the tonic in a warm, swinging outro that satisfies the earlier harmonic surprise.",
+  "suno_prompt": "Instrumental modern jazz quartet, no vocals. Smooth upright bass and brushed drums groove, piano states a warm theme, then an unexpected modulation to a distant key surprises the ear as a muted trumpet enters mid-phrase. Trumpet and saxophone trade call-and-response lines, tension building through rising sequences before resolving into a lush, swinging tonic resolution. Moderate tempo, intimate club atmosphere, dynamic swells, intensity 6/10.",
+  "triggers": [
+    "Unexpected harmony",
+    "Timbre surprise",
+    "Tension and release",
+    "Call and response"
+  ],
+  "buffered": true
+}
