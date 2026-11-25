@@ -1,0 +1,17 @@
+{
+  "folder": "synthwave",
+  "frisson_score": "82",
+  "generated_at": "2026-11-25T06:28:56.471Z",
+  "genre": "Synthwave",
+  "intensity": "7",
+  "scientific_analysis": "Frisson is strongly linked to sudden amplitude/timbral shifts and to expectancy violation resolving into consonance, both of which trigger dopamine release in the nucleus accumbens via the mesolimbic reward pathway. Placing the emotional climax near the golden ratio point of the track aligns with research showing peak chills often occur at proportionally predictable yet surprising structural moments, maximizing anticipation-resolution dynamics.",
+  "structure": "The track opens in near silence with a single filtered pad, then at 0:20 the full synth arrangement enters abruptly to trigger an initial frisson spike. A new lead instrument (soaring analog lead synth) unexpectedly enters at 1:10 over the existing groove, and a sustained suspended note builds tension from 2:10 before resolving into a lush major-key harmonic swell at 2:28, the golden ratio point (0.618 of a 4:00 track), marking the emotional peak; the track then sustains intensity through a final chorus before fading into a soft outro.",
+  "suno_prompt": "Instrumental synthwave, 1980s retro-futuristic, no vocals needed but if included use English. Begin near-silent with a lone filtered pad, then explode into full synth arrangement at 0:20. Introduce a soaring analog lead synth unexpectedly at 1:10. Build a long suspended note from 2:10 that resolves into a lush major-key harmonic swell at 2:28 for peak emotional climax. Driving arpeggios, gated reverb drums, warm bass, cinematic, nostalgic, intensity 7/10, 4 minutes.",
+  "triggers": [
+    "Dynamic contrast",
+    "Timbre surprise",
+    "Sustained resolution",
+    "Emotional climax"
+  ],
+  "buffered": true
+}
