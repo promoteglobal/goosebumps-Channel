@@ -1,0 +1,17 @@
+{
+  "folder": "bollywood",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T06:31:30.491Z",
+  "genre": "Bollywood",
+  "intensity": "9",
+  "scientific_analysis": "Frisson is driven by dopamine release in the nucleus accumbens when the brain's predictive model is violated by an unexpected acoustic event, such as a sudden dynamic surge or modulation. Placing this peak near the golden-ratio point (~61.8% through the track) aligns with natural aesthetic proportion, amplifying anticipation built through call-and-response phrasing between vocals and instruments.",
+  "structure": "The track opens with sparse solo bansuri and tabla in near-silence, building tension through call-and-response exchanges between male vocal and sarangi. At 2:28 (61.8% of the 4-minute track), a sudden full-ensemble entry—strings, dhol, choir, and a dramatic key change up a minor third—creates the emotional peak. The final section resolves into a soaring orchestral-Bollywood outro with layered harmonies fading to a single sustained vocal note.",
+  "suno_prompt": "Epic Bollywood orchestral ballad, Hindi male and female vocals, lyrics about longing and destiny. Begin near-silent with solo bansuri flute and soft tabla, building through call-and-response between sarangi and vocals. At 61% mark, sudden explosive entry of full orchestra, dhol, choir, and strings with a dramatic key change up a minor third. Lush, cinematic, emotionally soaring, Hindi language vocals throughout.",
+  "triggers": [
+    "Dynamic contrast",
+    "Key change",
+    "Emotional climax",
+    "Call and response"
+  ],
+  "buffered": true
+}
