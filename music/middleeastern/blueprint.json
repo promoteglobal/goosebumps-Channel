@@ -1,0 +1,17 @@
+{
+  "folder": "middleeastern",
+  "frisson_score": "84",
+  "generated_at": "2026-11-25T06:30:19.272Z",
+  "genre": "Middle Eastern",
+  "intensity": "7",
+  "scientific_analysis": "The gradual buildup of melodic tension via a rising maqam-based phrase activates the brain's anticipatory dopamine system, priming the listener for resolution. When the long sustained note finally resolves into a lush harmonic texture and an unexpected instrument (like a ney or qanun) enters, the auditory cortex's violated expectation triggers a surge of limbic activity, producing the chill response.",
+  "structure": "The track opens with a solo oud establishing a modal theme in Hijaz, slowly layering strings that build melodic tension through microtonal ornamentation and rising dynamics. At the climactic peak, a sustained vocal or ney note hangs suspended before resolving into a rich, unexpected harmonic shift to a distant related mode, introducing a surprising new instrument like a duduk. The piece then settles into a warm, resolved groove with layered percussion (darbuka, riq) and vocal harmonies, giving the listener a cathartic release after the tension-resolution arc.",
+  "suno_prompt": "Middle Eastern cinematic world music, instrumental and vocal, female vocals sung in Arabic with emotional maqam-based melisma. Oud and ney build rising melodic tension over hypnotic darbuka rhythm, sustained vocal note resolves into lush string harmony. Surprise qanun entrance and unexpected modulation to a distant exotic chord create goosebumps. Atmospheric, intense, 7/10 emotional intensity, cinematic Arabic fusion, rich reverb, dynamic swell and release.",
+  "triggers": [
+    "Tension and release",
+    "Sustained resolution",
+    "Timbre surprise",
+    "Unexpected harmony"
+  ],
+  "buffered": true
+}
