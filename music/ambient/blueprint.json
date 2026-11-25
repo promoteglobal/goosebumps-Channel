@@ -1,8 +1,17 @@
 {
-  "genre": "World",
-  "frisson_score": 81,
-  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and anterior cingulate cortex, triggering dopaminergic reward cascades. The combination of a sudden silence-to-full-sound transition and melodic tension resolution creates predictive-reward mismatch, the primary neurological driver of chills at approximately 61.8% track duration.",
-  "structure": "The track opens with a sparse duduk and oud melody building harmonic tension over a drone for the first 38% of the track. A sudden silence precedes an explosive entry of taiko drums, kora, and string ensemble at the golden ratio point (61.8%), accompanied by an unexpected shift from D minor to Bb major. The melodic line resolves triumphantly back to D minor, with layered vocals and frame drums carrying the emotional release through the final third.",
-  "suno_prompt": "World fusion instrumental, duduk and oud opening sparse melody over drone, sudden silence then explosive full ensemble entry, taiko drums kora strings frame drums, unexpected harmonic shift D minor to Bb major, triumphant melodic resolution, emotional cinematic peak, throat singing overtones, royalty-free, 7/10 intensity, 110 BPM",
-  "generated_at": "2026-06-14T20:52:19.230Z"
+  "folder": "ambient",
+  "frisson_score": "70",
+  "generated_at": "2026-11-25T06:11:18.377Z",
+  "genre": "Ambient",
+  "intensity": "4",
+  "scientific_analysis": "Slow tempo near resting heart rate (65 BPM) entrains cardiac rhythm via auditory-motor coupling, while a sustained note delaying harmonic resolution heightens dopaminergic anticipation in the nucleus accumbens. The unexpected modulation to a distant chord and sudden new timbral entrance trigger prediction-error responses in auditory cortex, producing the skin-tingling frisson response linked to superior temporal gyrus activation.",
+  "structure": "The piece opens with a single sustained pad tone held for sixteen bars, slowly swelling in volume before resolving into a warm consonant harmony. Midway through, the progression shifts unexpectedly to a distant, unrelated chord (e.g., a flat-VI borrowed chord), creating harmonic surprise, immediately followed by the entrance of a new solo instrument—a wordless soprano voice or cello—layered softly above the drone. The track closes by returning gently to the tonic harmony, allowing the tension to dissolve into stillness.",
+  "suno_prompt": "Instrumental ambient composition, no vocals, 65 BPM, heartbeat-paced pulse. Begin with a single sustained synth pad swelling into lush harmony, deep analog warmth, slow reverb tails. Introduce an unexpected modulation to a distant, unrelated chord for harmonic surprise. Layer in a new solo instrument—ethereal cello or wordless soprano voice—entering softly and unexpectedly. Spacious, meditative, cinematic texture, gentle resolution back to tonic, evoking goosebumps and quiet awe.",
+  "triggers": [
+    "Sustained resolution",
+    "Heartbeat sync",
+    "Unexpected harmony",
+    "Timbre surprise"
+  ],
+  "buffered": true
 }
