@@ -1,0 +1,17 @@
+{
+  "folder": "cinematic",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:17:28.443Z",
+  "genre": "Cinematic",
+  "intensity": "8",
+  "scientific_analysis": "Frisson arises when the brain's prediction-error system (dopaminergic reward circuitry linking auditory cortex, amygdala, and nucleus accumbens) is violated by sudden dynamic shifts and unresolved harmonic tension that resolves unexpectedly, per Huron's ITPRA model. The abrupt silence-to-fortissimo transition and late entrance of a novel timbral voice maximize expectancy violation, triggering peak dopamine release precisely when anticipation is highest, which neuroscientifically aligns with placing the climax near the track's golden-ratio point (~61.8%).",
+  "structure": "The track opens in near silence (0:00-0:08) before an explosive full-orchestra downbeat shocks the auditory system into alertness. From 0:08 to 2:05, a slow-building string and choir progression escalates through suspended 9th and sus4 chords, creating mounting melodic tension via sequential modulation and crescendo dynamics. At 2:10 (the golden ratio of a 3:30 track), an unexpected solo instrument—a boy soprano or duduk—enters alone over a sudden dynamic drop, delivering the emotional peak, after which the full ensemble resolves the harmonic tension into a cathartic, consonant finale through 3:30.",
+  "suno_prompt": "Instrumental cinematic orchestral epic, 3:30 length, no vocals except one wordless boy soprano solo in Latin-style vocalise. Begin in total silence, then a sudden fortissimo orchestral hit. Build tension with strings, choir, suspended harmonies, crescendo. At 2:10 timestamp, unexpected solo duduk/boy soprano enters alone, emotional climax, then resolves into a warm, consonant full-orchestra finale. Dynamic range 8/10 intensity, Hans Zimmer-style trailer score.",
+  "triggers": [
+    "Dynamic contrast",
+    "Tension and release",
+    "Emotional climax",
+    "Timbre surprise"
+  ],
+  "buffered": true
+}
