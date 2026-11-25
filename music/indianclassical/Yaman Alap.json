@@ -1,0 +1,17 @@
+{
+  "folder": "indianclassical",
+  "frisson_score": "78",
+  "generated_at": "2026-11-25T06:22:00.595Z",
+  "genre": "Indian Classical",
+  "intensity": "6",
+  "scientific_analysis": "Frisson is strongly predicted by slow tempos near resting heart rate (~65 BPM) that entrain cardiac and respiratory rhythms, combined with harmonic violations of expectation that resolve unexpectedly, triggering dopaminergic reward prediction-error responses in the nucleus accumbens. Novel timbral entrances (a new instrument) act as auditory surprise stimuli, activating the amygdala and ventral tegmental area simultaneously with melodic tension-release patterns in raga ornamentation (meend/gamak), producing the characteristic skin-tingling response.",
+  "structure": "The track opens with a solo bansuri flute alap in Raga Yaman, sustaining a long held Pa note that lingers unresolved before gently resolving into a tanpura drone harmony, establishing meditative tension. A sarangi enters unexpectedly at the second phrase, weaving serpentine gamakas that build melodic tension across an ascending phrase before cascading down to rest on Sa, the tonic home. The piece closes with tabla entering softly underneath at exactly 65 BPM, its heartbeat-like theka locking listener physiology to the pulse while flute and sarangi trade resolving phrases into a final unison drone fade-out.",
+  "suno_prompt": "Instrumental Hindustani classical, Raga Yaman, 65 BPM, meditative and intimate. Bansuri flute opens with long sustained notes resolving into tanpura drone harmony. Sarangi enters unexpectedly mid-track, building melodic tension through gamak ornamentation then resolving to tonic Sa. Tabla enters softly, heartbeat-paced theka. Spacious reverb, warm analog texture, no vocals, slow dynamic swells, goosebump-inducing resolution moments, authentic Indian classical instrumentation throughout.",
+  "triggers": [
+    "Sustained resolution",
+    "Tension and release",
+    "Timbre surprise",
+    "Heartbeat sync"
+  ],
+  "buffered": true
+}
