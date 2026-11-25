@@ -1,0 +1,17 @@
+{
+  "folder": "classical",
+  "frisson_score": "89",
+  "generated_at": "2026-11-25T06:08:19.242Z",
+  "genre": "Classical",
+  "intensity": "7",
+  "scientific_analysis": "Abrupt silence-to-fortissimo transitions trigger amygdala-driven arousal and startle-linked dopamine release, while delayed harmonic resolution after prolonged tension activates the nucleus accumbens reward pathway. Placing the emotional peak at the golden ratio point exploits learned expectancy timing in auditory cortex, maximizing prediction-error driven chills (frisson).",
+  "structure": "The piece opens with complete silence for two seconds before an explosive full-orchestra downbeat shocks the auditory system into alertness. A slow-building string and brass crescendo introduces rising chromatic tension and suspended dissonance across the next two minutes, denying resolution to heighten anticipation. At the golden ratio mark (~2:10 of a 3:30 piece), a solo horn sustains a long tension note that finally blooms into a lush resolving major chord, delivering the frisson peak before a gentle decrescendo closes the work.",
+  "suno_prompt": "Instrumental orchestral classical piece, no vocals. Begins in total silence then bursts into a sudden fortissimo full-orchestra hit. Strings and brass build chromatic tension with suspended, unresolved harmonies over two minutes. Climax at golden ratio timestamp (~2:10 of 3:30): solo French horn holds a long sustained note that resolves into a warm, consonant major chord, swelling strings, cinematic depth, dynamic contrast, emotionally cathartic resolution.",
+  "triggers": [
+    "Dynamic contrast",
+    "Tension and release",
+    "Emotional climax",
+    "Sustained resolution"
+  ],
+  "buffered": true
+}
