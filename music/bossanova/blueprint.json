@@ -1,9 +1,17 @@
 {
   "folder": "bossanova",
-  "frisson_score": "82",
-  "generated_at": "2026-06-20T10:10:30.649Z",
+  "frisson_score": "64",
+  "generated_at": "2026-11-25T06:27:58.895Z",
   "genre": "Bossa Nova",
-  "scientific_analysis": "Bossa Nova's syncopated rhythmic displacement activates dopaminergic reward circuits when combined with harmonic violations such as tritone substitutions and chromatic mediants, creating prediction error signals that manifest as frisson. The golden ratio emotional peak placement at approximately 61.8% of track duration aligns with accumulated tension resolution, maximizing autonomic nervous system response including piloerection and heart rate synchronization near the 65 BPM isochronous pulse.",
-  "structure": "The track opens with sparse solo guitar establishing a gentle samba-feel groove at 65 BPM in D major, building melodic tension through ascending chromatic lines before a sudden silence fractures the texture at the 38% mark. At the golden ratio point near 62%, a shocking key shift to Bb major arrives simultaneously with an unexpected solo flugelhorn entrance over full ensemble, resolving the accumulated harmonic tension through a lush descending progression. The final third uses gentle rhythmic deceleration and soft vocal harmonics to bring the listener down from the emotional peak, concluding with a single unresolved seventh chord fading into silence.",
-  "suno_prompt": "Royalty-free bossa nova, 65 BPM, D major shifting to Bb major, sparse nylon guitar opening, sudden silence break, full ensemble explosion, unexpected flugelhorn solo, chromatic melodic tension, golden ratio emotional climax, tritone substitutions, warm upright bass, soft brushed drums, lush jazz harmony, intimate vocal hum, cinematic resolution, gentle melancholic sophistication"
+  "intensity": "4",
+  "scientific_analysis": "Frisson arises from dopaminergic reward prediction errors triggered by harmonic surprise, particularly unresolved appoggiaturas suddenly resolving into consonance, which activates the nucleus accumbens and ventral tegmental area. A tempo near 65 BPM entrains with resting heart rate via auditory-motor coupling, lowering defensive arousal while the exposed solo voice recruits mirror-neuron empathy circuits, amplifying chills through vulnerability and acoustic intimacy.",
+  "structure": "The track opens with a solo female voice singing a cappella for eight bars, establishing raw vulnerability before any instrumentation enters. A nylon-string guitar then enters with gentle syncopated bossa chords, and at the first chorus the harmony shifts unexpectedly from the tonic to a distant flat-VI major chord, creating the primary frisson trigger. The bridge features a sustained high note held over a suspended chord that slowly resolves into warm vocal harmony, mirrored by soft brushed percussion settling precisely at 65 BPM to echo a resting heartbeat.",
+  "suno_prompt": "Bossa Nova ballad, vocals sung in Brazilian Portuguese, female voice, intimate and warm. Begin with raw unaccompanied solo voice, then gentle nylon-string guitar enters with soft syncopation. Tempo locked near 65 BPM, heartbeat-like pulse. Introduce unexpected harmonic shift to a distant chord before chorus. Bridge features a long sustained note resolving into lush vocal harmony. Subtle brushed drums, upright bass, warm reverb, emotionally restrained, delicate dynamics, cinematic intimacy, soft fade ending.",
+  "triggers": [
+    "Sustained resolution",
+    "Unexpected harmony",
+    "Heartbeat sync",
+    "Solo voice"
+  ],
+  "buffered": true
 }
