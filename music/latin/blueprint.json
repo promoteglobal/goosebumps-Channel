@@ -1,9 +1,17 @@
 {
-  "genre": "Celtic",
-  "folder": "celtic",
-  "frisson_score": "82",
-  "scientific_analysis": "Frisson in Celtic music is reliably induced by unexpected harmonic movement activating the nucleus accumbens and anterior cerebellum, particularly when a deceptive cadence or chromatic mediant shift violates learned tonal expectations. The golden ratio placement of the emotional climax at approximately 61.8% of track duration maximizes autonomic arousal response by aligning peak dopaminergic release with accumulated melodic tension discharge.",
-  "structure": "The track opens with sparse solo uilleann pipes establishing a haunting D Dorian melody, building layered bodhrán and fiddle textures through the first half while harmonic tension accumulates via suspended chords. At the golden ratio point roughly 62% through, a sudden silence fractures the momentum before an explosive full-ensemble entry featuring an unexpected shift from D minor to B-flat major, a chromatic mediant creating maximum harmonic surprise. The final section resolves the tension through a descending Celtic cadence, fiddle and harp converging on a luminous D major resolution, releasing accumulated emotional charge.",
-  "suno_prompt": "Celtic orchestral, uilleann pipes, fiddle, harp, bodhrán, D Dorian to B-flat major chromatic mediant shift, sudden silence before full ensemble explosion, building melodic tension resolving to D major, layered textures, emotional climax at golden ratio, haunting ancient atmosphere, no vocals, royalty-free, cinematic Celtic folk, 120 BPM moderate intensity",
-  "generated_at": "2026-06-14T22:46:11.204Z"
+  "folder": "latin",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:20:29.534Z",
+  "genre": "Latin",
+  "intensity": "8",
+  "scientific_analysis": "Call-and-response patterns engage predictive coding circuits in the auditory cortex, creating expectancy that is rewarded with dopamine release in the nucleus accumbens when the answering instrument arrives. Sudden silence-to-full-sound transitions and unexpected timbral entrances spike norepinephrine-driven skin conductance responses, the physiological signature of chills, especially when paired with harmonic tension-resolution in the dominant-to-tonic cadence.",
+  "structure": "The track opens with a single hushed cuatro figure fading into near silence, then explodes into a full brass-and-percussion tutti that immediately establishes call-and-response between trumpets and congas. A tension-building bridge uses suspended harmonies and rising strings before an unexpected bandoneón enters solo, piercing the texture, which then resolves into a cathartic full-ensemble climax with layered vocals and polyrhythmic percussion.",
+  "suno_prompt": "Afro-Cuban/Latin orchestral fusion, vocals sung in Spanish, passionate and soaring. Start with solo cuatro fading to silence, then sudden explosive brass-and-percussion hit. Call-and-response between trumpets, congas, and vocals. Build tension with suspended strings and syncopated piano montuno, release into euphoric climax. Surprise bandoneón solo enters unexpectedly. Dynamic contrasts, rich harmonies, goosebump-inducing crescendo, cinematic Latin big-band energy.",
+  "triggers": [
+    "Call and response",
+    "Dynamic contrast",
+    "Tension and release",
+    "Timbre surprise"
+  ],
+  "buffered": true
 }
