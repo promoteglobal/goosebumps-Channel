@@ -1,10 +1,17 @@
 {
   "folder": "kpop",
-  "frisson_score": "81",
-  "generated_at": "2026-06-20T16:12:44.021Z",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T06:06:35.598Z",
   "genre": "K-Pop",
-  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the brain's reward circuitry, particularly when a distant chromatic pivot chord breaches established tonal expectations, triggering dopaminergic release. The golden-ratio emotional apex (≈61.8% into the track) maximizes physiological arousal by aligning melodic resolution with peak predictive tension, exploiting the anterior cingulate cortex's sensitivity to expectancy fulfillment.",
-  "structure": "The track opens with sparse piano and breathy Korean vocals building melodic tension over a minor progression, then a sudden silence creates anticipatory suspension before the full production explodes back in. A bold harmonic pivot to a distant flat-VI major chord arrives unexpectedly, destabilizing the tonal center and triggering the chills response. At the golden ratio moment (approximately 2:30 of a 4-minute track), layered synths, soaring vocals, and a sweeping resolution to the tonic create the emotional climax.",
-  "suno_prompt": "K-Pop emotional ballad with synth-pop production, Korean female vocals sung in Korean, sparse piano intro building melodic tension, sudden silence then explosive full-band drop, unexpected chromatic pivot chord to distant flat-VI, layered synths and orchestral strings, soaring emotional peak at golden ratio, chills-inducing harmonic resolution, 120 BPM, cinematic atmosphere, intensity level 7, royalty-free",
+  "intensity": "9",
+  "scientific_analysis": "Abrupt silence-to-fortissimo transitions trigger amygdala-driven arousal via violated auditory expectations, while key changes at the golden-ratio climax (~61.8% through the track) maximize dopaminergic reward prediction error in the nucleus accumbens. The convergence of harmonic surprise, dynamic contrast, and novel timbral introduction (unexpected instrument) creates layered prediction violations that are the strongest known correlates of chills response.",
+  "structure": "The track opens with 8 seconds of near-silence (ambient breath/pad) before an explosive full-band drop establishes the main groove and verse. Pre-chorus builds tension through rising vocal layering and filtered synths, releasing into a chorus that modulates up a whole step exactly at the 61.8% mark (golden ratio), where a soaring string orchestra enters unexpectedly beneath the Korean vocal line. The final chorus repeats this modulated key with full instrumentation, ending on a sustained high note that decays into silence.",
+  "suno_prompt": "K-Pop anthem, female vocals sung in Korean, emotional and powerful. Starts in near silence (soft breath, faint pad) then explodes into full trap-pop production with punchy 808s, shimmering synths, and layered vocal harmonies. At 61.8% through the song, modulate up a key as a surprise live string orchestra enters beneath the soaring Korean vocal climax. Polished K-Pop mix, cinematic dynamics, goosebump-inducing emotional peak, radio-ready, 128 BPM.",
+  "triggers": [
+    "Dynamic contrast",
+    "Key change",
+    "Emotional climax",
+    "Timbre surprise"
+  ],
   "buffered": true
 }
