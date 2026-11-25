@@ -1,0 +1,17 @@
+{
+  "folder": "electronic",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:37:16.422Z",
+  "genre": "Electronic",
+  "intensity": "8",
+  "scientific_analysis": "Frisson is reliably triggered by violations of expectation that resolve favorably, such as sudden dynamic shifts and delayed harmonic resolution, which activate dopaminergic reward pathways in the striatum. Temporal unpredictability combined with rising tension (via suspended chords, crescendos, and sparse-to-dense textures) primes the nucleus accumbens for peak release at the moment of resolution, especially when paired with timbral novelty like an unexpected instrument entrance.",
+  "structure": "The track opens in near silence with a single held pad tone, then abruptly cuts to full, layered synths and a driving beat within the first eight seconds to trigger immediate frisson. A tension-building middle section strips back to a lone arpeggio and rising string swell that climbs chromatically over 16 bars before a surprise entrance of a soaring vocal or lead synth breaks through unexpectedly. The climax resolves this built tension into a lush, consonant harmonic wash with a sustained long note melting into layered chords, closing with a gradual fade that mirrors the opening silence.",
+  "suno_prompt": "Instrumental electronic/ambient-techno track, cinematic and emotionally expansive. Begin with near-silence, then explode into full synth and beat within seconds. Build chromatic tension via rising arpeggios and string swells, then introduce an unexpected ethereal wordless vocal (ooh/ahh, no specific language, treated as instrument) soaring above the mix. Resolve into lush consonant chords, a long sustained note melting into warm harmony, deep bass, shimmering pads, 8/10 intensity, emotionally overwhelming climax.",
+  "triggers": [
+    "Dynamic contrast",
+    "Tension and release",
+    "Timbre surprise",
+    "Sustained resolution"
+  ],
+  "buffered": true
+}
