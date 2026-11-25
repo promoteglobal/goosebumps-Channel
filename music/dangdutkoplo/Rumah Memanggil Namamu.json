@@ -1,0 +1,154 @@
+{
+  "folder": "dangdutkoplo",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T04:42:02.637Z",
+  "genre": "Dangdut Koplo",
+  "intensity": "10",
+  "scientific_analysis": "The abrupt silence-to-full-band drop exploits auditory predictive-coding violation, triggering dopaminergic reward surges in the nucleus accumbens, while the unanticipated modulation to a distant key at the golden-ratio peak maximizes harmonic surprise, a well-documented chills correlate. Layering a new timbral voice (suling flute) atop rising kendang polyrhythms further recruits superior temporal gyrus novelty responses, compounding autonomic arousal (piloerection, skin conductance) at the climax.",
+  "structure": "Track opens in near silence with a single suling flute drone (0:00-0:20), then slams into full koplo groove—kendang, saron, bass—at 0:21, establishing tension through a repeating minor-mode vocal melody that keeps delaying resolution. At the golden-ratio point (2:10 of 3:30), the band drops to a held chord, modulates unexpectedly up a minor third, and a gamelan bonang enters for the first time as the female vocal soars into falsetto, resolving the built tension in a cathartic peak. The final third sustains the new key with escalating kendang improvisation before a sudden full-stop ending.",
+  "suno_prompt": "Dangdut koplo, vocals in Bahasa Indonesia, female powerhouse singer, lyrics about rindu (longing). Start with lone suling flute in silence, then explosive drop into driving kendang, saron, electric guitar koplo riffs. Build melodic tension via delayed vocal resolution. At climax, sudden key change up a minor third, gamelan bonang enters, falsetto vocal peak, cathartic release, then dramatic full stop.",
+  "triggers": [
+    "Unexpected harmony",
+    "Dynamic contrast",
+    "Tension and release",
+    "Emotional climax",
+    "Key change",
+    "Timbre surprise"
+  ],
+  "buffered": false,
+  "lyrics": "But my eyes are looking for your shadow This distance is long, it feels longer The words I hold in my lips are left Missing, miss you, come home This house still calls your name Miss you, listen I'm strong but not good without you Intro I keep the message you sent first I read it again, I forget it You said for a moment, I believe The day has changed, I keep waiting I count the days, I don't ask when But every night, I call your name again I miss you, I miss you, come home This house still calls your name I miss you, I miss you, listen I'm strong but not good without you If you hear, don't just stay there Let my voice reach there I don't want a promise forever Just come back, stay here Miss, miss, come home Come back My name is Sebu Then Sunmi",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 54.32,
+      "end": 61.48,
+      "text": "But my eyes are looking for your shadow"
+    },
+    {
+      "start": 61.48,
+      "end": 67.88,
+      "text": "This distance is long, it feels longer"
+    },
+    {
+      "start": 67.88,
+      "end": 77.36,
+      "text": "The words I hold in my lips are left"
+    },
+    {
+      "start": 77.36,
+      "end": 82.74,
+      "text": "Missing, miss you, come home"
+    },
+    {
+      "start": 82.74,
+      "end": 90.94,
+      "text": "This house still calls your name"
+    },
+    {
+      "start": 90.94,
+      "end": 96.3,
+      "text": "Miss you, listen"
+    },
+    {
+      "start": 96.3,
+      "end": 103.98,
+      "text": "I'm strong but not good without you"
+    },
+    {
+      "start": 112.74,
+      "end": 125.54,
+      "text": "Intro"
+    },
+    {
+      "start": 125.54,
+      "end": 131.94,
+      "text": "I keep the message you sent first"
+    },
+    {
+      "start": 131.94,
+      "end": 138.34,
+      "text": "I read it again, I forget it"
+    },
+    {
+      "start": 138.34,
+      "end": 145.26,
+      "text": "You said for a moment, I believe"
+    },
+    {
+      "start": 145.26,
+      "end": 151.9,
+      "text": "The day has changed, I keep waiting"
+    },
+    {
+      "start": 151.9,
+      "end": 158.3,
+      "text": "I count the days, I don't ask when"
+    },
+    {
+      "start": 158.3,
+      "end": 167.26,
+      "text": "But every night, I call your name again"
+    },
+    {
+      "start": 167.26,
+      "end": 173.02,
+      "text": "I miss you, I miss you, come home"
+    },
+    {
+      "start": 173.02,
+      "end": 181.34,
+      "text": "This house still calls your name"
+    },
+    {
+      "start": 181.34,
+      "end": 186.46,
+      "text": "I miss you, I miss you, listen"
+    },
+    {
+      "start": 186.46,
+      "end": 195.42,
+      "text": "I'm strong but not good without you"
+    },
+    {
+      "start": 195.42,
+      "end": 198.74,
+      "text": "If you hear, don't just stay there"
+    },
+    {
+      "start": 198.74,
+      "end": 202.34,
+      "text": "Let my voice reach there"
+    },
+    {
+      "start": 202.34,
+      "end": 205.66,
+      "text": "I don't want a promise forever"
+    },
+    {
+      "start": 205.66,
+      "end": 212.32,
+      "text": "Just come back, stay here"
+    },
+    {
+      "start": 212.32,
+      "end": 217.7,
+      "text": "Miss, miss, come home"
+    },
+    {
+      "start": 244.84,
+      "end": 253.4,
+      "text": "Come back"
+    },
+    {
+      "start": 253.4,
+      "end": 261.0,
+      "text": "My name is Sebu"
+    },
+    {
+      "start": 261.0,
+      "end": 265.0,
+      "text": "Then Sunmi"
+    }
+  ],
+  "final_title": "Rumah Memanggil Namamu"
+}
