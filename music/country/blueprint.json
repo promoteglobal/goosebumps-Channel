@@ -1,9 +1,17 @@
 {
   "folder": "country",
   "frisson_score": "82",
-  "generated_at": "2026-06-17T14:05:43.135Z",
+  "generated_at": "2026-11-25T06:26:39.230Z",
   "genre": "Country",
-  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic deviations that violate learned musical schemas, activating dopaminergic reward pathways in the nucleus accumbens and ventral tegmental area. The combination of sudden dynamic contrast from silence to full texture and melodic appoggiatura resolution creates predictive violation followed by reward, the core neurological mechanism driving chills at intensity level 7.",
-  "structure": "The track opens with sparse fingerpicked acoustic guitar and lonesome pedal steel for 90 seconds, building melodic tension through ascending unresolved phrases before a sudden full-band explosion from complete silence marks the golden ratio point near 2 minutes 20 seconds. At that emotional peak the harmony pivots unexpectedly from the home key of G major to a distant Eb major chord, creating a stunning bVI modal mixture before resolving back through a suspended dominant. The final section releases all accumulated tension through a descending melodic cadence with warm vocal harmonies and gradually thinning instrumentation fading to single acoustic guitar.",
-  "suno_prompt": "Royalty-free country, G major with sudden bVI Eb major harmonic shift, sparse fingerpicked acoustic guitar opening, abrupt silence then explosive full band entry, pedal steel, warm baritone vocals, emotional longing, appoggiatura melodic resolution, golden ratio climax, dusty Americana, moderate tempo 84bpm, cinematic heartache, gradually fading outro, acoustic warmth"
+  "intensity": "6",
+  "scientific_analysis": "The unaccompanied solo voice opening activates auditory attention networks and creates an intimate prediction-violation setup, priming the brain for emotional salience via sparse sensory input. The combined effect of gradual melodic tension, a climax precisely at the 61.8% golden-ratio mark (~2:10 in a 3:30 track), and a sudden key modulation triggers dopaminergic reward circuits in the nucleus accumbens through violated harmonic expectancy, producing the characteristic frisson skin-tingle response.",
+  "structure": "The track opens with 20 seconds of a single raw, unaccompanied male voice singing the first verse a cappella, establishing vulnerability and intimacy. From there, acoustic guitar and pedal steel enter gradually, building melodic tension through rising vocal phrases and sustained suspended chords across the first chorus and second verse. At the golden ratio point (approximately 2:10 of a 3:30 song), the song modulates up a whole step into a soaring final chorus, releasing all accumulated tension in a full-band emotional peak before a quiet, stripped-back outro returns to solo voice.",
+  "suno_prompt": "Country ballad, English vocals, male voice, raw a cappella opening verse, intimate and vulnerable. Acoustic guitar and weeping pedal steel build slowly, rising melodic tension through verses and pre-chorus. At 61.8% mark, unexpected key change up a whole step launches soaring full-band emotional climax—strings swell, drums enter. Ends stripped back to solo voice, tender and resolved. Tempo 72 BPM, warm organic production.",
+  "triggers": [
+    "Solo voice",
+    "Tension and release",
+    "Emotional climax",
+    "Key change"
+  ],
+  "buffered": true
 }
