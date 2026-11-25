@@ -1,9 +1,17 @@
 {
   "folder": "bollywood",
-  "frisson_score": "82",
-  "generated_at": "2026-06-17T21:42:16.090Z",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T06:31:30.491Z",
   "genre": "Bollywood",
-  "scientific_analysis": "Frisson is neurologically mediated by dopaminergic reward pathways activated through violated musical expectations, particularly unexpected harmonic shifts and dynamic contrasts that trigger autonomic arousal responses including piloerection. The golden ratio emotional peak placement at approximately 61.8% track duration aligns with listener anticipatory tension accumulation, maximizing the affective discharge when melodic resolution coincides with full orchestral swell.",
-  "structure": "The track opens with sparse sitar drone and tabla establishing a melancholic Bhairavi raga motif, suddenly interrupted by complete silence at bar 16 before exploding into full orchestral texture. A chromatic pivot chord shifts unexpectedly from D minor to B-flat major seventh at the golden ratio point, colliding with a soaring female vocal line that climbs a suspended fourth before resolving tearfully downward. The final section strips instrumentation back to solo violin echoing the opening motif, creating retrospective emotional closure through dynamic and timbral contrast.",
-  "suno_prompt": "Royalty-free Bollywood orchestral, Bhairavi raga sitar opening, sparse tabla, sudden silence then full ensemble explosion, unexpected chromatic harmonic pivot D minor to B-flat major seventh, soaring female playback vocalist melodic tension suspended fourth resolution, golden ratio emotional climax, lush strings sarangi dhol, bittersweet cinematic, 95 BPM, emotional intensity building, tearful resolution, no lyrics copyright"
+  "intensity": "9",
+  "scientific_analysis": "Frisson is driven by dopamine release in the nucleus accumbens when the brain's predictive model is violated by an unexpected acoustic event, such as a sudden dynamic surge or modulation. Placing this peak near the golden-ratio point (~61.8% through the track) aligns with natural aesthetic proportion, amplifying anticipation built through call-and-response phrasing between vocals and instruments.",
+  "structure": "The track opens with sparse solo bansuri and tabla in near-silence, building tension through call-and-response exchanges between male vocal and sarangi. At 2:28 (61.8% of the 4-minute track), a sudden full-ensemble entry—strings, dhol, choir, and a dramatic key change up a minor third—creates the emotional peak. The final section resolves into a soaring orchestral-Bollywood outro with layered harmonies fading to a single sustained vocal note.",
+  "suno_prompt": "Epic Bollywood orchestral ballad, Hindi male and female vocals, lyrics about longing and destiny. Begin near-silent with solo bansuri flute and soft tabla, building through call-and-response between sarangi and vocals. At 61% mark, sudden explosive entry of full orchestra, dhol, choir, and strings with a dramatic key change up a minor third. Lush, cinematic, emotionally soaring, Hindi language vocals throughout.",
+  "triggers": [
+    "Dynamic contrast",
+    "Key change",
+    "Emotional climax",
+    "Call and response"
+  ],
+  "buffered": true
 }
