@@ -1,8 +1,17 @@
 {
-  "genre": "World",
-  "frisson_score": 81,
-  "scientific_analysis": "Frisson is reliably induced by unexpected harmonic violations that activate the nucleus accumbens and anterior cingulate cortex, triggering dopaminergic reward cascades. The combination of a sudden silence-to-full-sound transition and melodic tension resolution creates predictive-reward mismatch, the primary neurological driver of chills at approximately 61.8% track duration.",
-  "structure": "The track opens with a sparse duduk and oud melody building harmonic tension over a drone for the first 38% of the track. A sudden silence precedes an explosive entry of taiko drums, kora, and string ensemble at the golden ratio point (61.8%), accompanied by an unexpected shift from D minor to Bb major. The melodic line resolves triumphantly back to D minor, with layered vocals and frame drums carrying the emotional release through the final third.",
-  "suno_prompt": "World fusion instrumental, duduk and oud opening sparse melody over drone, sudden silence then explosive full ensemble entry, taiko drums kora strings frame drums, unexpected harmonic shift D minor to Bb major, triumphant melodic resolution, emotional cinematic peak, throat singing overtones, royalty-free, 7/10 intensity, 110 BPM",
-  "generated_at": "2026-06-14T20:52:19.230Z"
+  "folder": "electronic",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:37:16.422Z",
+  "genre": "Electronic",
+  "intensity": "8",
+  "scientific_analysis": "Frisson is reliably triggered by violations of expectation that resolve favorably, such as sudden dynamic shifts and delayed harmonic resolution, which activate dopaminergic reward pathways in the striatum. Temporal unpredictability combined with rising tension (via suspended chords, crescendos, and sparse-to-dense textures) primes the nucleus accumbens for peak release at the moment of resolution, especially when paired with timbral novelty like an unexpected instrument entrance.",
+  "structure": "The track opens in near silence with a single held pad tone, then abruptly cuts to full, layered synths and a driving beat within the first eight seconds to trigger immediate frisson. A tension-building middle section strips back to a lone arpeggio and rising string swell that climbs chromatically over 16 bars before a surprise entrance of a soaring vocal or lead synth breaks through unexpectedly. The climax resolves this built tension into a lush, consonant harmonic wash with a sustained long note melting into layered chords, closing with a gradual fade that mirrors the opening silence.",
+  "suno_prompt": "Instrumental electronic/ambient-techno track, cinematic and emotionally expansive. Begin with near-silence, then explode into full synth and beat within seconds. Build chromatic tension via rising arpeggios and string swells, then introduce an unexpected ethereal wordless vocal (ooh/ahh, no specific language, treated as instrument) soaring above the mix. Resolve into lush consonant chords, a long sustained note melting into warm harmony, deep bass, shimmering pads, 8/10 intensity, emotionally overwhelming climax.",
+  "triggers": [
+    "Dynamic contrast",
+    "Tension and release",
+    "Timbre surprise",
+    "Sustained resolution"
+  ],
+  "buffered": true
 }
