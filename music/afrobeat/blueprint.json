@@ -1,9 +1,17 @@
 {
   "folder": "afrobeat",
-  "frisson_score": "81",
-  "generated_at": "2026-06-15T07:39:20.822Z",
+  "frisson_score": "84",
+  "generated_at": "2026-11-25T06:18:59.852Z",
   "genre": "Afrobeat",
-  "scientific_analysis": "Frisson in Afrobeat contexts is amplified by the interplay between polyrhythmic groove expectation violations and unexpected harmonic displacement, activating dopaminergic reward pathways in the nucleus accumbens. The golden ratio emotional peak (~61.8% through the track) exploits temporal expectation mechanisms, while the silence-to-full-sound transition triggers the acoustic startle reflex cascade that primes skin conductance responses.",
-  "structure": "The track opens with sparse kora and talking drum establishing a hypnotic 12/8 groove for 32 bars, then drops to near-silence before exploding into full Afrobeat ensemble with a sudden bVI chord shift creating harmonic surprise. A melodic horn line builds tension through repeated ascending phrases with delayed resolution across the mid-section, culminating in a full cathartic release at bar 97 of 157, precisely the golden ratio point. The track uses unexpected modal mixture borrowing a flat-VII chord to sustain emotional elevation through the final section.",
-  "suno_prompt": "Afrobeat ensemble, kora opening, talking drum polyrhythm, sudden silence then explosive full band entry, unexpected bVI harmonic shift, building horn melody with delayed resolution, emotional climax at golden ratio, highlife guitar, bass guitar groove, bright brass stabs, tension and release, uplifting spiritual energy, 105 BPM, royalty-free, live band feel"
+  "intensity": "7",
+  "scientific_analysis": "Call-and-response patterns engage mirror neuron systems and predictive auditory processing, creating anticipation-reward cycles in the dopaminergic pathway. The near-65 BPM tempo entrains with resting heart rate via vagal pathways, while sudden dynamic shifts (silence-to-full-sound) trigger amygdala-driven arousal spikes that manifest as skin frisson.",
+  "structure": "Opens with solo talking drum in near-silence, establishing a 65 BPM heartbeat pulse that lulls the nervous system into synchrony. A call-and-response builds between vocals, guitar, and horns, each layer answering the last until a full Afrobeat groove locks in. At the climax, a sudden complete silence drops before an unexpected kora entrance erupts alongside the full ensemble, triggering peak frisson through pattern violation and payoff.",
+  "suno_prompt": "Afrobeat instrumental-vocal fusion, 65 BPM, Yoruba language vocals (call-and-response male/female chant), polyrhythmic talking drums, warm analog bass, Fela Kuti-style horns. Begin near-silent with single drum, slowly layer instruments in conversational exchange, build intensity, then full dramatic silence before explosive full-band drop featuring unexpected kora entrance. Organic, warm, cinematic, emotionally soaring, goosebump-inducing dynamic contrast.",
+  "triggers": [
+    "Call and response",
+    "Heartbeat sync",
+    "Timbre surprise",
+    "Dynamic contrast"
+  ],
+  "buffered": true
 }
