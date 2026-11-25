@@ -1,0 +1,187 @@
+{
+  "folder": "rock",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T06:12:46.191Z",
+  "genre": "Rock",
+  "intensity": "9",
+  "scientific_analysis": "The abrupt silence-to-full-sound transition triggers a startle-based dopaminergic response in the amygdala and nucleus accumbens, while the gradual melodic tension-build activates predictive-coding mechanisms in the auditory cortex that crave resolution. Positioning the key-change climax at the golden ratio (~61.8% through the track) aligns the emotional peak with the brain's innate preference for proportionally balanced narrative arcs, maximizing dopamine release upon resolution.",
+  "structure": "The track opens in silence for 2 seconds before slamming into a full-band hit (drums, distorted guitars, bass) at 0:03, establishing the shock trigger immediately. From there, verses and a pre-chorus build melodic tension through rising vocal lines, layered harmonies, and a gradual increase in instrumentation density, restrained just enough to create anticipation. At the golden ratio point (approximately 2:28 in a 4:00 track), the song modulates up a key into the emotional peak chorus, combining the climactic melodic resolution with the key change to deliver maximum frisson before descending into a stripped-back outro.",
+  "suno_prompt": "Epic anthemic rock in English, male tenor lead vocals, starts with 2 seconds of total silence then explodes into full distorted guitars, driving drums, and soaring vocal harmonies. Build melodic tension through verses with rising dynamics, then modulate up a key at the climactic chorus (~62% mark) for a soaring, goosebump-inducing emotional peak. Passionate, cinematic, stadium-rock energy, powerful resolution, dynamic contrast, anthemic key change.",
+  "triggers": [
+    "Dynamic contrast",
+    "Tension and release",
+    "Emotional climax",
+    "Key change"
+  ],
+  "buffered": true,
+  "lyrics": "Where the old road bends to the sea If the whole world turns, if the hard days rise I will stand here, I will not let go When the walls come down, I will find you And we'll make a home From what we know From what we know Your steady voice made every distance disappear When the walls come down I will find you Through the miles and the years between With my hands wide open I will meet you Where the old road bends to the sea If the whole world turns, if the hard days rise I will stand here, I will not let go When the walls come down I will find you And we'll make a home from what we know We were worn by the weather We were split by the miles Still you saved me a place there Still you met me with a smile Where the old road opens to the sea Let the whole world turn Let the hard days rise We are still here We are still whole When the walls come down I have found you And we've made a home From what we know I'm home now I'm home now Home now I'm home now",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 57.08,
+      "end": 60.42,
+      "text": "Where the old road bends to the sea"
+    },
+    {
+      "start": 60.42,
+      "end": 64.76,
+      "text": "If the whole world turns, if the hard days rise"
+    },
+    {
+      "start": 64.76,
+      "end": 67.62,
+      "text": "I will stand here, I will not let go"
+    },
+    {
+      "start": 67.62,
+      "end": 71.68,
+      "text": "When the walls come down, I will find you"
+    },
+    {
+      "start": 71.68,
+      "end": 73.72,
+      "text": "And we'll make a home"
+    },
+    {
+      "start": 73.72,
+      "end": 76.94,
+      "text": "From what we know"
+    },
+    {
+      "start": 76.94,
+      "end": 85.1,
+      "text": "From what we know"
+    },
+    {
+      "start": 111.44,
+      "end": 116.44,
+      "text": "Your steady voice made every distance disappear"
+    },
+    {
+      "start": 116.44,
+      "end": 122.66,
+      "text": "When the walls come down I will find you"
+    },
+    {
+      "start": 122.66,
+      "end": 125.64,
+      "text": "Through the miles and the years between"
+    },
+    {
+      "start": 125.64,
+      "end": 129.84,
+      "text": "With my hands wide open I will meet you"
+    },
+    {
+      "start": 129.84,
+      "end": 133.12,
+      "text": "Where the old road bends to the sea"
+    },
+    {
+      "start": 133.12,
+      "end": 137.36,
+      "text": "If the whole world turns, if the hard days rise"
+    },
+    {
+      "start": 137.36,
+      "end": 140.24,
+      "text": "I will stand here, I will not let go"
+    },
+    {
+      "start": 140.24,
+      "end": 144.1,
+      "text": "When the walls come down I will find you"
+    },
+    {
+      "start": 144.1,
+      "end": 149.92,
+      "text": "And we'll make a home from what we know"
+    },
+    {
+      "start": 149.92,
+      "end": 154.48,
+      "text": "We were worn by the weather"
+    },
+    {
+      "start": 154.48,
+      "end": 158.2,
+      "text": "We were split by the miles"
+    },
+    {
+      "start": 158.2,
+      "end": 162.12,
+      "text": "Still you saved me a place there"
+    },
+    {
+      "start": 162.12,
+      "end": 165.9,
+      "text": "Still you met me with a smile"
+    },
+    {
+      "start": 194.42,
+      "end": 197.26,
+      "text": "Where the old road opens to the sea"
+    },
+    {
+      "start": 197.26,
+      "end": 199.6,
+      "text": "Let the whole world turn"
+    },
+    {
+      "start": 199.6,
+      "end": 201.42,
+      "text": "Let the hard days rise"
+    },
+    {
+      "start": 201.42,
+      "end": 202.78,
+      "text": "We are still here"
+    },
+    {
+      "start": 202.78,
+      "end": 204.76,
+      "text": "We are still whole"
+    },
+    {
+      "start": 204.76,
+      "end": 206.78,
+      "text": "When the walls come down"
+    },
+    {
+      "start": 206.78,
+      "end": 208.12,
+      "text": "I have found you"
+    },
+    {
+      "start": 208.12,
+      "end": 210.12,
+      "text": "And we've made a home"
+    },
+    {
+      "start": 210.12,
+      "end": 215.44,
+      "text": "From what we know"
+    },
+    {
+      "start": 215.44,
+      "end": 223.84,
+      "text": "I'm home now"
+    },
+    {
+      "start": 223.84,
+      "end": 230.94,
+      "text": "I'm home now"
+    },
+    {
+      "start": 230.94,
+      "end": 233.96,
+      "text": "Home now"
+    },
+    {
+      "start": 233.96,
+      "end": 238.46,
+      "text": "I'm home now"
+    }
+  ],
+  "final_title": "Where the Old Road Bends"
+}

@@ -1,0 +1,157 @@
+{
+  "folder": "rb",
+  "frisson_score": "82",
+  "generated_at": "2026-11-25T06:14:44.375Z",
+  "genre": "R&B",
+  "intensity": "6",
+  "scientific_analysis": "The unaccompanied solo voice activates auditory cortex expectancy circuits and mirror-neuron empathy pathways, priming dopaminergic anticipation in the nucleus accumbens. The sudden modulation to a distant chord violates learned tonal schemas (per Huron's ITPRA model), triggering a prediction-error spike that combines with the sustained note's harmonic resolution to produce peak chills precisely at the golden-ratio climax.",
+  "structure": "The track opens with 8 bars of a completely unaccompanied raw vocal phrase, establishing intimacy and expectation. Instrumentation gradually layers in through verses and a pre-chorus, culminating in an unexpected pivot to a distant chord (e.g., bVI or chromatic mediant) that destabilizes the tonal center just before the emotional peak. At the golden ratio mark (~61.8% through the track), a long sustained vocal note resolves into full lush harmonic stacking, marking the frisson climax, followed by a gentle denouement.",
+  "suno_prompt": "Slow contemporary R&B ballad, English vocals, female alto voice. Begin with raw a cappella solo vocal line, intimate and breathy. Build sparse piano and warm pads through verses. Introduce surprise chromatic mediant chord shift before chorus, destabilizing yet intriguing. At 61.8% mark, hold a long sustained note that resolves into rich layered harmony and strings. Intensity 6/10, emotionally restrained, cinematic, soulful, reverb-drenched, tempo 68 BPM.",
+  "triggers": [
+    "Solo voice",
+    "Sustained resolution",
+    "Emotional climax",
+    "Unexpected harmony"
+  ],
+  "buffered": true,
+  "lyrics": "I kept your cup beside the sink The weeks went by, the dust came down I told myself it meant nothing Just one more thing I'd not put down He said the leaving had a reason I made the reason sound like blame I keep assigning you the damage Then catch myself, I did the same If you come back, come as you are No polished story, no repair We can sit quietly together And let the truth be in the air Stay a little, stay a while I'm not asking for a vow Just let me meet you where you are And learn you differently now Learn you differently now Your whole coat's gone from the hallway The hook still leans a little left I used to call that kind of absence The day you woke me to correct But I was keeping score in silence And calling silence being kind I said you made me hard to reach And watch me close the door each time If you come back, come as you are No polished story, no repair We can sit quietly together I'm not asking for a vow Just let me meet you where you are I'm feeling differently now where you are are you there?",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 0.0,
+      "end": 24.82,
+      "text": "I kept your cup beside the sink The weeks went by, the dust came down"
+    },
+    {
+      "start": 24.82,
+      "end": 32.22,
+      "text": "I told myself it meant nothing Just one more thing I'd not put down"
+    },
+    {
+      "start": 32.22,
+      "end": 39.34,
+      "text": "He said the leaving had a reason I made the reason sound like blame"
+    },
+    {
+      "start": 39.34,
+      "end": 46.34,
+      "text": "I keep assigning you the damage Then catch myself, I did the same"
+    },
+    {
+      "start": 46.34,
+      "end": 52.74,
+      "text": "If you come back, come as you are No polished story, no repair"
+    },
+    {
+      "start": 52.74,
+      "end": 56.94,
+      "text": "We can sit quietly together"
+    },
+    {
+      "start": 56.94,
+      "end": 60.68,
+      "text": "And let the truth be in the air"
+    },
+    {
+      "start": 60.68,
+      "end": 64.54,
+      "text": "Stay a little, stay a while"
+    },
+    {
+      "start": 64.54,
+      "end": 68.18,
+      "text": "I'm not asking for a vow"
+    },
+    {
+      "start": 68.18,
+      "end": 71.92,
+      "text": "Just let me meet you where you are"
+    },
+    {
+      "start": 71.92,
+      "end": 78.64,
+      "text": "And learn you differently now"
+    },
+    {
+      "start": 78.64,
+      "end": 87.06,
+      "text": "Learn you differently now"
+    },
+    {
+      "start": 87.06,
+      "end": 96.64,
+      "text": "Your whole coat's gone from the hallway"
+    },
+    {
+      "start": 96.64,
+      "end": 100.7,
+      "text": "The hook still leans a little left"
+    },
+    {
+      "start": 100.7,
+      "end": 104.38,
+      "text": "I used to call that kind of absence"
+    },
+    {
+      "start": 104.38,
+      "end": 107.92,
+      "text": "The day you woke me to correct"
+    },
+    {
+      "start": 107.92,
+      "end": 112.0,
+      "text": "But I was keeping score in silence"
+    },
+    {
+      "start": 112.0,
+      "end": 115.1,
+      "text": "And calling silence being kind"
+    },
+    {
+      "start": 115.1,
+      "end": 118.6,
+      "text": "I said you made me hard to reach"
+    },
+    {
+      "start": 118.6,
+      "end": 122.76,
+      "text": "And watch me close the door each time"
+    },
+    {
+      "start": 122.76,
+      "end": 125.86,
+      "text": "If you come back, come as you are"
+    },
+    {
+      "start": 125.86,
+      "end": 129.46,
+      "text": "No polished story, no repair"
+    },
+    {
+      "start": 129.46,
+      "end": 133.68,
+      "text": "We can sit quietly together"
+    },
+    {
+      "start": 190.96,
+      "end": 201.72,
+      "text": "I'm not asking for a vow Just let me meet you where you are"
+    },
+    {
+      "start": 201.72,
+      "end": 205.72,
+      "text": "I'm feeling differently now"
+    },
+    {
+      "start": 205.72,
+      "end": 213.72,
+      "text": "where you are"
+    },
+    {
+      "start": 213.72,
+      "end": 222.72,
+      "text": "are you there?"
+    }
+  ],
+  "final_title": "The Hook Leans Left"
+}

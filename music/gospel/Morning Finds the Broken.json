@@ -1,0 +1,102 @@
+{
+  "folder": "gospel",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:16:04.297Z",
+  "genre": "Gospel",
+  "intensity": "8",
+  "scientific_analysis": "Call-and-response patterns between organ, choir, and solo vocal activate predictive coding circuits in the auditory cortex, creating anticipatory tension that resolves into dopamine release. The abrupt silence-to-full-ensemble dynamic shift combined with a key change at the golden ratio point (~2:28 in a 4:00 track) maximizes amygdala-driven chills by violating expectation at the moment of peak emotional investment.",
+  "structure": "The track opens with a solo piano and a single gospel vocalist trading intimate call-and-response phrases over sparse accompaniment, building through verses with gradually layering handclaps, organ swells, and choir responses. At 2:28 (the golden ratio point), the full band drops to near-silence for one beat before exploding into a modulated key change with full choir, horns, and organ hitting fortissimo simultaneously. The final section sustains this elevated key through call-and-response vamps between lead vocal and choir, building to a sustained high note and gradual fade with ad-libbed runs.",
+  "suno_prompt": "Gospel anthem, English vocals, female lead singer with full choir in call-and-response, Hammond organ, piano, handclaps, horns. Start sparse and intimate, build dynamically, drop to near-silence at 2:28 then explode into a key change (modulate up a whole step) with full choir and horns fortissimo. Emotional, soulful, powerful belting, soaring high notes, uplifting worship energy, 8/10 intensity.",
+  "triggers": [
+    "Call and response",
+    "Dynamic contrast",
+    "Emotional climax",
+    "Key change"
+  ],
+  "buffered": true,
+  "lyrics": "Here in the quiet, I bring what I have A breath and a hope, a heart open wide You are with me here Still faithful You are here I have seen the morning find a broken day Seen a little mercy make a new way Now the song I carried low within me Rises like a promise stronger than before One step and another You keep calling me nearer You are still faithful Faithful through it all When I am weary You will not let me fall You are here",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 0.0,
+      "end": 13.72,
+      "text": "Here in the quiet, I bring what I have"
+    },
+    {
+      "start": 13.72,
+      "end": 25.46,
+      "text": "A breath and a hope, a heart open wide"
+    },
+    {
+      "start": 82.96,
+      "end": 88.46,
+      "text": "You are with me here"
+    },
+    {
+      "start": 88.46,
+      "end": 95.46,
+      "text": "Still faithful"
+    },
+    {
+      "start": 95.46,
+      "end": 103.46,
+      "text": "You are here"
+    },
+    {
+      "start": 103.46,
+      "end": 106.96,
+      "text": "I have seen the morning find a broken day"
+    },
+    {
+      "start": 106.96,
+      "end": 109.96,
+      "text": "Seen a little mercy make a new way"
+    },
+    {
+      "start": 109.96,
+      "end": 113.8,
+      "text": "Now the song I carried low within me"
+    },
+    {
+      "start": 113.8,
+      "end": 117.4,
+      "text": "Rises like a promise stronger than before"
+    },
+    {
+      "start": 117.4,
+      "end": 120.04,
+      "text": "One step and another"
+    },
+    {
+      "start": 120.04,
+      "end": 124.04,
+      "text": "You keep calling me nearer"
+    },
+    {
+      "start": 124.04,
+      "end": 125.7,
+      "text": "You are still faithful"
+    },
+    {
+      "start": 125.7,
+      "end": 129.48,
+      "text": "Faithful through it all"
+    },
+    {
+      "start": 129.48,
+      "end": 132.72,
+      "text": "When I am weary"
+    },
+    {
+      "start": 132.72,
+      "end": 136.92,
+      "text": "You will not let me fall"
+    },
+    {
+      "start": 249.16,
+      "end": 261.96,
+      "text": "You are here"
+    }
+  ],
+  "final_title": "Morning Finds the Broken"
+}

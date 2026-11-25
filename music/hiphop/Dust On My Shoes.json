@@ -1,0 +1,187 @@
+{
+  "folder": "hiphop",
+  "frisson_score": "88",
+  "generated_at": "2026-11-25T06:09:44.191Z",
+  "genre": "Hip-Hop",
+  "intensity": "7",
+  "scientific_analysis": "The abrupt transition from silence to full instrumentation creates a prediction-error spike in the auditory cortex, triggering dopamine release in the nucleus accumbens that manifests as chills. A tempo locked near 65 BPM entrains with resting heart rate via vagal afferents, while call-and-response phrasing and a surprise instrumental entrance sustain limbic arousal through repeated expectancy violation.",
+  "structure": "The track opens in near-total silence for four bars before a sudden full-band hit—sub bass, kick, and vocal chant—drops in unison at 65 BPM to trigger the first frisson spike. Verses unfold as call-and-response between a gritty rap vocal and a muted trumpet answering phrase, building tension through sparse space. A bridge introduces an unexpected gospel choir swelling beneath the beat, followed by a breakdown to near-silence before the final full-force chorus returns for a second frisson peak.",
+  "suno_prompt": "Slow heartbeat hip-hop at 65 BPM, English vocals, male rap verses in call-and-response with a muted trumpet. Track begins in silence then explodes into full sound with sub bass, boom-bap drums, and vocal chant. Bridge unexpectedly introduces a swelling gospel choir. Moody, cinematic, emotionally raw, dynamic contrasts between silence and fullness, atmospheric reverb, deep bass pulse mimicking a resting heart.",
+  "triggers": [
+    "Dynamic contrast",
+    "Heartbeat sync",
+    "Timbre surprise",
+    "Call and response"
+  ],
+  "buffered": true,
+  "lyrics": "I said I know the difference But I still get the two of them wrong Still here Still here with the dust on my shoes Still here Still here with the promise I bruise I said I'd come back I said I'd be strong I meant every word And I doubted them all Still here Still If I call, will you answer? If I break, will you know? I have carried this promise Further than I can go Carry him home Carry him home Carry him home He is trying Carry him home Still here Still here though my hands shake now Still here Still here though I don't know how I said I'd come back I said I'd be strong I meant every word, I'm still learning that song Still here Still here I said I'd come back I'm still on my way Thanks for watching!",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 108.88,
+      "end": 112.56,
+      "text": "I said I know the difference"
+    },
+    {
+      "start": 112.56,
+      "end": 116.9,
+      "text": "But I still get the two of them wrong"
+    },
+    {
+      "start": 116.9,
+      "end": 118.78,
+      "text": "Still here"
+    },
+    {
+      "start": 118.78,
+      "end": 123.52,
+      "text": "Still here with the dust on my shoes"
+    },
+    {
+      "start": 123.52,
+      "end": 126.18,
+      "text": "Still here"
+    },
+    {
+      "start": 126.18,
+      "end": 131.54,
+      "text": "Still here with the promise I bruise"
+    },
+    {
+      "start": 131.54,
+      "end": 133.56,
+      "text": "I said I'd come back"
+    },
+    {
+      "start": 133.56,
+      "end": 135.46,
+      "text": "I said I'd be strong"
+    },
+    {
+      "start": 135.46,
+      "end": 137.26,
+      "text": "I meant every word"
+    },
+    {
+      "start": 137.26,
+      "end": 139.8,
+      "text": "And I doubted them all"
+    },
+    {
+      "start": 139.8,
+      "end": 140.96,
+      "text": "Still here"
+    },
+    {
+      "start": 140.96,
+      "end": 144.1,
+      "text": "Still"
+    },
+    {
+      "start": 144.1,
+      "end": 150.08,
+      "text": "If I call, will you answer?"
+    },
+    {
+      "start": 150.88,
+      "end": 153.5,
+      "text": "If I break, will you know?"
+    },
+    {
+      "start": 154.32,
+      "end": 157.42,
+      "text": "I have carried this promise"
+    },
+    {
+      "start": 157.42,
+      "end": 160.8,
+      "text": "Further than I can go"
+    },
+    {
+      "start": 160.8,
+      "end": 163.48,
+      "text": "Carry him home"
+    },
+    {
+      "start": 163.48,
+      "end": 165.32,
+      "text": "Carry him home"
+    },
+    {
+      "start": 165.32,
+      "end": 169.32,
+      "text": "Carry him home"
+    },
+    {
+      "start": 169.32,
+      "end": 173.32,
+      "text": "He is trying"
+    },
+    {
+      "start": 173.32,
+      "end": 176.32,
+      "text": "Carry him home"
+    },
+    {
+      "start": 176.32,
+      "end": 178.32,
+      "text": "Still here"
+    },
+    {
+      "start": 178.32,
+      "end": 184.32,
+      "text": "Still here though my hands shake now"
+    },
+    {
+      "start": 184.32,
+      "end": 186.32,
+      "text": "Still here"
+    },
+    {
+      "start": 186.32,
+      "end": 190.32,
+      "text": "Still here though I don't know how"
+    },
+    {
+      "start": 190.32,
+      "end": 192.32,
+      "text": "I said I'd come back"
+    },
+    {
+      "start": 192.32,
+      "end": 194.32,
+      "text": "I said I'd be strong"
+    },
+    {
+      "start": 194.32,
+      "end": 198.56,
+      "text": "I meant every word, I'm still learning that song"
+    },
+    {
+      "start": 198.56,
+      "end": 200.04,
+      "text": "Still here"
+    },
+    {
+      "start": 200.04,
+      "end": 206.0,
+      "text": "Still here"
+    },
+    {
+      "start": 206.0,
+      "end": 214.88,
+      "text": "I said I'd come back"
+    },
+    {
+      "start": 214.88,
+      "end": 221.66,
+      "text": "I'm still on my way"
+    },
+    {
+      "start": 224.32,
+      "end": 254.3,
+      "text": "Thanks for watching!"
+    }
+  ],
+  "final_title": "Dust On My Shoes"
+}

@@ -13,5 +13,9 @@
     "Unexpected harmony",
     "Timbre surprise"
   ],
-  "buffered": true
+  "buffered": true,
+  "lyrics": "",
+  "instrumental": true,
+  "lyric_segments": [],
+  "final_title": "Threshold of Quiet Light"
 }
