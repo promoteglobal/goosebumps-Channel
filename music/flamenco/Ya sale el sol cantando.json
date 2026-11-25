@@ -1,0 +1,97 @@
+{
+  "folder": "flamenco",
+  "frisson_score": "89",
+  "generated_at": "2026-11-25T06:23:41.679Z",
+  "genre": "Flamenco",
+  "intensity": "8",
+  "scientific_analysis": "Unaccompanied cante jondo vocals activate auditory-limbic coupling, triggering dopamine release in the nucleus accumbens as the brain processes raw vocal tension without harmonic scaffolding. Sudden dynamic shifts from silence to full ensemble violate predictive coding models (Huron's ITPRA framework), producing amygdala-mediated chills, while call-and-response phrasing sustains anticipatory arousal through cyclical tension-resolution patterns characteristic of peak emotional musical experiences.",
+  "structure": "The track opens with a solitary cantaor voice in free rhythm (cante jondo style), unaccompanied and raw, establishing melodic tension through melismatic ornamentation and modal ambiguity. A pregnant silence follows before guitar, palmas, and cajón enter explosively in unison, creating the sudden silence-to-full-sound frisson trigger. The composition then alternates call-and-response between guitarra flamenca falsetas and vocal outcries, escalating through rhythmic compás acceleration toward a climactic resolution where all elements converge in cathartic unity.",
+  "suno_prompt": "Flamenco track, vocals sung in Spanish. Begin with raw unaccompanied cante jondo voice, melismatic and emotionally intense, in silence. Sudden explosive entrance of flamenco guitar, palmas, cajón, and jaleos. Call-and-response between solo voice and guitar falsetas, building melodic tension through modal shifts and rhythmic compás acceleration, resolving in a passionate full-ensemble climax. Intensity 8/10, soleá/bulería influence, visceral and cathartic.",
+  "triggers": [
+    "Solo voice",
+    "Tension and release",
+    "Dynamic contrast",
+    "Call and response"
+  ],
+  "buffered": true,
+  "lyrics": "Traigo la pena doblada, bajo la lengua sin nombre Dije que ya no dolía, mentí que también soy hombre Ay, que me quema por dentro, ay, que no puedo callar, si la noche pide cuenta, mi corazón va a apagar. Por la vereda del monte se me perdió la razón Iba buscando tus pasos, volví siguiendo el dolor Ay, que me quema por dentro, ay, que no puedo callar Si la noche te da cuenta mi corazón va a apagar Dame un sitio en tu puerta no vengo a pedir perdón Vengo con las manos vacías y encendida la canción Ay, que me quema por dentro, ay, que no puedo callar Que responda la guitarra, que responda el corazón Ay, que me quema por dentro, ya no me pienso esconder Si el dolor me dio la vida con mi voz la he vencido Ay madre, ya sale el sol y aún me queda por cantar Gracias.",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 30.0,
+      "end": 47.48,
+      "text": "Traigo la pena doblada, bajo la lengua sin nombre"
+    },
+    {
+      "start": 47.48,
+      "end": 53.7,
+      "text": "Dije que ya no dolía, mentí que también soy hombre"
+    },
+    {
+      "start": 53.7,
+      "end": 68.78,
+      "text": "Ay, que me quema por dentro, ay, que no puedo callar, si la noche pide cuenta, mi corazón va a apagar."
+    },
+    {
+      "start": 68.78,
+      "end": 82.08,
+      "text": "Por la vereda del monte se me perdió la razón"
+    },
+    {
+      "start": 82.08,
+      "end": 87.94,
+      "text": "Iba buscando tus pasos, volví siguiendo el dolor"
+    },
+    {
+      "start": 87.94,
+      "end": 95.98,
+      "text": "Ay, que me quema por dentro, ay, que no puedo callar"
+    },
+    {
+      "start": 95.98,
+      "end": 102.12,
+      "text": "Si la noche te da cuenta mi corazón va a apagar"
+    },
+    {
+      "start": 118.26,
+      "end": 125.36,
+      "text": "Dame un sitio en tu puerta no vengo a pedir perdón"
+    },
+    {
+      "start": 125.36,
+      "end": 131.54,
+      "text": "Vengo con las manos vacías y encendida la canción"
+    },
+    {
+      "start": 131.54,
+      "end": 139.8,
+      "text": "Ay, que me quema por dentro, ay, que no puedo callar"
+    },
+    {
+      "start": 139.8,
+      "end": 145.66,
+      "text": "Que responda la guitarra, que responda el corazón"
+    },
+    {
+      "start": 145.66,
+      "end": 152.54,
+      "text": "Ay, que me quema por dentro, ya no me pienso esconder"
+    },
+    {
+      "start": 152.54,
+      "end": 159.54,
+      "text": "Si el dolor me dio la vida con mi voz la he vencido"
+    },
+    {
+      "start": 160.9,
+      "end": 176.04,
+      "text": "Ay madre, ya sale el sol y aún me queda por cantar"
+    },
+    {
+      "start": 182.54,
+      "end": 183.54,
+      "text": "Gracias."
+    }
+  ],
+  "final_title": "Ya sale el sol cantando"
+}

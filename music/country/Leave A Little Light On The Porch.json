@@ -1,0 +1,197 @@
+{
+  "folder": "country",
+  "frisson_score": "82",
+  "generated_at": "2026-11-25T06:26:39.230Z",
+  "genre": "Country",
+  "intensity": "6",
+  "scientific_analysis": "The unaccompanied solo voice opening activates auditory attention networks and creates an intimate prediction-violation setup, priming the brain for emotional salience via sparse sensory input. The combined effect of gradual melodic tension, a climax precisely at the 61.8% golden-ratio mark (~2:10 in a 3:30 track), and a sudden key modulation triggers dopaminergic reward circuits in the nucleus accumbens through violated harmonic expectancy, producing the characteristic frisson skin-tingle response.",
+  "structure": "The track opens with 20 seconds of a single raw, unaccompanied male voice singing the first verse a cappella, establishing vulnerability and intimacy. From there, acoustic guitar and pedal steel enter gradually, building melodic tension through rising vocal phrases and sustained suspended chords across the first chorus and second verse. At the golden ratio point (approximately 2:10 of a 3:30 song), the song modulates up a whole step into a soaring final chorus, releasing all accumulated tension in a full-band emotional peak before a quiet, stripped-back outro returns to solo voice.",
+  "suno_prompt": "Country ballad, English vocals, male voice, raw a cappella opening verse, intimate and vulnerable. Acoustic guitar and weeping pedal steel build slowly, rising melodic tension through verses and pre-chorus. At 61.8% mark, unexpected key change up a whole step launches soaring full-band emotional climax—strings swell, drums enter. Ends stripped back to solo voice, tender and resolved. Tempo 72 BPM, warm organic production.",
+  "triggers": [
+    "Solo voice",
+    "Tension and release",
+    "Emotional climax",
+    "Key change"
+  ],
+  "buffered": true,
+  "lyrics": "I left your coffee cup beside the sink Like you might come back before the day was done The house stayed still, the clock kept counting I kept finding reasons not to call Your coat is gone from the back of the door But one loose thread still clings to the nail I tell the neighbors I'm doing better Than drive past your road and slow down I said I'd give you room to breathe A minute then, I think I did But every mile I put between us Feels like a mile I can't forgive If there's a way back, leave a little light on I won't ask you to forget what I've done I can meet you where the truth begins Take it slow and try again If you're not there, I'll learn to stand alone But I still hope you'll come back home The rain came hard the night you left me I watched it blur the county line I had a hundred words to tell you And none of them came out right I'm not the man who made that promise Not yet, but I'm trying to be I can't undo the hurt between us I can only show you what I mean If there's a way back Leave a little light on I won't ask you to forget what I've done I can meet you where the truth begins And take it slow and try again If you're not there, I'll learn to stand alone But I still hope you'll come back home If there's a way back, leave a little light on I'll leave the porch door open just in case",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 0.0,
+      "end": 17.16,
+      "text": "I left your coffee cup beside the sink"
+    },
+    {
+      "start": 17.16,
+      "end": 20.56,
+      "text": "Like you might come back before the day was done"
+    },
+    {
+      "start": 20.56,
+      "end": 24.0,
+      "text": "The house stayed still, the clock kept counting"
+    },
+    {
+      "start": 24.0,
+      "end": 27.12,
+      "text": "I kept finding reasons not to call"
+    },
+    {
+      "start": 27.12,
+      "end": 30.74,
+      "text": "Your coat is gone from the back of the door"
+    },
+    {
+      "start": 30.74,
+      "end": 34.36,
+      "text": "But one loose thread still clings to the nail"
+    },
+    {
+      "start": 34.36,
+      "end": 37.46,
+      "text": "I tell the neighbors I'm doing better"
+    },
+    {
+      "start": 37.46,
+      "end": 41.88,
+      "text": "Than drive past your road and slow down"
+    },
+    {
+      "start": 41.88,
+      "end": 45.2,
+      "text": "I said I'd give you room to breathe"
+    },
+    {
+      "start": 45.2,
+      "end": 48.34,
+      "text": "A minute then, I think I did"
+    },
+    {
+      "start": 48.34,
+      "end": 52.34,
+      "text": "But every mile I put between us"
+    },
+    {
+      "start": 52.34,
+      "end": 55.14,
+      "text": "Feels like a mile I can't forgive"
+    },
+    {
+      "start": 55.14,
+      "end": 62.32,
+      "text": "If there's a way back, leave a little light on"
+    },
+    {
+      "start": 62.32,
+      "end": 69.04,
+      "text": "I won't ask you to forget what I've done"
+    },
+    {
+      "start": 69.04,
+      "end": 72.44,
+      "text": "I can meet you where the truth begins"
+    },
+    {
+      "start": 72.44,
+      "end": 75.84,
+      "text": "Take it slow and try again"
+    },
+    {
+      "start": 75.84,
+      "end": 80.54,
+      "text": "If you're not there, I'll learn to stand alone"
+    },
+    {
+      "start": 80.54,
+      "end": 86.28,
+      "text": "But I still hope you'll come back home"
+    },
+    {
+      "start": 86.28,
+      "end": 95.46,
+      "text": "The rain came hard the night you left me"
+    },
+    {
+      "start": 95.46,
+      "end": 98.0,
+      "text": "I watched it blur the county line"
+    },
+    {
+      "start": 98.0,
+      "end": 102.04,
+      "text": "I had a hundred words to tell you"
+    },
+    {
+      "start": 102.04,
+      "end": 104.6,
+      "text": "And none of them came out right"
+    },
+    {
+      "start": 104.6,
+      "end": 107.98,
+      "text": "I'm not the man who made that promise"
+    },
+    {
+      "start": 107.98,
+      "end": 111.04,
+      "text": "Not yet, but I'm trying to be"
+    },
+    {
+      "start": 111.04,
+      "end": 114.92,
+      "text": "I can't undo the hurt between us"
+    },
+    {
+      "start": 114.92,
+      "end": 118.0,
+      "text": "I can only show you what I mean"
+    },
+    {
+      "start": 118.0,
+      "end": 120.2,
+      "text": "If there's a way back"
+    },
+    {
+      "start": 120.2,
+      "end": 123.16,
+      "text": "Leave a little light on"
+    },
+    {
+      "start": 123.16,
+      "end": 129.9,
+      "text": "I won't ask you to forget what I've done"
+    },
+    {
+      "start": 129.9,
+      "end": 133.26,
+      "text": "I can meet you where the truth begins"
+    },
+    {
+      "start": 133.26,
+      "end": 136.64,
+      "text": "And take it slow and try again"
+    },
+    {
+      "start": 136.64,
+      "end": 141.54,
+      "text": "If you're not there, I'll learn to stand alone"
+    },
+    {
+      "start": 141.54,
+      "end": 147.84,
+      "text": "But I still hope you'll come back home"
+    },
+    {
+      "start": 147.84,
+      "end": 163.66,
+      "text": "If there's a way back, leave a little light on"
+    },
+    {
+      "start": 187.54,
+      "end": 198.44,
+      "text": "I'll leave the porch door open just in case"
+    }
+  ],
+  "final_title": "Leave A Little Light On The Porch"
+}

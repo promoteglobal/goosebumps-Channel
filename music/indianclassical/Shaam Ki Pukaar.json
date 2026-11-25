@@ -13,5 +13,9 @@
     "Timbre surprise",
     "Heartbeat sync"
   ],
-  "buffered": true
+  "buffered": true,
+  "lyrics": "",
+  "instrumental": true,
+  "lyric_segments": [],
+  "final_title": "Shaam Ki Pukaar"
 }

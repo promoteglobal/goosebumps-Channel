@@ -1,0 +1,127 @@
+{
+  "folder": "jpop",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T06:35:52.415Z",
+  "genre": "J-Pop",
+  "intensity": "9",
+  "scientific_analysis": "The abrupt silence-to-fulsound transition triggers amygdala-driven arousal via violated auditory expectation, while the modulation to a higher key at the golden-ratio peak (~2:28 in a 4:00 track) synchronizes dopaminergic reward prediction error with peak emotional salience. The sudden entrance of an unexpected timbre (shakuhachi/strings) amplifies novelty detection in auditory cortex, compounding chills response.",
+  "structure": "The track opens with 4 seconds of true silence before erupting instantly into full-band J-Pop instrumentation—drums, synths, and vocals simultaneously—creating maximal onset shock. A tension-building verse-chorus progression climbs steadily until the golden ratio point (approx. 2:28 of 4:00), where the song modulates up a whole step into its emotional climax chorus while a shakuhachi flute enters unexpectedly atop the full arrangement. The final section sustains the new key and instrumentation through an anthemic outro, slowly fading strings to silence for symmetry.",
+  "suno_prompt": "J-Pop power ballad, female vocals sung in Japanese, emotional and soaring. Begin with 4 seconds of total silence then explosive full-band entrance—piano, strings, drums, synths together. Build intensity through verses; at 2:28 modulate up a key for climactic chorus as an unexpected shakuhachi flute enters dramatically. Lush orchestral-pop production, anthemic hooks, bittersweet nostalgic melody, dynamic contrast, cinematic build-and-release, euphoric key-change payoff, fading strings outro.",
+  "triggers": [
+    "Dynamic contrast",
+    "Key change",
+    "Emotional climax",
+    "Timbre surprise"
+  ],
+  "buffered": true,
+  "lyrics": "作詞・作曲・編曲 初音ミク 言えなかった言葉を渡そう 失くした日々も痛みさえも 二人で歩いた証だから どんなに遠く離れても この想いは消えない 遠回りした道も 無駄じゃなかったと 君の手に触れたなら もう一度君に会えたなら あの日の続きを始めよう 零れた涙 抱えた夜も 二人で超える力に変えて どんなに遠く離れても この願いを届けたい もしも君の心にも 小さな灯りが残るなら 失くした日々も痛みさえも 明日の景色へ連れて行こう 何度季節が巡っても 君のもとへ帰るよ この声が届くまで 君の名前を呼ぶよ 白い花が揺れている 君の帰るその日まで",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 0.0,
+      "end": 29.98,
+      "text": "作詞・作曲・編曲 初音ミク"
+    },
+    {
+      "start": 59.44,
+      "end": 66.24,
+      "text": "言えなかった言葉を渡そう"
+    },
+    {
+      "start": 66.24,
+      "end": 70.0,
+      "text": "失くした日々も痛みさえも"
+    },
+    {
+      "start": 70.0,
+      "end": 73.34,
+      "text": "二人で歩いた証だから"
+    },
+    {
+      "start": 73.34,
+      "end": 76.84,
+      "text": "どんなに遠く離れても"
+    },
+    {
+      "start": 76.84,
+      "end": 83.88,
+      "text": "この想いは消えない"
+    },
+    {
+      "start": 119.44,
+      "end": 125.6,
+      "text": "遠回りした道も 無駄じゃなかったと"
+    },
+    {
+      "start": 125.6,
+      "end": 132.36,
+      "text": "君の手に触れたなら"
+    },
+    {
+      "start": 132.36,
+      "end": 138.56,
+      "text": "もう一度君に会えたなら"
+    },
+    {
+      "start": 138.56,
+      "end": 145.32,
+      "text": "あの日の続きを始めよう"
+    },
+    {
+      "start": 145.32,
+      "end": 149.0,
+      "text": "零れた涙 抱えた夜も"
+    },
+    {
+      "start": 149.0,
+      "end": 152.24,
+      "text": "二人で超える力に変えて"
+    },
+    {
+      "start": 152.24,
+      "end": 155.8,
+      "text": "どんなに遠く離れても"
+    },
+    {
+      "start": 155.8,
+      "end": 159.92,
+      "text": "この願いを届けたい"
+    },
+    {
+      "start": 159.92,
+      "end": 168.0,
+      "text": "もしも君の心にも"
+    },
+    {
+      "start": 168.62,
+      "end": 174.08,
+      "text": "小さな灯りが残るなら"
+    },
+    {
+      "start": 203.08,
+      "end": 210.56,
+      "text": "失くした日々も痛みさえも 明日の景色へ連れて行こう"
+    },
+    {
+      "start": 210.56,
+      "end": 217.32,
+      "text": "何度季節が巡っても 君のもとへ帰るよ"
+    },
+    {
+      "start": 217.32,
+      "end": 228.38,
+      "text": "この声が届くまで 君の名前を呼ぶよ"
+    },
+    {
+      "start": 228.38,
+      "end": 234.54,
+      "text": "白い花が揺れている"
+    },
+    {
+      "start": 234.54,
+      "end": 241.12,
+      "text": "君の帰るその日まで"
+    }
+  ],
+  "final_title": "白い花が揺れる日まで"
+}

@@ -1,0 +1,187 @@
+{
+  "folder": "latin",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:20:29.534Z",
+  "genre": "Latin",
+  "intensity": "8",
+  "scientific_analysis": "Call-and-response patterns engage predictive coding circuits in the auditory cortex, creating expectancy that is rewarded with dopamine release in the nucleus accumbens when the answering instrument arrives. Sudden silence-to-full-sound transitions and unexpected timbral entrances spike norepinephrine-driven skin conductance responses, the physiological signature of chills, especially when paired with harmonic tension-resolution in the dominant-to-tonic cadence.",
+  "structure": "The track opens with a single hushed cuatro figure fading into near silence, then explodes into a full brass-and-percussion tutti that immediately establishes call-and-response between trumpets and congas. A tension-building bridge uses suspended harmonies and rising strings before an unexpected bandoneón enters solo, piercing the texture, which then resolves into a cathartic full-ensemble climax with layered vocals and polyrhythmic percussion.",
+  "suno_prompt": "Afro-Cuban/Latin orchestral fusion, vocals sung in Spanish, passionate and soaring. Start with solo cuatro fading to silence, then sudden explosive brass-and-percussion hit. Call-and-response between trumpets, congas, and vocals. Build tension with suspended strings and syncopated piano montuno, release into euphoric climax. Surprise bandoneón solo enters unexpectedly. Dynamic contrasts, rich harmonies, goosebump-inducing crescendo, cinematic Latin big-band energy.",
+  "triggers": [
+    "Call and response",
+    "Dynamic contrast",
+    "Tension and release",
+    "Timbre surprise"
+  ],
+  "buffered": true,
+  "lyrics": "I left the door open in case you came back La mesa puesta para dos todavía Dije ya basta, no era verdad La casa sabe lo que cayó al pasar Y cuando el silencio me quiso vencer Tu nombre en mi pecho volvió a responder Vuelve, vuelve, que aún hay lugar Mi corazón no aprendió a cerrar Vuelve, vuelve, déjame hablar Lo que perdimos se puede nombrar La lluvia borró tus pasos del patio Pero no el rumor de aquel último abrazo Yo me hice fuerte, pues o conté Hasta que en la esquina te imaginé No fue el orgullo quien me sostuvo Fue aquella promesa que nunca se tuvo Vuelve, vuelve, que aún hay lugar Mi corazón no aprendió a cerrar Vuelve, vuelve, déjame hablar Lo que perdimos se puede nombrar I'm going to sing it. I don't ask you to forget. I don't even start from scratch. I just open the door. I wait. I wait. Come back, come back, there's still room. Mi corazón no aprendió a cerrar Vuelve, vuelve, déjame hablar Lo que perdimos se puede nombrar Quédate, quédate, vamos a intentar Con todo lo roto también se puede amar Vuelve, aquí hay lugar",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 50.0,
+      "end": 75.78,
+      "text": "I left the door open in case you came back"
+    },
+    {
+      "start": 75.78,
+      "end": 82.96,
+      "text": "La mesa puesta para dos todavía"
+    },
+    {
+      "start": 82.96,
+      "end": 90.58,
+      "text": "Dije ya basta, no era verdad"
+    },
+    {
+      "start": 90.58,
+      "end": 98.24,
+      "text": "La casa sabe lo que cayó al pasar"
+    },
+    {
+      "start": 98.24,
+      "end": 103.54,
+      "text": "Y cuando el silencio me quiso vencer"
+    },
+    {
+      "start": 103.54,
+      "end": 107.02,
+      "text": "Tu nombre en mi pecho volvió a responder"
+    },
+    {
+      "start": 107.02,
+      "end": 113.56,
+      "text": "Vuelve, vuelve, que aún hay lugar"
+    },
+    {
+      "start": 113.56,
+      "end": 117.5,
+      "text": "Mi corazón no aprendió a cerrar"
+    },
+    {
+      "start": 117.5,
+      "end": 120.84,
+      "text": "Vuelve, vuelve, déjame hablar"
+    },
+    {
+      "start": 120.84,
+      "end": 125.74,
+      "text": "Lo que perdimos se puede nombrar"
+    },
+    {
+      "start": 133.54,
+      "end": 150.84,
+      "text": "La lluvia borró tus pasos del patio"
+    },
+    {
+      "start": 150.84,
+      "end": 154.6,
+      "text": "Pero no el rumor de aquel último abrazo"
+    },
+    {
+      "start": 154.6,
+      "end": 157.6,
+      "text": "Yo me hice fuerte, pues o conté"
+    },
+    {
+      "start": 158.2,
+      "end": 162.1,
+      "text": "Hasta que en la esquina te imaginé"
+    },
+    {
+      "start": 162.1,
+      "end": 166.94,
+      "text": "No fue el orgullo quien me sostuvo"
+    },
+    {
+      "start": 166.94,
+      "end": 174.26,
+      "text": "Fue aquella promesa que nunca se tuvo"
+    },
+    {
+      "start": 174.26,
+      "end": 179.96,
+      "text": "Vuelve, vuelve, que aún hay lugar"
+    },
+    {
+      "start": 179.96,
+      "end": 184.1,
+      "text": "Mi corazón no aprendió a cerrar"
+    },
+    {
+      "start": 184.1,
+      "end": 187.28,
+      "text": "Vuelve, vuelve, déjame hablar"
+    },
+    {
+      "start": 187.28,
+      "end": 192.28,
+      "text": "Lo que perdimos se puede nombrar"
+    },
+    {
+      "start": 217.28,
+      "end": 227.88,
+      "text": "I'm going to sing it."
+    },
+    {
+      "start": 227.88,
+      "end": 229.68,
+      "text": "I don't ask you to forget."
+    },
+    {
+      "start": 229.86,
+      "end": 231.52,
+      "text": "I don't even start from scratch."
+    },
+    {
+      "start": 231.84,
+      "end": 233.3,
+      "text": "I just open the door."
+    },
+    {
+      "start": 233.5,
+      "end": 234.4,
+      "text": "I wait."
+    },
+    {
+      "start": 235.76,
+      "end": 237.18,
+      "text": "I wait."
+    },
+    {
+      "start": 241.12,
+      "end": 243.86,
+      "text": "Come back, come back, there's still room."
+    },
+    {
+      "start": 243.86,
+      "end": 248.36,
+      "text": "Mi corazón no aprendió a cerrar"
+    },
+    {
+      "start": 248.36,
+      "end": 251.36,
+      "text": "Vuelve, vuelve, déjame hablar"
+    },
+    {
+      "start": 251.36,
+      "end": 257.24,
+      "text": "Lo que perdimos se puede nombrar"
+    },
+    {
+      "start": 257.24,
+      "end": 261.62,
+      "text": "Quédate, quédate, vamos a intentar"
+    },
+    {
+      "start": 261.62,
+      "end": 267.42,
+      "text": "Con todo lo roto también se puede amar"
+    },
+    {
+      "start": 273.86,
+      "end": 279.68,
+      "text": "Vuelve, aquí hay lugar"
+    }
+  ],
+  "final_title": "La mesa puesta para dos"
+}

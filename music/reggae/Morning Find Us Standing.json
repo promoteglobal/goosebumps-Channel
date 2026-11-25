@@ -13,5 +13,45 @@
     "Sustained resolution",
     "Timbre surprise"
   ],
-  "buffered": true
+  "buffered": true,
+  "lyrics": "One long nose, then hearts together We will find a kind of way And the morning find us standing With a little hope to give Through the hard times, through the waiting Love is how we learn to live Hold on",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 170.46,
+      "end": 174.14,
+      "text": "One long nose, then hearts together"
+    },
+    {
+      "start": 174.14,
+      "end": 182.86,
+      "text": "We will find a kind of way"
+    },
+    {
+      "start": 182.86,
+      "end": 186.7,
+      "text": "And the morning find us standing"
+    },
+    {
+      "start": 186.7,
+      "end": 190.12,
+      "text": "With a little hope to give"
+    },
+    {
+      "start": 190.12,
+      "end": 193.86,
+      "text": "Through the hard times, through the waiting"
+    },
+    {
+      "start": 193.86,
+      "end": 197.18,
+      "text": "Love is how we learn to live"
+    },
+    {
+      "start": 197.18,
+      "end": 199.12,
+      "text": "Hold on"
+    }
+  ],
+  "final_title": "Morning Find Us Standing"
 }

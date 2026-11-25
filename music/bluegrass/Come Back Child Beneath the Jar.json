@@ -1,0 +1,202 @@
+{
+  "folder": "bluegrass",
+  "frisson_score": "78",
+  "generated_at": "2026-11-25T06:39:42.490Z",
+  "genre": "Bluegrass",
+  "intensity": "6",
+  "scientific_analysis": "Call-and-response phrasing between banjo and fiddle creates predictive expectancy violations in the auditory cortex, triggering dopaminergic reward signals when tension resolves. The sudden entrance of an unaccompanied raw human voice recruits limbic and mirror-neuron circuits tied to emotional contagion, intensifying skin-conductance and chill responses as predicted by Huron's ITPRA model.",
+  "structure": "The track opens with banjo and fiddle trading short melodic phrases in tightening call-and-response, gradually raising harmonic tension through modal shifts. At the midpoint, all instruments drop out for a raw, unaccompanied solo vocal line carrying the emotional peak before a mandolin unexpectedly re-enters with a sparkling counter-melody. The final section layers all instruments together, resolving the built tension into a joyous, full-band climax before a gentle fade.",
+  "suno_prompt": "Bluegrass track, English vocals, Appalachian storytelling tone. Banjo and fiddle trade call-and-response licks building melodic tension through modal shifts. Midway, instruments cut to a raw, unaccompanied solo male vocal, emotionally exposed. A mandolin unexpectedly enters with bright counter-melody, resolving tension into a joyful full-band climax with upright bass and dobro, warm acoustic production, intensity 6/10.",
+  "triggers": [
+    "Call and response",
+    "Tension and release",
+    "Solo voice",
+    "Timbre surprise"
+  ],
+  "buffered": true,
+  "lyrics": "I thought I'd left that row for good, but my feet remembered skill The porch swing leaned against the post, the garden had gone wild I found you nubbed beneath the jar, you'd written come back child I read it once, then read it twice, my hands forgot their word Well that's a foolish thing to say, some words can turn a heart I'm home where the ridge folds down Where the creek runs clear and cold I crossed a dozen county lines to find what I had known If you leave the lamp on one more night, I'll lay my leaving down I'm home where the ridge falls down I'm home, I'm homeward bound You met me by the apple trees with flower on your sleeve You didn't ask me where I'd been, you only said you're here The years between us stood like boards of fence we'd both put up You reached across and touched my hand, that was more than enough The wind turned north across the field The clouds broke over stone I had a thousand things to say I thought miles would make me wise I thought the years would mend I kept your name behind my teeth And caught it moving on It never worked I'm tired of being halfway gone I'm here if you still want me I'm here I'm home where the ridge folds down Where the creek runs clear and cold I crossed a dozen county lines and found the hand I know Leave the lamp on every night, I'm laying my leaving down I'm home where the ridge falls down I'm home, I'm homeward bound The rain let up, the kettle sang The porch board settled slow You took my coat, I took your hand And neither let it go",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 27.42,
+      "end": 31.2,
+      "text": "I thought I'd left that row for good, but my feet remembered skill"
+    },
+    {
+      "start": 31.2,
+      "end": 37.28,
+      "text": "The porch swing leaned against the post, the garden had gone wild"
+    },
+    {
+      "start": 37.28,
+      "end": 40.74,
+      "text": "I found you nubbed beneath the jar, you'd written come back child"
+    },
+    {
+      "start": 40.74,
+      "end": 44.22,
+      "text": "I read it once, then read it twice, my hands forgot their word"
+    },
+    {
+      "start": 44.22,
+      "end": 47.96,
+      "text": "Well that's a foolish thing to say, some words can turn a heart"
+    },
+    {
+      "start": 47.96,
+      "end": 50.52,
+      "text": "I'm home where the ridge folds down"
+    },
+    {
+      "start": 50.52,
+      "end": 54.34,
+      "text": "Where the creek runs clear and cold"
+    },
+    {
+      "start": 54.34,
+      "end": 61.12,
+      "text": "I crossed a dozen county lines to find what I had known"
+    },
+    {
+      "start": 61.12,
+      "end": 65.58,
+      "text": "If you leave the lamp on one more night, I'll lay my leaving down"
+    },
+    {
+      "start": 65.58,
+      "end": 68.46,
+      "text": "I'm home where the ridge falls down"
+    },
+    {
+      "start": 68.46,
+      "end": 71.96,
+      "text": "I'm home, I'm homeward bound"
+    },
+    {
+      "start": 84.34,
+      "end": 90.14,
+      "text": "You met me by the apple trees with flower on your sleeve"
+    },
+    {
+      "start": 90.14,
+      "end": 93.72,
+      "text": "You didn't ask me where I'd been, you only said you're here"
+    },
+    {
+      "start": 93.72,
+      "end": 97.28,
+      "text": "The years between us stood like boards of fence we'd both put up"
+    },
+    {
+      "start": 97.28,
+      "end": 100.74,
+      "text": "You reached across and touched my hand, that was more than enough"
+    },
+    {
+      "start": 100.74,
+      "end": 103.56,
+      "text": "The wind turned north across the field"
+    },
+    {
+      "start": 103.56,
+      "end": 107.02,
+      "text": "The clouds broke over stone"
+    },
+    {
+      "start": 107.02,
+      "end": 111.0,
+      "text": "I had a thousand things to say"
+    },
+    {
+      "start": 141.0,
+      "end": 156.62,
+      "text": "I thought miles would make me wise"
+    },
+    {
+      "start": 156.62,
+      "end": 159.58,
+      "text": "I thought the years would mend"
+    },
+    {
+      "start": 159.58,
+      "end": 163.48,
+      "text": "I kept your name behind my teeth"
+    },
+    {
+      "start": 163.48,
+      "end": 165.12,
+      "text": "And caught it moving on"
+    },
+    {
+      "start": 165.12,
+      "end": 166.64,
+      "text": "It never worked"
+    },
+    {
+      "start": 166.64,
+      "end": 170.46,
+      "text": "I'm tired of being halfway gone"
+    },
+    {
+      "start": 170.46,
+      "end": 174.68,
+      "text": "I'm here if you still want me"
+    },
+    {
+      "start": 174.68,
+      "end": 177.38,
+      "text": "I'm here"
+    },
+    {
+      "start": 177.38,
+      "end": 193.4,
+      "text": "I'm home where the ridge folds down"
+    },
+    {
+      "start": 193.4,
+      "end": 196.92,
+      "text": "Where the creek runs clear and cold"
+    },
+    {
+      "start": 196.92,
+      "end": 203.82,
+      "text": "I crossed a dozen county lines and found the hand I know"
+    },
+    {
+      "start": 203.82,
+      "end": 208.32,
+      "text": "Leave the lamp on every night, I'm laying my leaving down"
+    },
+    {
+      "start": 208.32,
+      "end": 211.16,
+      "text": "I'm home where the ridge falls down"
+    },
+    {
+      "start": 211.16,
+      "end": 214.92,
+      "text": "I'm home, I'm homeward bound"
+    },
+    {
+      "start": 214.92,
+      "end": 219.36,
+      "text": "The rain let up, the kettle sang"
+    },
+    {
+      "start": 219.36,
+      "end": 223.28,
+      "text": "The porch board settled slow"
+    },
+    {
+      "start": 223.28,
+      "end": 228.34,
+      "text": "You took my coat, I took your hand"
+    },
+    {
+      "start": 228.34,
+      "end": 232.82,
+      "text": "And neither let it go"
+    }
+  ],
+  "final_title": "Come Back Child Beneath the Jar"
+}

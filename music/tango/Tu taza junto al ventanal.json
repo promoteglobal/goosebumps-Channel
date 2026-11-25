@@ -1,0 +1,167 @@
+{
+  "folder": "tango",
+  "frisson_score": "91",
+  "generated_at": "2026-11-25T06:33:42.935Z",
+  "genre": "Tango",
+  "intensity": "8",
+  "scientific_analysis": "Sudden silence-to-fullness transitions trigger the brain's startle-reward circuitry, spiking dopamine release in the nucleus accumbens, while unresolved melodic tension recruits the amygdala's anticipation response before resolution floods the auditory cortex with pleasurable prediction-error correction. Placing the emotional peak at the golden ratio exploits temporal expectancy windows shown in EEG studies to maximize chills intensity.",
+  "structure": "The track opens in near silence with a single sustained low string note before an abrupt fortissimo bandoneon-and-string unison strike shocks the listener into the main tango theme, which builds through chromatic suspensions and rhythmic syncopation toward unbearable tension. At the golden ratio point (approximately 2:28 of a 4-minute track), all instruments drop out entirely, leaving one raw, unaccompanied female voice singing a fragile, exposed lament. This solo voice then triggers the full ensemble's cathartic return, resolving the accumulated harmonic tension into a sweeping, tragic-triumphant tango climax before a slow decrescendo fade.",
+  "suno_prompt": "Dramatic instrumental tango in Spanish vocals, bandoneon, strings, piano, double bass. Begin near-silent, then sudden explosive full-ensemble entrance. Build chromatic tension, syncopated rhythms, aching suspended harmonies. At 61.8% mark, abrupt silence—raw unaccompanied female voice sings a mournful Spanish lament alone. Then full orchestra erupts in cathartic resolution, tragic and triumphant. Cinematic, emotionally overwhelming, Astor Piazzolla-inspired nuevo tango, dynamic extremes, goosebump-inducing climax.",
+  "triggers": [
+    "Tension and release",
+    "Dynamic contrast",
+    "Emotional climax",
+    "Solo voice"
+  ],
+  "buffered": true,
+  "lyrics": "La casa guarda tu manera de partir La silla frente a mí no sabe dónde ir Tu taza sigue intacta junto al ventanal Y el polvo va cubriendo lo que no supe hablar No te llamo no, pero te nombro Cuando el día se deshace en el umbral Llevo tu ausencia prendida en los hombros Y este corazón no aprende a soltar La calle dobla donde te vi volver Mis pasos van más lentos sin querer La noche pone un vaso en tu lugar Y yo le cuento todo lo que no escucharás No te llamo no, pero te nombro Cuando el día se deshace en el umbral Llevo tu ausencia prendida en los hombros Y este corazón no aprende a soltar Si queda una palabra entre los dos Que cruce el frío que encuentre tu voz No pido que regreses por piedad, solo que sepas cuánto fue verdad Madre, si me oyes, guarda mi lugar, que ya no sé volver sin recordar Le di mi pan, mi pulso y mi canción Y aún así se fue con la mitad de mí Ahora te nombro sin pedir pena Con la frente en alto y el pecho en paz Aunque tu puerta quede clausurada Lo que amé en ti Nadie lo borrará Lo que amé en ti Nadie lo borrará",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 30.0,
+      "end": 46.94,
+      "text": "La casa guarda tu manera de partir"
+    },
+    {
+      "start": 48.52,
+      "end": 55.94,
+      "text": "La silla frente a mí no sabe dónde ir"
+    },
+    {
+      "start": 55.94,
+      "end": 62.9,
+      "text": "Tu taza sigue intacta junto al ventanal"
+    },
+    {
+      "start": 62.9,
+      "end": 71.26,
+      "text": "Y el polvo va cubriendo lo que no supe hablar"
+    },
+    {
+      "start": 71.26,
+      "end": 79.38,
+      "text": "No te llamo no, pero te nombro"
+    },
+    {
+      "start": 79.38,
+      "end": 87.56,
+      "text": "Cuando el día se deshace en el umbral"
+    },
+    {
+      "start": 87.56,
+      "end": 94.88,
+      "text": "Llevo tu ausencia prendida en los hombros"
+    },
+    {
+      "start": 94.88,
+      "end": 103.68,
+      "text": "Y este corazón no aprende a soltar"
+    },
+    {
+      "start": 103.68,
+      "end": 109.68,
+      "text": "La calle dobla donde te vi volver"
+    },
+    {
+      "start": 109.68,
+      "end": 117.96,
+      "text": "Mis pasos van más lentos sin querer"
+    },
+    {
+      "start": 117.96,
+      "end": 124.76,
+      "text": "La noche pone un vaso en tu lugar"
+    },
+    {
+      "start": 124.76,
+      "end": 136.14,
+      "text": "Y yo le cuento todo lo que no escucharás"
+    },
+    {
+      "start": 136.14,
+      "end": 141.6,
+      "text": "No te llamo no, pero te nombro"
+    },
+    {
+      "start": 141.6,
+      "end": 148.42,
+      "text": "Cuando el día se deshace en el umbral"
+    },
+    {
+      "start": 148.42,
+      "end": 156.76,
+      "text": "Llevo tu ausencia prendida en los hombros"
+    },
+    {
+      "start": 156.76,
+      "end": 165.54,
+      "text": "Y este corazón no aprende a soltar"
+    },
+    {
+      "start": 165.54,
+      "end": 171.14,
+      "text": "Si queda una palabra entre los dos"
+    },
+    {
+      "start": 171.14,
+      "end": 174.8,
+      "text": "Que cruce el frío que encuentre tu voz"
+    },
+    {
+      "start": 174.8,
+      "end": 183.46,
+      "text": "No pido que regreses por piedad, solo que sepas cuánto fue verdad"
+    },
+    {
+      "start": 183.46,
+      "end": 195.8,
+      "text": "Madre, si me oyes, guarda mi lugar, que ya no sé volver sin recordar"
+    },
+    {
+      "start": 195.8,
+      "end": 201.48,
+      "text": "Le di mi pan, mi pulso y mi canción"
+    },
+    {
+      "start": 201.48,
+      "end": 209.88,
+      "text": "Y aún así se fue con la mitad de mí"
+    },
+    {
+      "start": 209.88,
+      "end": 218.08,
+      "text": "Ahora te nombro sin pedir pena"
+    },
+    {
+      "start": 218.08,
+      "end": 225.98,
+      "text": "Con la frente en alto y el pecho en paz"
+    },
+    {
+      "start": 225.98,
+      "end": 233.6,
+      "text": "Aunque tu puerta quede clausurada"
+    },
+    {
+      "start": 233.6,
+      "end": 236.84,
+      "text": "Lo que amé en ti"
+    },
+    {
+      "start": 236.84,
+      "end": 241.6,
+      "text": "Nadie lo borrará"
+    },
+    {
+      "start": 242.56,
+      "end": 245.96,
+      "text": "Lo que amé en ti"
+    },
+    {
+      "start": 248.08,
+      "end": 254.58,
+      "text": "Nadie lo borrará"
+    }
+  ],
+  "final_title": "Tu taza junto al ventanal"
+}

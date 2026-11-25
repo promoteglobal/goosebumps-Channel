@@ -1,0 +1,137 @@
+{
+  "folder": "bossanova",
+  "frisson_score": "64",
+  "generated_at": "2026-11-25T06:27:58.895Z",
+  "genre": "Bossa Nova",
+  "intensity": "4",
+  "scientific_analysis": "Frisson arises from dopaminergic reward prediction errors triggered by harmonic surprise, particularly unresolved appoggiaturas suddenly resolving into consonance, which activates the nucleus accumbens and ventral tegmental area. A tempo near 65 BPM entrains with resting heart rate via auditory-motor coupling, lowering defensive arousal while the exposed solo voice recruits mirror-neuron empathy circuits, amplifying chills through vulnerability and acoustic intimacy.",
+  "structure": "The track opens with a solo female voice singing a cappella for eight bars, establishing raw vulnerability before any instrumentation enters. A nylon-string guitar then enters with gentle syncopated bossa chords, and at the first chorus the harmony shifts unexpectedly from the tonic to a distant flat-VI major chord, creating the primary frisson trigger. The bridge features a sustained high note held over a suspended chord that slowly resolves into warm vocal harmony, mirrored by soft brushed percussion settling precisely at 65 BPM to echo a resting heartbeat.",
+  "suno_prompt": "Bossa Nova ballad, vocals sung in Brazilian Portuguese, female voice, intimate and warm. Begin with raw unaccompanied solo voice, then gentle nylon-string guitar enters with soft syncopation. Tempo locked near 65 BPM, heartbeat-like pulse. Introduce unexpected harmonic shift to a distant chord before chorus. Bridge features a long sustained note resolving into lush vocal harmony. Subtle brushed drums, upright bass, warm reverb, emotionally restrained, delicate dynamics, cinematic intimacy, soft fade ending.",
+  "triggers": [
+    "Sustained resolution",
+    "Unexpected harmony",
+    "Heartbeat sync",
+    "Solo voice"
+  ],
+  "buffered": true,
+  "lyrics": "Enchei a xícara no mesmo lugar A janela aberta pro vento entrar Tua ausência prendeu meu caminho Passa em silêncio, senta comigo Eu prometi não chamar teu nome Mas a promessa muda quando anoitece Fica mais um pouco, mesmo sem dizer porquê Há tanto que eu guardo, tão pouco que sei esconder Se amanhã for tarde, me deixa hoje te querer Dobrei tua carta, não joguei fora Às vezes releio, às vezes ignoro Meu orgulho sustenta a conversa Meu coração não aprendeu a mesma regra Eu digo que estou bem, quase convenço Mas tua voz desarruma o silêncio Fica mais um pouco, mesmo sem dizer porquê Há tanto que eu guardo, tão pouco que sei esconder Se amanhã for tarde, me deixa hoje te querer Eu vou ficar, eu acho Se você ainda quiser ficar E quando eu soltar teu nome Que ele encontre o teu abraço Encontre o teu abraço Fica mais um pouco, mesmo sem dizer porquê Há tanto que eu guardo, tão pouco que sei esconder Se amanhã for tarde, me deixa hoje te querer Se eu disser que passou Será que o peito acredita?",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 23.0,
+      "end": 30.0,
+      "text": "Enchei a xícara no mesmo lugar A janela aberta pro vento entrar"
+    },
+    {
+      "start": 30.0,
+      "end": 38.0,
+      "text": "Tua ausência prendeu meu caminho Passa em silêncio, senta comigo"
+    },
+    {
+      "start": 38.0,
+      "end": 48.0,
+      "text": "Eu prometi não chamar teu nome Mas a promessa muda quando anoitece"
+    },
+    {
+      "start": 48.0,
+      "end": 57.86,
+      "text": "Fica mais um pouco, mesmo sem dizer porquê"
+    },
+    {
+      "start": 57.86,
+      "end": 64.42,
+      "text": "Há tanto que eu guardo, tão pouco que sei esconder"
+    },
+    {
+      "start": 64.42,
+      "end": 75.96,
+      "text": "Se amanhã for tarde, me deixa hoje te querer"
+    },
+    {
+      "start": 75.96,
+      "end": 84.6,
+      "text": "Dobrei tua carta, não joguei fora"
+    },
+    {
+      "start": 84.6,
+      "end": 88.12,
+      "text": "Às vezes releio, às vezes ignoro"
+    },
+    {
+      "start": 88.12,
+      "end": 92.22,
+      "text": "Meu orgulho sustenta a conversa"
+    },
+    {
+      "start": 92.22,
+      "end": 95.96,
+      "text": "Meu coração não aprendeu a mesma regra"
+    },
+    {
+      "start": 95.96,
+      "end": 100.2,
+      "text": "Eu digo que estou bem, quase convenço"
+    },
+    {
+      "start": 100.2,
+      "end": 105.32,
+      "text": "Mas tua voz desarruma o silêncio"
+    },
+    {
+      "start": 105.32,
+      "end": 112.76,
+      "text": "Fica mais um pouco, mesmo sem dizer porquê"
+    },
+    {
+      "start": 112.76,
+      "end": 119.62,
+      "text": "Há tanto que eu guardo, tão pouco que sei esconder"
+    },
+    {
+      "start": 119.62,
+      "end": 130.34,
+      "text": "Se amanhã for tarde, me deixa hoje te querer"
+    },
+    {
+      "start": 130.34,
+      "end": 142.58,
+      "text": "Eu vou ficar, eu acho Se você ainda quiser ficar"
+    },
+    {
+      "start": 142.58,
+      "end": 150.76,
+      "text": "E quando eu soltar teu nome Que ele encontre o teu abraço"
+    },
+    {
+      "start": 150.76,
+      "end": 156.66,
+      "text": "Encontre o teu abraço"
+    },
+    {
+      "start": 156.66,
+      "end": 164.02,
+      "text": "Fica mais um pouco, mesmo sem dizer porquê"
+    },
+    {
+      "start": 164.02,
+      "end": 170.66,
+      "text": "Há tanto que eu guardo, tão pouco que sei esconder"
+    },
+    {
+      "start": 170.66,
+      "end": 182.32,
+      "text": "Se amanhã for tarde, me deixa hoje te querer"
+    },
+    {
+      "start": 186.66,
+      "end": 190.66,
+      "text": "Se eu disser que passou"
+    },
+    {
+      "start": 193.66,
+      "end": 199.66,
+      "text": "Será que o peito acredita?"
+    }
+  ],
+  "final_title": "Dobrei Tua Carta"
+}

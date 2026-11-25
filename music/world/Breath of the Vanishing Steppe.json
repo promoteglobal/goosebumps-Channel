@@ -13,5 +13,9 @@
     "Heartbeat sync",
     "Emotional climax"
   ],
-  "buffered": true
+  "buffered": true,
+  "lyrics": "",
+  "instrumental": true,
+  "lyric_segments": [],
+  "final_title": "Breath of the Vanishing Steppe"
 }
