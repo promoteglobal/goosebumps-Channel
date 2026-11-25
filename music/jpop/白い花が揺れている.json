@@ -1,0 +1,17 @@
+{
+  "folder": "jpop",
+  "frisson_score": "94",
+  "generated_at": "2026-11-25T06:35:52.415Z",
+  "genre": "J-Pop",
+  "intensity": "9",
+  "scientific_analysis": "The abrupt silence-to-fulsound transition triggers amygdala-driven arousal via violated auditory expectation, while the modulation to a higher key at the golden-ratio peak (~2:28 in a 4:00 track) synchronizes dopaminergic reward prediction error with peak emotional salience. The sudden entrance of an unexpected timbre (shakuhachi/strings) amplifies novelty detection in auditory cortex, compounding chills response.",
+  "structure": "The track opens with 4 seconds of true silence before erupting instantly into full-band J-Pop instrumentation—drums, synths, and vocals simultaneously—creating maximal onset shock. A tension-building verse-chorus progression climbs steadily until the golden ratio point (approx. 2:28 of 4:00), where the song modulates up a whole step into its emotional climax chorus while a shakuhachi flute enters unexpectedly atop the full arrangement. The final section sustains the new key and instrumentation through an anthemic outro, slowly fading strings to silence for symmetry.",
+  "suno_prompt": "J-Pop power ballad, female vocals sung in Japanese, emotional and soaring. Begin with 4 seconds of total silence then explosive full-band entrance—piano, strings, drums, synths together. Build intensity through verses; at 2:28 modulate up a key for climactic chorus as an unexpected shakuhachi flute enters dramatically. Lush orchestral-pop production, anthemic hooks, bittersweet nostalgic melody, dynamic contrast, cinematic build-and-release, euphoric key-change payoff, fading strings outro.",
+  "triggers": [
+    "Dynamic contrast",
+    "Key change",
+    "Emotional climax",
+    "Timbre surprise"
+  ],
+  "buffered": true
+}
