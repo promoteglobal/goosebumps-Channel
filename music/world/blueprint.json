@@ -1,0 +1,17 @@
+{
+  "folder": "world",
+  "frisson_score": "82",
+  "generated_at": "2026-11-25T06:38:29.832Z",
+  "genre": "World",
+  "intensity": "7",
+  "scientific_analysis": "Call-and-response phrasing engages predictive auditory pathways, triggering dopamine release when expectations are both met and violated by the surprise instrument entrance. The 65 BPM tempo entrains with resting heart rate, lowering physiological arousal before the golden-ratio climax induces a sudden sympathetic surge, producing chills via amygdala-auditory cortex coupling.",
+  "structure": "The track opens with a solo duduk establishing a plaintive call, answered by kora in gentle response, building a hypnotic 65 BPM pulse that mirrors a resting heartbeat. Layers accumulate through handheld frame drums and overlapping vocal-like string phrases, creating anticipation through repeated call-and-response cycles. At the golden ratio point (~2:28 of a 4:00 track), a previously unheard bowed instrument (erhu) enters fortissimo alongside swelling strings, creating the emotional peak before resolving into a tender outro duet.",
+  "suno_prompt": "Instrumental world-fusion track, no lyrics, 65 BPM, cinematic and meditative. Duduk and kora in call-and-response phrasing, frame drum heartbeat pulse, swelling strings. Golden-ratio climax (~2:28) features surprise erhu entrance, soaring and emotional, intensity 7/10. Rich reverb, organic textures, slow build, tender resolution, goosebump-inducing crescendo, warm analog production, deeply human and transcendent atmosphere.",
+  "triggers": [
+    "Call and response",
+    "Timbre surprise",
+    "Heartbeat sync",
+    "Emotional climax"
+  ],
+  "buffered": true
+}
