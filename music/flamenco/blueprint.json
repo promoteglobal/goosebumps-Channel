@@ -1,9 +1,17 @@
 {
   "folder": "flamenco",
-  "frisson_score": "81",
-  "generated_at": "2026-06-20T09:53:01.094Z",
+  "frisson_score": "89",
+  "generated_at": "2026-11-25T06:23:41.679Z",
   "genre": "Flamenco",
-  "scientific_analysis": "Flamenco's Phrygian dominant tonality creates measurable autonomic arousal through unexpected modal interchange, activating the nucleus accumbens and anterior insula during harmonic surprises that violate learned tonal predictions. The sudden contrast between silence and full ensemble texture triggers a startle-mediated dopamine cascade, while a raw unaccompanied voice at the golden ratio timestamp (61.8%) exploits emotional contagion circuits in the mirror neuron system.",
-  "structure": "The track opens with sparse footwork and hushed guitar building Phrygian tension before a complete silence drop of 2.3 seconds creates maximum anticipatory arousal. A sudden full-ensemble entrance with unexpected shift from E Phrygian to C major creates the primary harmonic surprise, driving intensity through layered palmas and ascending melodic lines toward the golden ratio apex. At 61.8% duration a raw solo voice enters unaccompanied with a sustained melismatic cry resolving the harmonic tension downward, followed by a gradual decrescendo of layered textures fading into single guitar harmonics.",
-  "suno_prompt": "Flamenco, Phrygian dominant, raw emotional intensity, male cantaor solo voice unaccompanied melisma, sudden silence then explosive full ensemble, unexpected shift to distant major chord, footwork percussion, nylon guitar, palmas clapping, melodic tension resolving, golden ratio emotional climax, live recording warmth, no loops, authentic Andalusian, bittersweet longing, cante jondo, 7/10 intensity"
+  "intensity": "8",
+  "scientific_analysis": "Unaccompanied cante jondo vocals activate auditory-limbic coupling, triggering dopamine release in the nucleus accumbens as the brain processes raw vocal tension without harmonic scaffolding. Sudden dynamic shifts from silence to full ensemble violate predictive coding models (Huron's ITPRA framework), producing amygdala-mediated chills, while call-and-response phrasing sustains anticipatory arousal through cyclical tension-resolution patterns characteristic of peak emotional musical experiences.",
+  "structure": "The track opens with a solitary cantaor voice in free rhythm (cante jondo style), unaccompanied and raw, establishing melodic tension through melismatic ornamentation and modal ambiguity. A pregnant silence follows before guitar, palmas, and cajón enter explosively in unison, creating the sudden silence-to-full-sound frisson trigger. The composition then alternates call-and-response between guitarra flamenca falsetas and vocal outcries, escalating through rhythmic compás acceleration toward a climactic resolution where all elements converge in cathartic unity.",
+  "suno_prompt": "Flamenco track, vocals sung in Spanish. Begin with raw unaccompanied cante jondo voice, melismatic and emotionally intense, in silence. Sudden explosive entrance of flamenco guitar, palmas, cajón, and jaleos. Call-and-response between solo voice and guitar falsetas, building melodic tension through modal shifts and rhythmic compás acceleration, resolving in a passionate full-ensemble climax. Intensity 8/10, soleá/bulería influence, visceral and cathartic.",
+  "triggers": [
+    "Solo voice",
+    "Tension and release",
+    "Dynamic contrast",
+    "Call and response"
+  ],
+  "buffered": true
 }
