@@ -1,0 +1,17 @@
+{
+  "folder": "reggae",
+  "frisson_score": "74",
+  "generated_at": "2026-11-25T06:25:19.457Z",
+  "genre": "Reggae",
+  "intensity": "6",
+  "scientific_analysis": "A tempo near 65 BPM mirrors resting heart rate, synchronizing the listener's physiological rhythm with the music and heightening emotional openness. The interplay of call-and-response phrasing, a sustained note resolving into rich harmony, and a surprising new instrumental timbre each trigger dopaminergic prediction-error responses in the auditory cortex, producing chills.",
+  "structure": "The track opens with a slow, heartbeat-like bass and rim-shot pulse at 65 BPM, establishing a meditative reggae groove. Verses unfold as call-and-response between a soulful lead vocal and skanking organ/horn answers, building tension through repetition. The bridge features a held vocal note that blooms into three-part harmony, followed by the unexpected entrance of a steel pan, delivering the frisson peak before resolving into a warm, grounded outro.",
+  "suno_prompt": "Roots reggae ballad, 65 BPM, deep one-drop drum and bass heartbeat pulse, skanking organ, warm horns in call-and-response with soulful lead vocal. Vocals sung in English with Jamaican Patois inflection, emotive and warm. Bridge: sustained vocal note blossoming into lush three-part harmony, then surprise entrance of a bright steel pan. Intensity moderate, intimate, analog warmth, spacious dub-style reverb, uplifting spiritual mood.",
+  "triggers": [
+    "Heartbeat sync",
+    "Call and response",
+    "Sustained resolution",
+    "Timbre surprise"
+  ],
+  "buffered": true
+}
