@@ -1,9 +1,17 @@
 {
-  "genre": "Celtic",
-  "folder": "celtic",
+  "folder": "synthwave",
   "frisson_score": "82",
-  "scientific_analysis": "Frisson in Celtic music is reliably induced by unexpected harmonic movement activating the nucleus accumbens and anterior cerebellum, particularly when a deceptive cadence or chromatic mediant shift violates learned tonal expectations. The golden ratio placement of the emotional climax at approximately 61.8% of track duration maximizes autonomic arousal response by aligning peak dopaminergic release with accumulated melodic tension discharge.",
-  "structure": "The track opens with sparse solo uilleann pipes establishing a haunting D Dorian melody, building layered bodhrán and fiddle textures through the first half while harmonic tension accumulates via suspended chords. At the golden ratio point roughly 62% through, a sudden silence fractures the momentum before an explosive full-ensemble entry featuring an unexpected shift from D minor to B-flat major, a chromatic mediant creating maximum harmonic surprise. The final section resolves the tension through a descending Celtic cadence, fiddle and harp converging on a luminous D major resolution, releasing accumulated emotional charge.",
-  "suno_prompt": "Celtic orchestral, uilleann pipes, fiddle, harp, bodhrán, D Dorian to B-flat major chromatic mediant shift, sudden silence before full ensemble explosion, building melodic tension resolving to D major, layered textures, emotional climax at golden ratio, haunting ancient atmosphere, no vocals, royalty-free, cinematic Celtic folk, 120 BPM moderate intensity",
-  "generated_at": "2026-06-14T22:46:11.204Z"
+  "generated_at": "2026-11-25T06:28:56.471Z",
+  "genre": "Synthwave",
+  "intensity": "7",
+  "scientific_analysis": "Frisson is strongly linked to sudden amplitude/timbral shifts and to expectancy violation resolving into consonance, both of which trigger dopamine release in the nucleus accumbens via the mesolimbic reward pathway. Placing the emotional climax near the golden ratio point of the track aligns with research showing peak chills often occur at proportionally predictable yet surprising structural moments, maximizing anticipation-resolution dynamics.",
+  "structure": "The track opens in near silence with a single filtered pad, then at 0:20 the full synth arrangement enters abruptly to trigger an initial frisson spike. A new lead instrument (soaring analog lead synth) unexpectedly enters at 1:10 over the existing groove, and a sustained suspended note builds tension from 2:10 before resolving into a lush major-key harmonic swell at 2:28, the golden ratio point (0.618 of a 4:00 track), marking the emotional peak; the track then sustains intensity through a final chorus before fading into a soft outro.",
+  "suno_prompt": "Instrumental synthwave, 1980s retro-futuristic, no vocals needed but if included use English. Begin near-silent with a lone filtered pad, then explode into full synth arrangement at 0:20. Introduce a soaring analog lead synth unexpectedly at 1:10. Build a long suspended note from 2:10 that resolves into a lush major-key harmonic swell at 2:28 for peak emotional climax. Driving arpeggios, gated reverb drums, warm bass, cinematic, nostalgic, intensity 7/10, 4 minutes.",
+  "triggers": [
+    "Dynamic contrast",
+    "Timbre surprise",
+    "Sustained resolution",
+    "Emotional climax"
+  ],
+  "buffered": true
 }
