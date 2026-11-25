@@ -126,8 +126,31 @@ footer a{color:#7c5cbf;text-decoration:none;}
 const G=[{n:'Blues',i:'🎸'},{n:'Jazz',i:'🎺'},{n:'K-Pop',i:'✨'},{n:'Classical',i:'🎻'},{n:'Hip-Hop',i:'🎤'},{n:'Ambient',i:'🌊'},{n:'Rock',i:'⚡'},{n:'EDM',i:'💫'},{n:'R&B',i:'❤️'},{n:'Gospel',i:'🙏'},{n:'Cinematic',i:'🎬'},{n:'Folk',i:'🪕'},{n:'Lo-Fi',i:'☕'},{n:'Afrobeat',i:'🥁'},{n:'Latin',i:'🎉'},{n:'Celtic',i:'🍀'},{n:'Indian Classical',i:'🎵'},{n:'Flamenco',i:'💃'},{n:'Reggae',i:'🌴'},{n:'Neo-Soul',i:'🌟'},{n:'Country',i:'🤠'},{n:'Metal',i:'🔥'},{n:'Bossa Nova',i:'🌺'},{n:'Synthwave',i:'🌈'},{n:'Middle Eastern',i:'🌙'},{n:'Nordic Folk',i:'❄️'},{n:'Bollywood',i:'🎭'},{n:'Deep House',i:'🎧'},{n:'Tango',i:'🌹'},{n:'J-Pop',i:'🗾'},{n:'Electronic',i:'💡'},{n:'World',i:'🌍'},{n:'Dangdut Koplo',i:'🥁'},{n:'Bluegrass',i:'🪕'}];
 const T=[{id:'h',l:'Unexpected harmony',v:'unexpected harmonic shift to a distant chord'},{id:'d',l:'Dynamic contrast',v:'sudden shift from silence to full sound'},{id:'t',l:'Tension and release',v:'melodic tension building then resolving'},{id:'b',l:'Heartbeat sync',v:'tempo near 65 BPM matching heartbeat'},{id:'ti',l:'Timbre surprise',v:'unexpected new instrument entering'},{id:'c',l:'Emotional climax',v:'emotional peak at golden ratio of track'},{id:'s',l:'Sustained resolution',v:'long note resolving into harmony'},{id:'v',l:'Solo voice',v:'raw solo voice no accompaniment'},{id:'k',l:'Key change',v:'key change at emotional peak'},{id:'cr',l:'Call and response',v:'instruments in call and response'}];
 let sg='Blues',at=new Set(['h','d','t','c']);
-G.forEach(g=>{const b=document.createElement('button');b.className='gb'+(g.n===sg?' active':'');b.innerHTML='<span class="gi">'+g.i+'</span>'+g.n;b.onclick=()=>{document.querySelectorAll('.gb').forEach(x=>x.classList.remove('active'));b.classList.add('active');sg=g.n;};document.getElementById('gg').appendChild(b);});
-T.forEach(t=>{const b=document.createElement('button');b.className='tb'+(at.has(t.id)?' active':'');b.innerHTML='<div class="td"></div>'+t.l;b.onclick=()=>{if(at.has(t.id)){at.delete(t.id);b.classList.remove('active');}else{at.add(t.id);b.classList.add('active');}};document.getElementById('tg').appendChild(b);});
+// Per-genre smart defaults: frisson triggers that fit the genre + a fitting
+// intensity. Starting point only — the user can still tweak. Fallback = Classic Chill.
+const GENRE_PRESETS={
+ 'Blues':{t:['v','t','c','cr'],i:7},'Jazz':{t:['h','ti','t','cr'],i:6},
+ 'K-Pop':{t:['d','k','c','ti'],i:9},'Classical':{t:['d','t','c','s'],i:7},
+ 'Hip-Hop':{t:['d','b','ti','cr'],i:7},'Ambient':{t:['s','b','h','ti'],i:4},
+ 'Rock':{t:['d','t','c','k'],i:9},'EDM':{t:['d','t','ti','c'],i:9},
+ 'R&B':{t:['v','s','c','h'],i:6},'Gospel':{t:['cr','d','c','k'],i:8},
+ 'Cinematic':{t:['d','t','c','ti'],i:8},'Folk':{t:['v','s','b','t'],i:5},
+ 'Lo-Fi':{t:['b','s','ti','h'],i:3},'Afrobeat':{t:['cr','b','ti','d'],i:7},
+ 'Latin':{t:['cr','d','t','ti'],i:8},'Celtic':{t:['v','s','h','c'],i:6},
+ 'Indian Classical':{t:['s','t','ti','b'],i:6},'Flamenco':{t:['v','t','d','cr'],i:8},
+ 'Reggae':{t:['b','cr','s','ti'],i:6},'Neo-Soul':{t:['v','h','s','c'],i:6},
+ 'Country':{t:['v','t','c','k'],i:6},'Metal':{t:['d','t','ti','c'],i:10},
+ 'Bossa Nova':{t:['s','h','b','v'],i:4},'Synthwave':{t:['d','ti','s','c'],i:7},
+ 'Middle Eastern':{t:['t','s','ti','h'],i:7},'Nordic Folk':{t:['v','s','b','h'],i:5},
+ 'Bollywood':{t:['d','k','c','cr'],i:9},'Deep House':{t:['b','d','ti','s'],i:7},
+ 'Tango':{t:['t','d','c','v'],i:8},'J-Pop':{t:['d','k','c','ti'],i:9},
+ 'Electronic':{t:['d','t','ti','s'],i:8},'World':{t:['cr','ti','b','c'],i:7},
+ 'Dangdut Koplo':{t:['cr','d','b','ti'],i:8},'Bluegrass':{t:['cr','t','v','ti'],i:6}
+};
+function applyPreset(name){const p=GENRE_PRESETS[name]||{t:['h','d','t','c'],i:7};at=new Set(p.t);document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('active',at.has(b.dataset.tid)));document.getElementById('isl').value=p.i;document.getElementById('iv').textContent=p.i;}
+G.forEach(g=>{const b=document.createElement('button');b.className='gb'+(g.n===sg?' active':'');b.innerHTML='<span class="gi">'+g.i+'</span>'+g.n;b.onclick=()=>{document.querySelectorAll('.gb').forEach(x=>x.classList.remove('active'));b.classList.add('active');sg=g.n;applyPreset(g.n);};document.getElementById('gg').appendChild(b);});
+T.forEach(t=>{const b=document.createElement('button');b.dataset.tid=t.id;b.className='tb'+(at.has(t.id)?' active':'');b.innerHTML='<div class="td"></div>'+t.l;b.onclick=()=>{if(at.has(t.id)){at.delete(t.id);b.classList.remove('active');}else{at.add(t.id);b.classList.add('active');}};document.getElementById('tg').appendChild(b);});
+applyPreset(sg);
 // Key sources, in priority order:
 //   1. whatever is typed in the box  (override for one session)
 //   2. key.js sitting next to this file  (gitignored - travels with the folder)

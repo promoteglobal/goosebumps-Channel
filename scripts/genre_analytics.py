@@ -219,7 +219,26 @@ def experiment_report(videos):
     return "\n".join(out)
 
 
-def build_email(rows, unknown, total_videos, best_time, experiment):
+def buffer_status(videos):
+    """How many BUFFERED songs are still waiting to be posted (not yet on
+    YouTube). Drives the monthly 'refill the buffer' reminder."""
+    posted = {norm(v.get("snippet", {}).get("title", "")) for v in videos}
+    left = 0
+    for jp in MUSIC.rglob("*.json"):
+        if jp.name == "blueprint.json":
+            continue
+        try:
+            bp = json.load(open(jp, encoding="utf-8"))
+        except Exception:
+            continue
+        if not bp.get("buffered"):
+            continue
+        if norm(bp.get("final_title") or jp.stem) not in posted:
+            left += 1
+    return left
+
+
+def build_email(rows, unknown, total_videos, best_time, experiment, buffer_left):
     if not rows:
         winner = "Blues"
         headline = ("No genre stats yet (no matching videos found). Post anything "
@@ -238,7 +257,18 @@ def build_email(rows, unknown, total_videos, best_time, experiment):
                 f"{r['likes']} likes  {r['comments']} comments")
         board = "\n".join(lines)
 
+    if buffer_left == 0:
+        buf = ("BUFFER EMPTY - no songs queued to post. Batch-download a new set "
+               "now (Buffer mode ON) or posting stops.")
+    elif buffer_left <= 5:
+        buf = (f"** REFILL TIME ** only {buffer_left} buffered song(s) left (~{buffer_left} "
+               "days of posts). Batch-download ~25 more this cycle (Buffer mode ON) "
+               "to cover next month.")
+    else:
+        buf = f"Buffer: {buffer_left} songs queued (~{buffer_left} days of auto-posts left)."
     body = f"""{headline}
+
+{buf}
 
 {best_time}
 
@@ -293,7 +323,8 @@ def main():
     rows, unknown = rank_genres(videos)
     best_time = best_post_time(videos)
     experiment = experiment_report(videos)
-    subject, body, winner = build_email(rows, unknown, len(videos), best_time, experiment)
+    buffer_left = buffer_status(videos)
+    subject, body, winner = build_email(rows, unknown, len(videos), best_time, experiment, buffer_left)
     log("=" * 60)
     log(subject)
     log(body)
