@@ -13,5 +13,20 @@
     "Emotional climax",
     "Timbre surprise"
   ],
-  "buffered": true
+  "buffered": true,
+  "lyrics": "끝까지 나를 믿어 다시 시작해 나는 여기 있어",
+  "instrumental": false,
+  "lyric_segments": [
+    {
+      "start": 169.04,
+      "end": 176.54,
+      "text": "끝까지 나를 믿어 다시 시작해"
+    },
+    {
+      "start": 176.54,
+      "end": 179.98,
+      "text": "나는 여기 있어"
+    }
+  ],
+  "final_title": "여기 있어"
 }
