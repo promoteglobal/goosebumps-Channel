@@ -1,0 +1,17 @@
+{
+  "folder": "ambient",
+  "frisson_score": "70",
+  "generated_at": "2026-11-25T06:11:18.377Z",
+  "genre": "Ambient",
+  "intensity": "4",
+  "scientific_analysis": "Slow tempo near resting heart rate (65 BPM) entrains cardiac rhythm via auditory-motor coupling, while a sustained note delaying harmonic resolution heightens dopaminergic anticipation in the nucleus accumbens. The unexpected modulation to a distant chord and sudden new timbral entrance trigger prediction-error responses in auditory cortex, producing the skin-tingling frisson response linked to superior temporal gyrus activation.",
+  "structure": "The piece opens with a single sustained pad tone held for sixteen bars, slowly swelling in volume before resolving into a warm consonant harmony. Midway through, the progression shifts unexpectedly to a distant, unrelated chord (e.g., a flat-VI borrowed chord), creating harmonic surprise, immediately followed by the entrance of a new solo instrument—a wordless soprano voice or cello—layered softly above the drone. The track closes by returning gently to the tonic harmony, allowing the tension to dissolve into stillness.",
+  "suno_prompt": "Instrumental ambient composition, no vocals, 65 BPM, heartbeat-paced pulse. Begin with a single sustained synth pad swelling into lush harmony, deep analog warmth, slow reverb tails. Introduce an unexpected modulation to a distant, unrelated chord for harmonic surprise. Layer in a new solo instrument—ethereal cello or wordless soprano voice—entering softly and unexpectedly. Spacious, meditative, cinematic texture, gentle resolution back to tonic, evoking goosebumps and quiet awe.",
+  "triggers": [
+    "Sustained resolution",
+    "Heartbeat sync",
+    "Unexpected harmony",
+    "Timbre surprise"
+  ],
+  "buffered": true
+}
